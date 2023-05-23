@@ -12,5 +12,5 @@ const config = {
 }
 
 const app = initializeApp(config)
-const auth = getAuth(app)
-const db = getFirestore(app)
+export const auth = getAuth(app)
+export const db = getFirestore(app)
