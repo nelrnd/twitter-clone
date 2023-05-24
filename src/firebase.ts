@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { doc, getFirestore, setDoc } from 'firebase/firestore'
+import { createPostId } from './utils'
 
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -14,3 +15,18 @@ const config = {
 const app = initializeApp(config)
 export const auth = getAuth(app)
 export const db = getFirestore(app)
+
+export async function createPost(text: string, userId: string): Promise<void> {
+  try {
+    const postId = createPostId()
+    const postRef = doc(db, 'posts', postId)
+    await setDoc(postRef, {
+      id: postId,
+      text: text,
+      created_at: Date.now(),
+      created_by: userId,
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
