@@ -1,10 +1,11 @@
 import './App.css'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { auth, createPost, db } from './firebase'
+import { auth, createPost, createUserInFirestore, db } from './firebase'
 import { signInWithPopup, signOut, GoogleAuthProvider, User } from 'firebase/auth'
 import { useState } from 'react'
-import { CollectionReference, DocumentData, collection, orderBy, query } from 'firebase/firestore'
+import { CollectionReference, collection, orderBy, query } from 'firebase/firestore'
+import useUserData from './hooks/useUserData'
 
 function App() {
   const [user, loading] = useAuthState(auth)
@@ -15,9 +16,10 @@ function App() {
 }
 
 function Login() {
-  function signInWithGoogle(): void {
+  async function signInWithGoogle(): Promise<void> {
     const provider = new GoogleAuthProvider()
-    signInWithPopup(auth, provider)
+    await signInWithPopup(auth, provider)
+    await createUserInFirestore(auth.currentUser)
   }
 
   return (
@@ -89,8 +91,17 @@ function Feed() {
 }
 
 function Post({ post }: { post: Post }) {
+  const [user] = useUserData(post.created_by)
+
   return (
-    <div>
+    <div className="Post">
+      {user && (
+        <>
+          <img src={user.photoURL} />
+          <h3>{user.name}</h3>
+        </>
+      )}
+
       <p>{post.text}</p>
     </div>
   )
