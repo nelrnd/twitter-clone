@@ -1,8 +1,10 @@
 import './App.css'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth, createPost } from './firebase'
+import { useCollectionData } from 'react-firebase-hooks/firestore'
+import { auth, createPost, db } from './firebase'
 import { signInWithPopup, signOut, GoogleAuthProvider, User } from 'firebase/auth'
 import { useState } from 'react'
+import { CollectionReference, DocumentData, collection, orderBy, query } from 'firebase/firestore'
 
 function App() {
   const [user, loading] = useAuthState(auth)
@@ -37,6 +39,7 @@ function Home({ user }: { user: User }) {
       <button onClick={logout}>Logout</button>
 
       <PostForm userId={user.uid} />
+      <Feed />
     </div>
   )
 }
@@ -59,6 +62,37 @@ function PostForm({ userId }: { userId: string }) {
       <textarea value={text} onChange={handleChange}></textarea>
       <button>Post</button>
     </form>
+  )
+}
+
+interface Post {
+  id: string
+  text: string
+  created_by: string
+  created_at: number
+}
+
+function Feed() {
+  const postsRef = collection(db, 'posts') as CollectionReference<Post>
+  const postsQuery = query(postsRef, orderBy('created_at', 'desc'))
+  const [posts, loading] = useCollectionData(postsQuery)
+
+  if (loading) return <p>Loading...</p>
+
+  return (
+    <div>
+      {posts?.map((post) => (
+        <Post key={post.id} post={post} />
+      ))}
+    </div>
+  )
+}
+
+function Post({ post }: { post: Post }) {
+  return (
+    <div>
+      <p>{post.text}</p>
+    </div>
   )
 }
 
