@@ -103,7 +103,7 @@ function Post({ post }: { post: Post }) {
     <div className="Post">
       {user && (
         <>
-          <img src={user.photoURL} />
+          <img src={user.photoURL} referrerPolicy="no-referrer" />
           <h3>{user.name}</h3>
         </>
       )}
