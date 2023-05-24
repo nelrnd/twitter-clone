@@ -1,7 +1,7 @@
 import './App.css'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { auth, createPost, createUserInFirestore, db } from './firebase'
+import { auth, createPost, createUserInFirestore, db, toggleLikePost } from './firebase'
 import { signInWithPopup, signOut, GoogleAuthProvider, User } from 'firebase/auth'
 import { useState } from 'react'
 import { CollectionReference, collection, orderBy, query } from 'firebase/firestore'
@@ -70,6 +70,7 @@ function PostForm({ userId }: { userId: string }) {
 interface Post {
   id: string
   text: string
+  liked_by: string[]
   created_by: string
   created_at: number
 }
@@ -92,6 +93,11 @@ function Feed() {
 
 function Post({ post }: { post: Post }) {
   const [user] = useUserData(post.created_by)
+  const uid = auth.currentUser?.uid
+  if (!uid) return null
+  const liked = post.liked_by.includes(uid)
+
+  const handleClick = () => toggleLikePost(post.id, uid, post.liked_by.includes(uid))
 
   return (
     <div className="Post">
@@ -103,6 +109,9 @@ function Post({ post }: { post: Post }) {
       )}
 
       <p>{post.text}</p>
+
+      <button onClick={handleClick}>{!liked ? 'Like' : 'Unlike'}</button>
+      <p>{post.liked_by.length}</p>
     </div>
   )
 }

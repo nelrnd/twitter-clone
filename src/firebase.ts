@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { User, getAuth } from 'firebase/auth'
-import { DocumentReference, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore'
+import { DocumentReference, arrayRemove, arrayUnion, doc, getDoc, getFirestore, setDoc, updateDoc } from 'firebase/firestore'
 import { createPostId } from './utils'
 
 const config = {
@@ -25,21 +25,6 @@ async function checkIfDocExists(docRef: DocumentReference<unknown>) {
   }
 }
 
-export async function createPost(text: string, userId: string): Promise<void> {
-  try {
-    const postId = createPostId()
-    const postRef = doc(db, 'posts', postId)
-    await setDoc(postRef, {
-      id: postId,
-      text: text,
-      created_at: Date.now(),
-      created_by: userId,
-    })
-  } catch (err) {
-    console.error(err)
-  }
-}
-
 export async function createUserInFirestore(user: User | null) {
   try {
     if (user) {
@@ -49,7 +34,48 @@ export async function createUserInFirestore(user: User | null) {
         id: user.uid,
         name: user.displayName,
         photoURL: user.photoURL,
+        liked_posts: [],
         created_at: Date.now(),
+      })
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export async function createPost(text: string, userId: string): Promise<void> {
+  try {
+    const postId = createPostId()
+    const postRef = doc(db, 'posts', postId)
+    await setDoc(postRef, {
+      id: postId,
+      text: text,
+      liked_by: [],
+      created_at: Date.now(),
+      created_by: userId,
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export async function toggleLikePost(postId: string, userId: string, liked: boolean) {
+  try {
+    const postRef = doc(db, 'posts', postId)
+    const userRef = doc(db, 'users', userId)
+    if (liked) {
+      await updateDoc(postRef, {
+        liked_by: arrayRemove(userId),
+      })
+      await updateDoc(userRef, {
+        liked_posts: arrayRemove(postId),
+      })
+    } else {
+      await updateDoc(postRef, {
+        liked_by: arrayUnion(userId),
+      })
+      await updateDoc(userRef, {
+        liked_posts: arrayUnion(postId),
       })
     }
   } catch (err) {

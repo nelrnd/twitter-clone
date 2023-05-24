@@ -6,6 +6,7 @@ interface User {
   id: string
   name: string
   photoURL: string
+  liked_posts: string[]
   created_at: number
 }
 
