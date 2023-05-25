@@ -35,7 +35,7 @@ export async function createUserInFirestore(user: User | null, username: string)
         username: username,
         name: user.displayName,
         email: user.email,
-        profileURL: user.photoURL,
+        profileURL: user.photoURL || null,
         headerURL: null,
         posts: [],
         likedPosts: [],

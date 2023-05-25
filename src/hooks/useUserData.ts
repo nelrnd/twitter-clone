@@ -4,13 +4,21 @@ import { db } from '../firebase'
 
 interface User {
   id: string
+  username: string
   name: string
-  photoURL: string
-  liked_posts: string[]
-  created_at: number
+  email: string
+  profileURL: string | null
+  headerURL: string | null
+  posts: string[]
+  likedPosts: string[]
+  following: string[]
+  followers: string[]
+  createdAt: number
 }
 
-export default function useUserData(id: string) {
-  const [user] = useDocumentData(doc(db, 'users', id) as DocumentReference<User>)
-  return [user]
+type DocumentData = [User | null | undefined, boolean]
+
+export default function useUserData(username: string): DocumentData {
+  const [user, loading] = useDocumentData(doc(db, 'users', username) as DocumentReference<User | null>)
+  return [user, loading]
 }
