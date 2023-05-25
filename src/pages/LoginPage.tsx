@@ -1,25 +1,39 @@
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
-import { auth, createUserInFirestore } from '../firebase'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth, joinWithGoogle } from '../firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
+import { useState } from 'react'
 
 function LoginPage() {
   const [user, loading] = useAuthState(auth)
 
-  async function signInWithGoogle(): Promise<void> {
-    const provider = new GoogleAuthProvider()
-    await signInWithPopup(auth, provider)
-    await createUserInFirestore(auth.currentUser)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const changeEmail = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
+  const changePassword = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    signInWithEmailAndPassword(auth, email, password)
   }
 
   if (loading) return <p>Loading...</p>
-
-  return user ? (
-    <Navigate to="/" replace />
-  ) : (
+  
+  return user ? <Navigate to="/" replace /> : (
     <div>
-      <h1>Sign in</h1>
-      <button onClick={signInWithGoogle}>Sign in with Google</button>
+      <h1>Sign in to Twitter</h1>
+      <button onClick={joinWithGoogle}>Sign in with Google</button>
+
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="email">Email</label>
+        <input type="email" id="email" value={email} onChange={changeEmail} />
+        <label htmlFor="password">Password</label>
+        <input type="password" id="password" value={password} onChange={changePassword} />
+        <button>Next</button>
+      </form>
+
+      <p>Don't have an ccount? <Link to="/signup">Sign up</Link></p>
     </div>
   )
 }

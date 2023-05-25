@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
-import { User, getAuth } from 'firebase/auth'
-import { DocumentReference, arrayRemove, arrayUnion, doc, getDoc, getFirestore, setDoc, updateDoc } from 'firebase/firestore'
+import { GoogleAuthProvider, User, getAuth, signInWithPopup } from 'firebase/auth'
+import { arrayRemove, arrayUnion, doc, getFirestore, setDoc, updateDoc } from 'firebase/firestore'
 import { createPostId } from './utils'
 
 const config = {
@@ -16,26 +16,32 @@ const app = initializeApp(config)
 export const auth = getAuth(app)
 export const db = getFirestore(app)
 
-async function checkIfDocExists(docRef: DocumentReference<unknown>) {
+export async function joinWithGoogle() {
   try {
-    const doc = await getDoc(docRef)
-    return doc.exists()
+    const provider = new GoogleAuthProvider()
+    const result = await signInWithPopup(auth, provider)
+    return result
   } catch (err) {
     console.error(err)
   }
 }
 
-export async function createUserInFirestore(user: User | null) {
+export async function createUserInFirestore(user: User | null, username: string) {
   try {
     if (user) {
-      const userRef = doc(db, 'users', user.uid)
-      if (await checkIfDocExists(userRef)) return
+      const userRef = doc(db, 'users', username)
       await setDoc(userRef, {
         id: user.uid,
+        username: username,
         name: user.displayName,
-        photoURL: user.photoURL,
-        liked_posts: [],
-        created_at: Date.now(),
+        email: user.email,
+        profileURL: user.photoURL,
+        headerURL: null,
+        posts: [],
+        likedPosts: [],
+        following: [],
+        followers: [],
+        createdAt: Date.now(),
       })
     }
   } catch (err) {

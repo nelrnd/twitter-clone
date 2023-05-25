@@ -1,24 +1,23 @@
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth, createPost, db, toggleLikePost } from '../firebase'
-import { Navigate } from 'react-router-dom'
 import { signOut } from 'firebase/auth'
 import { useState } from 'react'
 import useUserData from '../hooks/useUserData'
 import { CollectionReference, collection, orderBy, query } from 'firebase/firestore'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
+import useAuthRedirect from '../hooks/useAuthRedirect'
 
 function HomePage() {
   const [user, loading] = useAuthState(auth)
+  useAuthRedirect()
 
   function logout(): void {
     signOut(auth)
   }
 
   if (loading) return <p>Loading...</p>
-
-  return !user ? (
-    <Navigate to="/login" replace />
-  ) : (
+  
+  return user ? (
     <div>
       <h1>Home</h1>
       <button onClick={logout}>Logout</button>
@@ -26,7 +25,7 @@ function HomePage() {
       <PostForm userId={user.uid} />
       <Feed />
     </div>
-  )
+  ) : null
 }
 
 function PostForm({ userId }: { userId: string }) {
