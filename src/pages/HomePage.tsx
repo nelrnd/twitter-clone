@@ -52,16 +52,15 @@ function PostForm({ userId }: { userId: string }) {
 interface Post {
   id: string
   text: string
-  liked_by: string[]
-  created_by: string
-  created_at: number
+  likedBy: string[]
+  createdBy: string
+  createdAt: number
 }
 
 function Post({ post }: { post: Post }) {
-  const [user] = useUserData(post.created_by)
+  const [user] = useUserData(post.createdBy)
   const uid = auth.currentUser?.uid
-  if (!uid) return null
-  const liked = post.liked_by.includes(uid)
+  const liked = !!uid && post.likedBy.includes(uid)
 
   const handleClick = () => toggleLikePost(post.id, uid, liked)
 
@@ -69,7 +68,7 @@ function Post({ post }: { post: Post }) {
     <div className="Post">
       {user && (
         <>
-          <img src={user.photoURL} referrerPolicy="no-referrer" />
+          <img src={user.profileURL || ''} referrerPolicy="no-referrer" />
           <h3>{user.name}</h3>
         </>
       )}
@@ -77,7 +76,7 @@ function Post({ post }: { post: Post }) {
       <p>{post.text}</p>
 
       <button onClick={handleClick}>
-        {!liked ? 'Like' : 'Unlike'} {post.liked_by.length}
+        {!liked ? 'Like' : 'Unlike'} {post.likedBy.length}
       </button>
     </div>
   )
@@ -85,7 +84,7 @@ function Post({ post }: { post: Post }) {
 
 function Feed() {
   const postsRef = collection(db, 'posts') as CollectionReference<Post>
-  const postsQuery = query(postsRef, orderBy('created_at', 'desc'))
+  const postsQuery = query(postsRef, orderBy('createdAt', 'desc'))
   const [posts, loading] = useCollectionData(postsQuery)
 
   if (loading) return <p>Loading...</p>

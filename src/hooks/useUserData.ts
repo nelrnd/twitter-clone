@@ -18,7 +18,7 @@ interface User {
 
 type DocumentData = [User | null | undefined, boolean]
 
-export default function useUserData(username: string): DocumentData {
-  const [user, loading] = useDocumentData(doc(db, 'users', username) as DocumentReference<User | null>)
+export default function useUserData(userId: string): DocumentData {
+  const [user, loading] = useDocumentData(doc(db, 'users', userId) as DocumentReference<User | null>)
   return [user, loading]
 }

@@ -29,7 +29,7 @@ export async function joinWithGoogle() {
 export async function createUserInFirestore(user: User | null, username: string) {
   try {
     if (user) {
-      const userRef = doc(db, 'users', username)
+      const userRef = doc(db, 'users', user.uid)
       await setDoc(userRef, {
         id: user.uid,
         username: username,
@@ -56,32 +56,33 @@ export async function createPost(text: string, userId: string): Promise<void> {
     await setDoc(postRef, {
       id: postId,
       text: text,
-      liked_by: [],
-      created_at: Date.now(),
-      created_by: userId,
+      likedBy: [],
+      createdAt: Date.now(),
+      createdBy: userId,
     })
   } catch (err) {
     console.error(err)
   }
 }
 
-export async function toggleLikePost(postId: string, userId: string, liked: boolean) {
+export async function toggleLikePost(postId: string, userId: string | undefined, liked: boolean) {
   try {
+    if (!userId) return
     const postRef = doc(db, 'posts', postId)
     const userRef = doc(db, 'users', userId)
     if (liked) {
       await updateDoc(postRef, {
-        liked_by: arrayRemove(userId),
+        likedBy: arrayRemove(userId),
       })
       await updateDoc(userRef, {
-        liked_posts: arrayRemove(postId),
+        likedPosts: arrayRemove(postId),
       })
     } else {
       await updateDoc(postRef, {
-        liked_by: arrayUnion(userId),
+        likedBy: arrayUnion(userId),
       })
       await updateDoc(userRef, {
-        liked_posts: arrayUnion(postId),
+        likedPosts: arrayUnion(postId),
       })
     }
   } catch (err) {

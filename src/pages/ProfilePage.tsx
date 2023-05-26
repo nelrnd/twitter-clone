@@ -1,10 +1,19 @@
 import { useParams } from "react-router-dom"
-import useUserData from "../hooks/useUserData"
+import { collection, limit, query, where } from "firebase/firestore"
+import { db } from "../firebase"
+import { useCollectionData } from "react-firebase-hooks/firestore"
+import useAuthRedirect from "../hooks/useAuthRedirect"
 
 function ProfilePage() {
   const params = useParams()
   const username = params.username
-  const [user, loading] = useUserData(username || '')
+  // Get user data
+  const ref = collection(db, 'users')
+  const qry = query(ref, where('username', '==', username), limit(1))
+  const [data, loading] = useCollectionData(qry)
+  const user = data && data[0]
+
+  useAuthRedirect()
 
   if (loading) return <p>Loading...</p>
 

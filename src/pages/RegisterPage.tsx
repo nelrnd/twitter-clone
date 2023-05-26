@@ -1,16 +1,17 @@
-import { auth, createUserInFirestore, db, joinWithGoogle } from '../firebase'
+import { auth, createUserInFirestore, joinWithGoogle } from '../firebase'
 import { Link, useNavigate } from 'react-router-dom'
-import { collection, getDocs, limit, query, where } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import useUserData from '../hooks/useUserData'
 
 const STAGES = ['JOIN', 'CREATE_ACCOUNT', 'PICK_PASSWORD', 'PICK_USERNAME']
 
 function RegisterPage() {
   // current stage
   const [stage, setStage] = useState(STAGES[0])
-  const [user, loading] = useAuthState(auth)
+  const [user] = useAuthState(auth)
+  const [userData, dataLoading] = useUserData(!!user && user.uid || '_')
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
@@ -24,22 +25,13 @@ function RegisterPage() {
   const changePassword = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)
 
   useEffect(() => {
-    (async () => {
-      if (user) {
-        // check if user exists in Firestore
-        const ref = collection(db, 'users')
-        const qry = query(ref, where('id', '==', user.uid), limit(1))
-        const doc = await getDocs(qry)
-        if (doc.empty) {
-          setStage(STAGES[3])
-        } else {
-          navigate('/')
-        }
-      }
-    })()
-  }, [user, navigate])
+    if (user) {
+      if (userData) navigate('/')
+      else setStage(STAGES[3])
+    }
+  }, [user, userData, navigate])
 
-  if (loading) return <p>Loading...</p>
+  if (user && dataLoading) return <p>Loading...</p>
 
   switch (stage) {
     case 'JOIN':
