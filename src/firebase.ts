@@ -39,6 +39,7 @@ export async function createUserInFirestore(user: User | null, username: string)
         headerURL: null,
         posts: [],
         likedPosts: [],
+        retweetedPosts: [],
         following: [],
         followers: [],
         createdAt: Date.now(),
@@ -85,6 +86,31 @@ export async function toggleLikePost(postId: string, userId: string | undefined,
       })
       await updateDoc(userRef, {
         likedPosts: arrayUnion(postId),
+      })
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export async function toggleRetweetPost(postId: string, userId: string | undefined, retweeted: boolean) {
+  try {
+    if (!userId) return
+    const postRef = doc(db, 'posts', postId)
+    const userRef = doc(db, 'users', userId)
+    if (retweeted) {
+      await updateDoc(postRef, {
+        retweets: arrayRemove(userId),
+      })
+      await updateDoc(userRef, {
+        retweetedPosts: arrayRemove(postId),
+      })
+    } else {
+      await updateDoc(postRef, {
+        retweets: arrayUnion(userId),
+      })
+      await updateDoc(userRef, {
+        retweetedPosts: arrayUnion(postId),
       })
     }
   } catch (err) {

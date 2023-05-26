@@ -11,6 +11,7 @@ interface User {
   headerURL: string | null
   posts: string[]
   likedPosts: string[]
+  retweetedPosts: string[]
   following: string[]
   followers: string[]
   createdAt: number

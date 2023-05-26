@@ -1,4 +1,4 @@
-import { auth, toggleLikePost } from '../../firebase'
+import { auth, toggleLikePost, toggleRetweetPost } from '../../firebase'
 import useUserData from '../../hooks/useUserData'
 import Avatar from '../Avatar/Avatar'
 import './Post.sass'
@@ -22,10 +22,12 @@ interface Post {
 function Post({post}: {post: Post}) {
   const [user, loading] = useUserData(post.createdBy)
   const uid = auth.currentUser?.uid
+
   const liked = !!uid && post.likes.includes(uid)
   const retweeted = !!uid && post.retweets.includes(uid)
 
   const handleLike = () => toggleLikePost(post.id, uid, liked)
+  const handleRetweet = () => toggleRetweetPost(post.id, uid, retweeted)
 
   if (loading || !user) return <p>Loading...</p>
 
@@ -55,7 +57,7 @@ function Post({post}: {post: Post}) {
             {post.likes.length || ' '}
           </div>
 
-          <div className={`action retweet ${retweeted ? 'active' : ''}`}>
+          <div onClick={handleRetweet} className={`action retweet ${retweeted ? 'active' : ''}`}>
             <RetweetIcon />
             {post.retweets.length || ' '}
           </div>
