@@ -1,11 +1,11 @@
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth, createPost, db, toggleLikePost } from '../firebase'
+import { auth, createPost, db } from '../firebase'
 import { signOut } from 'firebase/auth'
 import { useState } from 'react'
-import useUserData from '../hooks/useUserData'
 import { CollectionReference, collection, orderBy, query } from 'firebase/firestore'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import useAuthRedirect from '../hooks/useAuthRedirect'
+import Post from '../components/Post/Post'
 
 function HomePage() {
   const [user, loading] = useAuthState(auth)
@@ -46,39 +46,6 @@ function PostForm({ userId }: { userId: string }) {
       <textarea value={text} onChange={handleChange}></textarea>
       <button>Post</button>
     </form>
-  )
-}
-
-interface Post {
-  id: string
-  text: string
-  likedBy: string[]
-  createdBy: string
-  createdAt: number
-}
-
-function Post({ post }: { post: Post }) {
-  const [user] = useUserData(post.createdBy)
-  const uid = auth.currentUser?.uid
-  const liked = !!uid && post.likedBy.includes(uid)
-
-  const handleClick = () => toggleLikePost(post.id, uid, liked)
-
-  return (
-    <div className="Post">
-      {user && (
-        <>
-          <img src={user.profileURL || ''} referrerPolicy="no-referrer" />
-          <h3>{user.name}</h3>
-        </>
-      )}
-
-      <p>{post.text}</p>
-
-      <button onClick={handleClick}>
-        {!liked ? 'Like' : 'Unlike'} {post.likedBy.length}
-      </button>
-    </div>
   )
 }
 

@@ -1,0 +1,58 @@
+@use '../../App'
+  
+.Post
+  padding: 12px 16px
+  line-height: 135%
+  border-bottom: solid 1px App.$dark-10
+  display: grid
+  grid-template-columns: auto 1fr
+  gap: 12px
+
+header
+  display: flex
+  gap: 4px
+  align-items: baseline
+  margin-bottom: 2px
+
+footer
+  margin-top: 4px
+  display: flex
+  justify-content: center
+  align-items: center
+  gap: 64px
+
+  .action
+    color: App.$dark-70
+    font-size: 13px
+    display: flex
+    align-items: center
+    gap: 4px
+    cursor: pointer
+
+    &.like:hover,
+    &.like.active
+      color: App.$red
+      
+    &.like:hover svg
+      background-color: App.$red-10
+
+
+    &.retweet:hover,
+    &.retweet.active
+      color: App.$green
+
+    &.retweet:hover svg
+      background-color: App.$green-10
+    
+    &.reply:hover
+      color: App.$blue
+
+      svg
+       background-color: App.$blue-10
+
+    svg
+      width: 18px
+      height: 18px
+      padding: 8px
+      border-radius: 1000px
+      box-sizing: content-box

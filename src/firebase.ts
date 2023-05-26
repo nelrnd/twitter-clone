@@ -56,7 +56,9 @@ export async function createPost(text: string, userId: string): Promise<void> {
     await setDoc(postRef, {
       id: postId,
       text: text,
-      likedBy: [],
+      likes: [],
+      retweets: [],
+      replies: [],
       createdAt: Date.now(),
       createdBy: userId,
     })
@@ -72,14 +74,14 @@ export async function toggleLikePost(postId: string, userId: string | undefined,
     const userRef = doc(db, 'users', userId)
     if (liked) {
       await updateDoc(postRef, {
-        likedBy: arrayRemove(userId),
+        likes: arrayRemove(userId),
       })
       await updateDoc(userRef, {
         likedPosts: arrayRemove(postId),
       })
     } else {
       await updateDoc(postRef, {
-        likedBy: arrayUnion(userId),
+        likes: arrayUnion(userId),
       })
       await updateDoc(userRef, {
         likedPosts: arrayUnion(postId),
