@@ -2,6 +2,8 @@
   border-radius: 1000px
   background-size: cover
   background-position: center
+  transition: filter 0.2s ease-in-out
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05)
 
   &.xl
     width: 134px
@@ -21,3 +23,6 @@
   &.xs
     width: 18px
     height: 18px
+
+a > .Avatar:hover
+  filter: brightness(0.9)

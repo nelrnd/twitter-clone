@@ -7,6 +7,7 @@ import LikeIcon from '../../assets/heart.svg'
 import LikeIconFilled from '../../assets/heart-filled.svg'
 import RetweetIcon from '../../assets/retweet.svg'
 import ReplyIcon from '../../assets/comment.svg'
+import { Link } from 'react-router-dom'
 
 interface Post {
   id: string
@@ -30,12 +31,18 @@ function Post({post}: {post: Post}) {
 
   return (
     <article className='Post'>
-      <Avatar profileURL={user.profileURL} />
+      <Link to={`/${user.username}`}>
+        <Avatar profileURL={user.profileURL} />
+      </Link>
 
       <div>
         <header>
-          <div className='name'>{user.name}</div>
-          <div className='username'>@{user.username}</div>
+          <Link to={`/${user.username}`}>
+            <div className='name'>{user.name}</div>
+          </Link>
+          <Link to={`/${user.username}`}>
+            <div className='username'>@{user.username}</div>
+          </Link>
         </header>
 
         <main>
