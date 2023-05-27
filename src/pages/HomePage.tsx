@@ -6,6 +6,7 @@ import { CollectionReference, collection, orderBy, query } from 'firebase/firest
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import useAuthRedirect from '../hooks/useAuthRedirect'
 import Post from '../components/Post/Post'
+import Layout from '../components/Layout/Layout'
 
 function HomePage() {
   const [user, loading] = useAuthState(auth)
@@ -18,13 +19,19 @@ function HomePage() {
   if (loading) return <p>Loading...</p>
   
   return user ? (
-    <div>
-      <h1>Home</h1>
-      <button onClick={logout}>Logout</button>
+    <Layout>
+      <div>
+        <h1>Home</h1>
+        <button onClick={logout}>Logout</button>
+      </div>
 
-      <PostForm userId={user.uid} />
-      <Feed />
-    </div>
+      <main>
+        <PostForm userId={user.uid} />
+        <Feed />
+      </main>
+
+      <div></div>
+    </Layout>
   ) : null
 }
 
