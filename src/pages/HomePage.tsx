@@ -1,12 +1,10 @@
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth, createPost, db } from '../firebase'
+import { auth, createPost } from '../firebase'
 import { signOut } from 'firebase/auth'
 import { useState } from 'react'
-import { CollectionReference, collection, orderBy, query } from 'firebase/firestore'
-import { useCollectionData } from 'react-firebase-hooks/firestore'
 import useAuthRedirect from '../hooks/useAuthRedirect'
-import Post from '../components/Post/Post'
 import Layout from '../components/Layout/Layout'
+import Feed from '../components/Feed/Feed'
 
 function HomePage() {
   const [user, loading] = useAuthState(auth)
@@ -17,7 +15,7 @@ function HomePage() {
   }
 
   if (loading) return <p>Loading...</p>
-  
+
   return user ? (
     <Layout>
       <div>
@@ -27,7 +25,7 @@ function HomePage() {
 
       <main>
         <PostForm userId={user.uid} />
-        <Feed />
+        <Feed general={true} />
       </main>
 
       <div></div>
@@ -53,22 +51,6 @@ function PostForm({ userId }: { userId: string }) {
       <textarea value={text} onChange={handleChange}></textarea>
       <button>Post</button>
     </form>
-  )
-}
-
-function Feed() {
-  const postsRef = collection(db, 'posts') as CollectionReference<Post>
-  const postsQuery = query(postsRef, orderBy('createdAt', 'desc'))
-  const [posts, loading] = useCollectionData(postsQuery)
-
-  if (loading) return <p>Loading...</p>
-
-  return (
-    <div>
-      {posts?.map((post) => (
-        <Post key={post.id} post={post} />
-      ))}
-    </div>
   )
 }
 

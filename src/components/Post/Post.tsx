@@ -1,4 +1,6 @@
 import { auth, toggleLikePost, toggleRetweetPost } from '../../firebase'
+import { Link } from 'react-router-dom'
+import { Post as PostInter } from '../../types'
 import useUserData from '../../hooks/useUserData'
 import Avatar from '../Avatar/Avatar'
 import './Post.sass'
@@ -7,19 +9,8 @@ import LikeIcon from '../../assets/heart.svg'
 import LikeIconFilled from '../../assets/heart-filled.svg'
 import RetweetIcon from '../../assets/retweet.svg'
 import ReplyIcon from '../../assets/comment.svg'
-import { Link } from 'react-router-dom'
 
-interface Post {
-  id: string
-  text: string
-  likes: string[]
-  retweets: string[]
-  replies: string[]
-  createdBy: string
-  createdAt: number
-}
-
-function Post({post}: {post: Post}) {
+function Post({ post }: { post: PostInter }) {
   const [user, loading] = useUserData(post.createdBy)
   const uid = auth.currentUser?.uid
 
@@ -32,7 +23,7 @@ function Post({post}: {post: Post}) {
   if (loading || !user) return <p>Loading...</p>
 
   return (
-    <article className='Post'>
+    <article className="Post">
       <Link to={`/${user.username}`}>
         <Avatar profileURL={user.profileURL} />
       </Link>
@@ -40,10 +31,10 @@ function Post({post}: {post: Post}) {
       <div>
         <header>
           <Link to={`/${user.username}`}>
-            <div className='name'>{user.name}</div>
+            <div className="name">{user.name}</div>
           </Link>
           <Link to={`/${user.username}`}>
-            <div className='username'>@{user.username}</div>
+            <div className="username">@{user.username}</div>
           </Link>
         </header>
 
@@ -62,7 +53,7 @@ function Post({post}: {post: Post}) {
             {post.retweets.length || ' '}
           </div>
 
-          <div className='action reply'>
+          <div className="action reply">
             <ReplyIcon />
             {post.replies.length || ' '}
           </div>

@@ -12,3 +12,13 @@ export interface User {
   followers: string[]
   createdAt: number
 }
+
+export interface Post {
+  id: string
+  text: string
+  likes: string[]
+  retweets: string[]
+  replies: string[]
+  createdBy: string
+  createdAt: number
+}

@@ -54,6 +54,7 @@ export async function createPost(text: string, userId: string): Promise<void> {
   try {
     const postId = createPostId()
     const postRef = doc(db, 'posts', postId)
+    const userRef = doc(db, 'users', userId)
     await setDoc(postRef, {
       id: postId,
       text: text,
@@ -62,6 +63,9 @@ export async function createPost(text: string, userId: string): Promise<void> {
       replies: [],
       createdAt: Date.now(),
       createdBy: userId,
+    })
+    await updateDoc(userRef, {
+      posts: arrayUnion(postId),
     })
   } catch (err) {
     console.error(err)
