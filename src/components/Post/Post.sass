@@ -9,51 +9,51 @@
   align-items: start
   gap: 12px
 
-header
-  display: flex
-  gap: 4px
-  align-items: baseline
-  margin-bottom: 2px
-
-footer
-  margin-top: 4px
-  display: flex
-  justify-content: center
-  align-items: center
-  gap: 64px
-
-  .action
-    color: App.$dark-70
-    font-size: 13px
+  header
     display: flex
-    align-items: center
     gap: 4px
-    cursor: pointer
+    align-items: baseline
+    margin-bottom: 2px
 
-    &.like:hover,
-    &.like.active
-      color: App.$red
+  footer
+    margin-top: 4px
+    display: flex
+    justify-content: center
+    align-items: center
+    gap: 64px
+
+    .action
+      color: App.$dark-70
+      font-size: 13px
+      display: flex
+      align-items: center
+      gap: 4px
+      cursor: pointer
+
+      &.like:hover,
+      &.like.active
+        color: App.$red
+        
+      &.like:hover svg
+        background-color: App.$red-10
+
+
+      &.retweet:hover,
+      &.retweet.active
+        color: App.$green
+
+      &.retweet:hover svg
+        background-color: App.$green-10
       
-    &.like:hover svg
-      background-color: App.$red-10
+      &.reply:hover
+        color: App.$blue
 
-
-    &.retweet:hover,
-    &.retweet.active
-      color: App.$green
-
-    &.retweet:hover svg
-      background-color: App.$green-10
-    
-    &.reply:hover
-      color: App.$blue
+        svg
+        background-color: App.$blue-10
 
       svg
-       background-color: App.$blue-10
-
-    svg
-      width: 18px
-      height: 18px
-      padding: 8px
-      border-radius: 1000px
-      box-sizing: content-box
+        width: 18px
+        height: 18px
+        padding: 8px
+        border-radius: 1000px
+        box-sizing: content-box
