@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
 import { User } from '../../types'
-import Avatar from '../Avatar/Avatar'
-import './ProfileHeader.sass'
-import Button from '../Button/Button'
 import { auth } from '../../firebase'
+import Avatar from '../Avatar/Avatar'
+import Button from '../Button/Button'
+import FollowButton from '../Button/FollowButton'
+import './ProfileHeader.sass'
 
 interface ProfileHeaderProps {
   user: User
@@ -13,7 +14,9 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
   const handleClick = () => {
     console.log('ok')
   }
-  const isCurrentUser = user.id === auth.currentUser?.uid
+  const currentUserId = auth.currentUser?.uid
+  const isCurrentUser = user.id === currentUserId
+  const followed = (currentUserId && user.followers.includes(currentUserId)) || false
 
   return (
     <header className="ProfileHeader">
@@ -28,7 +31,7 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
               Edit profile
             </Button>
           ) : (
-            <Button handleClick={handleClick}>Follow</Button>
+            <FollowButton userId={user.id} currentUserId={currentUserId} followed={followed} />
           )}
         </div>
         <h2 className="heading">{user.name}</h2>

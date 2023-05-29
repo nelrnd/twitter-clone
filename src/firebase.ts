@@ -117,3 +117,28 @@ export async function toggleRetweetPost(postId: string, userId: string | undefin
     console.error(err)
   }
 }
+
+export async function toggleFollowAccount(userId: string, currentUserId: string | undefined, followed: boolean) {
+  try {
+    if (!currentUserId) return
+    const userRef = doc(db, 'users', userId)
+    const currentUserRef = doc(db, 'users', currentUserId)
+    if (followed) {
+      await updateDoc(userRef, {
+        followers: arrayRemove(currentUserId),
+      })
+      await updateDoc(currentUserRef, {
+        following: arrayRemove(userId),
+      })
+    } else {
+      await updateDoc(userRef, {
+        followers: arrayUnion(currentUserId),
+      })
+      await updateDoc(currentUserRef, {
+        following: arrayUnion(userId),
+      })
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
