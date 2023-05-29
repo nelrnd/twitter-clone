@@ -1,0 +1,44 @@
+@use '../../App'
+
+.Button
+  font-size: 16px
+  font-weight: bold
+  line-height: 135%
+  border: none
+  border-radius: 1000px
+  cursor: pointer
+  transition: all 0.2s ease-in-out
+
+  &.dark
+    color: white
+    background-color: App.$dark-100
+
+    &:hover
+      opacity: 0.9
+
+  &.primary
+    color: white
+    background-color: App.$blue
+
+    &:hover
+      filter: brightness(0.9)
+
+  &.outline
+    color: App.$dark-100
+    background-color: white
+    border: solid 1px App.$dark-30
+
+    &:hover
+      filter: brightness(0.9)
+
+  &.large
+    width: 100%
+    max-width: 300px
+    padding: 16px 32px
+
+  &.medium
+    padding: 8px 20px
+
+  &.small
+    font-size: 14px
+    padding: 6px 18px
