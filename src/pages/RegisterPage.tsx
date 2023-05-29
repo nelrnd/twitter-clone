@@ -11,7 +11,7 @@ function RegisterPage() {
   // current stage
   const [stage, setStage] = useState(STAGES[0])
   const [user] = useAuthState(auth)
-  const [userData, dataLoading] = useUserData(!!user && user.uid || '_')
+  const [userData, dataLoading] = useUserData((!!user && user.uid) || '_')
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
@@ -26,7 +26,7 @@ function RegisterPage() {
 
   useEffect(() => {
     if (user) {
-      if (userData) navigate('/')
+      if (userData) navigate('/home')
       else setStage(STAGES[3])
     }
   }, [user, userData, navigate])
@@ -89,13 +89,13 @@ function RegisterPage_CreateAccount({ setStage, name, changeName, email, changeE
   )
 }
 
-function RegisterPage_PickPassword({ password, changePassword, email, name }: { password: string, changePassword: (e: React.ChangeEvent<HTMLInputElement>) => void, email: string, name: string }) {
+function RegisterPage_PickPassword({ password, changePassword, email, name }: { password: string; changePassword: (e: React.ChangeEvent<HTMLInputElement>) => void; email: string; name: string }) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const result = await createUserWithEmailAndPassword(auth, email, password)
-    if (result.user ) {
+    if (result.user) {
       await updateProfile(result.user, {
-        displayName: name
+        displayName: name,
       })
     }
   }
@@ -114,13 +114,13 @@ function RegisterPage_PickPassword({ password, changePassword, email, name }: { 
   )
 }
 
-function RegisterPage_PickUsername({username, changeUsername}: {username: string, changeUsername: (e: React.ChangeEvent<HTMLInputElement>) => void}) {
+function RegisterPage_PickUsername({ username, changeUsername }: { username: string; changeUsername: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
   const navigate = useNavigate()
 
   const handleClick = async () => {
     if (!username) return
     await createUserInFirestore(auth.currentUser, username)
-    navigate('/')
+    navigate('/home')
   }
 
   return (

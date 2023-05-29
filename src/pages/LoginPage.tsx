@@ -19,8 +19,10 @@ function LoginPage() {
   }
 
   if (loading) return <p>Loading...</p>
-  
-  return user ? <Navigate to="/" replace /> : (
+
+  return user ? (
+    <Navigate to="/home" replace />
+  ) : (
     <div>
       <h1>Sign in to Twitter</h1>
       <button onClick={joinWithGoogle}>Sign in with Google</button>
@@ -33,7 +35,9 @@ function LoginPage() {
         <button>Next</button>
       </form>
 
-      <p>Don't have an ccount? <Link to="/signup">Sign up</Link></p>
+      <p>
+        Don't have an ccount? <Link to="/signup">Sign up</Link>
+      </p>
     </div>
   )
 }
