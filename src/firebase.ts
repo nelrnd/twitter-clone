@@ -50,7 +50,7 @@ export async function createUserInFirestore(user: User | null, username: string)
   }
 }
 
-export async function createPost(text: string, userId: string): Promise<void> {
+export async function createPost(text: string[], userId: string): Promise<void> {
   try {
     const postId = createPostId()
     const postRef = doc(db, 'posts', postId)

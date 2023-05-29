@@ -15,7 +15,7 @@ export interface User {
 
 export interface Post {
   id: string
-  text: string
+  text: string[]
   likes: string[]
   retweets: string[]
   replies: string[]

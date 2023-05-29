@@ -39,7 +39,9 @@ function Post({ post }: { post: PostInter }) {
         </header>
 
         <main>
-          <p>{post.text}</p>
+          {post.text.map((line, id) => (
+            <p key={id}>{line}</p>
+          ))}
         </main>
 
         <footer>
