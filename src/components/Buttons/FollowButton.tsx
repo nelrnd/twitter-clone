@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { toggleFollowAccount } from '../../firebase'
-import './Button.sass'
+import './Buttons.sass'
 
 interface FollowButtonProps {
   userId: string

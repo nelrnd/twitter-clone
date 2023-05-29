@@ -5,6 +5,7 @@ import { useState } from 'react'
 import useAuthRedirect from '../hooks/useAuthRedirect'
 import Layout from '../components/Layout/Layout'
 import Feed from '../components/Feed/Feed'
+import PageHeader from '../components/PageHeader/PageHeader'
 
 function HomePage() {
   const [user, loading] = useAuthState(auth)
@@ -24,6 +25,9 @@ function HomePage() {
       </div>
 
       <main>
+        <PageHeader>
+          <h2 className="heading">Home</h2>
+        </PageHeader>
         <PostForm userId={user.uid} />
         <Feed general={true} />
       </main>

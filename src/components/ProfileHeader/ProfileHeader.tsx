@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 import { User } from '../../types'
 import { auth } from '../../firebase'
 import Avatar from '../Avatar/Avatar'
-import Button from '../Button/Button'
-import FollowButton from '../Button/FollowButton'
+import Button from '../Buttons/Button'
+import FollowButton from '../Buttons/FollowButton'
 import './ProfileHeader.sass'
 
 interface ProfileHeaderProps {
