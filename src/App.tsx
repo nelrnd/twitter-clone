@@ -1,13 +1,15 @@
 import './App.sass'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { auth } from './firebase'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { UserContext } from './contexts/UserContext'
 import HomePage from './pages/HomePage'
 import ProfilePage from './pages/ProfilePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from './firebase'
 import useUserData from './hooks/useUserData'
-import { UserContext } from './contexts/UserContext'
+import FollowingPage from './pages/FollowingPage'
+import FollowersPage from './pages/FollowersPage'
 
 function App() {
   const [user] = useAuthState(auth)
@@ -20,6 +22,8 @@ function App() {
           <Route path="/" element={<Navigate to="/home" replace={true} />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/:username" element={<ProfilePage />} />
+          <Route path="/:username/following" element={<FollowingPage />} />
+          <Route path="/:username/followers" element={<FollowersPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<RegisterPage />} />
         </Routes>
