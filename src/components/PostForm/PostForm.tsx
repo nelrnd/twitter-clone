@@ -1,9 +1,11 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useContext } from 'react'
 import { User } from 'firebase/auth'
 import Avatar from '../Avatar/Avatar'
 import Button from '../Buttons/Button'
 import './PostForm.sass'
 import { createPost } from '../../firebase'
+import { UserContext } from '../../contexts/UserContext'
+import { Link } from 'react-router-dom'
 
 interface PostFormProps {
   user: User
@@ -12,6 +14,8 @@ interface PostFormProps {
 function PostForm({ user }: PostFormProps) {
   const [text, setText] = useState('')
   const elem = useRef<HTMLDivElement>(null)
+
+  const userData = useContext(UserContext)
 
   const handleInput = () => setText((elem.current && elem.current.textContent) || '')
   const handlePost = () => {
@@ -27,9 +31,13 @@ function PostForm({ user }: PostFormProps) {
     createPost(postText, user.uid)
   }
 
+  if (!userData) return <p>Loading...</p>
+
   return (
     <div className="PostForm">
-      <Avatar profileURL={user.photoURL} />
+      <Link to={`/${userData.username}`}>
+        <Avatar profileURL={user.photoURL} />
+      </Link>
 
       <div>
         <div className="input">
