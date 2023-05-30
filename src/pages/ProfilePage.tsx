@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { CollectionReference, collection, limit, query, where } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
@@ -15,7 +15,6 @@ function ProfilePage() {
   const params = useParams()
   const username = params.username
   const navigate = useNavigate()
-  const location = useLocation()
   // Get user data
   const ref = collection(db, 'users') as CollectionReference<User>
   const qry = query(ref, where('username', '==', username), limit(1))
@@ -24,13 +23,7 @@ function ProfilePage() {
 
   useAuthRedirect()
 
-  const goBack = () => {
-    if (location.key === 'default') {
-      navigate('/home')
-    } else {
-      navigate(-1)
-    }
-  }
+  const goBack = () => navigate('/')
 
   if (loading) return <p>Loading...</p>
 
@@ -38,12 +31,14 @@ function ProfilePage() {
     <Layout>
       <main>
         <PageHeader>
-          <IconButton handleClick={goBack}>
-            <BackIcon />
-          </IconButton>
-          <div>
-            <h2 className="heading">{user.name}</h2>
-            <p className="small grey">{user.posts.length} Tweets</p>
+          <div className="bar">
+            <IconButton handleClick={goBack}>
+              <BackIcon />
+            </IconButton>
+            <div>
+              <h2 className="heading">{user.name}</h2>
+              <p className="small grey">{user.posts.length} Tweets</p>
+            </div>
           </div>
         </PageHeader>
         <ProfileHeader user={user} />

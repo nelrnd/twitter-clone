@@ -8,6 +8,7 @@ import PageHeader from '../components/PageHeader/PageHeader'
 import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
 import Tabs from '../components/Tabs/Tabs'
+import ProfileItem from '../components/ProfileItem/ProfileItem'
 
 function FollowingPage() {
   const params = useParams()
@@ -15,6 +16,11 @@ function FollowingPage() {
   const [data, loading] = useCollectionData(query(collection(db, 'users') as CollectionReference<User>, where('username', '==', username), limit(1)))
   const user = !!data && data[0]
   const navigate = useNavigate()
+
+  const usersRef = collection(db, 'users') as CollectionReference<User>
+  const arr = user && user.following.length ? user.following : ['_']
+  const usersQuery = query(usersRef, where('id', 'in', arr))
+  const [users] = useCollectionData(usersQuery)
 
   const goBack = () => navigate('/' + username)
 
@@ -40,6 +46,8 @@ function FollowingPage() {
             ]}
           />
         </PageHeader>
+
+        <div>{users && users.map((user) => <ProfileItem key={user.id} user={user} />)}</div>
       </main>
     </Layout>
   ) : (

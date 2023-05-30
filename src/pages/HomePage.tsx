@@ -26,7 +26,9 @@ function HomePage() {
 
       <main>
         <PageHeader>
-          <h2 className="heading">Home</h2>
+          <div className="bar">
+            <h2 className="heading">Home</h2>
+          </div>
         </PageHeader>
         <PostForm user={user} />
         <Feed general={true} />
