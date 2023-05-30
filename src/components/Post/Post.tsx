@@ -9,6 +9,7 @@ import LikeIcon from '../../assets/heart.svg'
 import LikeIconFilled from '../../assets/heart-filled.svg'
 import RetweetIcon from '../../assets/retweet.svg'
 import ReplyIcon from '../../assets/comment.svg'
+import { getPostTime } from '../../utils'
 
 function Post({ post }: { post: PostInter }) {
   const [user, loading] = useUserData(post.createdBy)
@@ -36,6 +37,7 @@ function Post({ post }: { post: PostInter }) {
           <Link to={`/${user.username}`}>
             <div className="username">@{user.username}</div>
           </Link>
+          <div className="grey"> · {getPostTime(post.createdAt)}</div>
         </header>
 
         <main>
