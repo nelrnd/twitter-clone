@@ -1,0 +1,39 @@
+@use '../../App'
+
+.Tabs
+  display: grid
+  border-bottom: solid 1px App.$dark-10
+
+.Tab
+  height: 52px
+  cursor: pointer
+
+  div.text
+    color: App.$dark-70
+    font-weight: 500
+    width: fit-content
+    height: 100%
+    margin: auto
+    vertical-align: middle
+    display: flex
+    align-items: center
+    position: relative
+
+  &.active
+
+    div.text
+      color: App.$dark-100
+      font-weight: bold
+
+      &::after
+        content: ''
+        display: block
+        height: 4px
+        width: 100%
+        background-color: App.$blue
+        border-radius: 2px
+        position: absolute
+        bottom: 0
+
+  &:hover
+    background-color: App.$grey

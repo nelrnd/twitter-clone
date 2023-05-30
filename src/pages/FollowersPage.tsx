@@ -7,6 +7,7 @@ import Layout from '../components/Layout/Layout'
 import PageHeader from '../components/PageHeader/PageHeader'
 import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
+import Tabs from '../components/Tabs/Tabs'
 
 function FollowersPage() {
   const params = useParams()
@@ -23,13 +24,21 @@ function FollowersPage() {
     <Layout>
       <main>
         <PageHeader>
-          <IconButton handleClick={goBack}>
-            <BackIcon />
-          </IconButton>
-          <div>
-            <h2 className="heading">{user.name}</h2>
-            <p className="grey small">@{username}</p>
+          <div className="bar">
+            <IconButton handleClick={goBack}>
+              <BackIcon />
+            </IconButton>
+            <div>
+              <h2 className="heading">{user.name}</h2>
+              <p className="grey small">@{username}</p>
+            </div>
           </div>
+          <Tabs
+            tabs={[
+              { text: 'Followers', link: `/${username}/followers`, active: true },
+              { text: 'Following', link: `/${username}/following`, active: false },
+            ]}
+          />
         </PageHeader>
       </main>
     </Layout>
