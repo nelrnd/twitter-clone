@@ -11,7 +11,7 @@ import RetweetIcon from '../../assets/retweet.svg'
 import ReplyIcon from '../../assets/comment.svg'
 import { getPostTime } from '../../utils'
 
-function Post({ post }: { post: PostInter }) {
+function Post({ post, inFeedFrom }: { post: PostInter; inFeedFrom?: string }) {
   const [user, loading] = useUserData(post.createdBy)
   const uid = auth.currentUser?.uid
 
@@ -25,6 +25,8 @@ function Post({ post }: { post: PostInter }) {
 
   return (
     <article className="Post">
+      {inFeedFrom && inFeedFrom !== post.createdBy ? <PostRetweetedBar userId={inFeedFrom} /> : null}
+
       <Link to={`/${user.username}`}>
         <Avatar profileURL={user.profileURL} />
       </Link>
@@ -64,6 +66,24 @@ function Post({ post }: { post: PostInter }) {
         </footer>
       </div>
     </article>
+  )
+}
+
+function PostRetweetedBar({ userId }: { userId: string }) {
+  const [user, loading] = useUserData(userId)
+  const uid = auth.currentUser?.uid
+
+  if (loading || !user) return null
+
+  return (
+    <div className="PostRetweetedBar">
+      <div className="icon">
+        <RetweetIcon />
+      </div>
+      <div>
+        <p>{userId === uid ? 'You' : user.name} Retweeted</p>
+      </div>
+    </div>
   )
 }
 

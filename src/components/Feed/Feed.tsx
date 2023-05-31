@@ -7,9 +7,10 @@ import Post from '../Post/Post'
 interface FeedProps {
   general?: boolean
   postIds?: string[]
+  userId?: string
 }
 
-function Feed({ general, postIds }: FeedProps) {
+function Feed({ general, postIds, userId }: FeedProps) {
   const postsRef = collection(db, 'posts') as CollectionReference<PostInter>
 
   const ordering = orderBy('createdAt', 'desc')
@@ -22,7 +23,7 @@ function Feed({ general, postIds }: FeedProps) {
   return (
     <div>
       {posts?.map((post) => (
-        <Post key={post.id} post={post} />
+        <Post key={post.id} post={post} inFeedFrom={userId} />
       ))}
     </div>
   )

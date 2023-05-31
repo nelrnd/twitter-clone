@@ -37,12 +37,12 @@ function ProfilePage() {
             </IconButton>
             <div>
               <h2 className="heading">{user.name}</h2>
-              <p className="small grey">{user.posts.length} Tweets</p>
+              <p className="small grey">{user.posts.concat(user.retweetedPosts).length} Tweets</p>
             </div>
           </div>
         </PageHeader>
         <ProfileHeader user={user} />
-        <Feed postIds={user.posts} />
+        <Feed postIds={user.posts.concat(user.retweetedPosts)} userId={user.id} />
       </main>
     </LayoutWithSidebar>
   ) : (
