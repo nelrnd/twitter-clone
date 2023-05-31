@@ -10,6 +10,8 @@ import RegisterPage from './pages/RegisterPage'
 import useUserData from './hooks/useUserData'
 import FollowingPage from './pages/FollowingPage'
 import FollowersPage from './pages/FollowersPage'
+import NotificationsPage from './pages/NotificationsPage'
+import MessagesPage from './pages/MessagesPage'
 
 function App() {
   const [user] = useAuthState(auth)
@@ -24,6 +26,8 @@ function App() {
           <Route path="/:username" element={<ProfilePage />} />
           <Route path="/:username/following" element={<FollowingPage />} />
           <Route path="/:username/followers" element={<FollowersPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/messages" element={<MessagesPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<RegisterPage />} />
         </Routes>
