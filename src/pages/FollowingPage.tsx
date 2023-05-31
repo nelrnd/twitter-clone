@@ -3,12 +3,12 @@ import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { CollectionReference, collection, limit, query, where } from 'firebase/firestore'
 import { useNavigate, useParams } from 'react-router-dom'
 import { User } from '../types'
-import Layout from '../components/Layout/Layout'
 import PageHeader from '../components/PageHeader/PageHeader'
 import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
 import Tabs from '../components/Tabs/Tabs'
 import ProfileItem from '../components/ProfileItem/ProfileItem'
+import LayoutWithSidebar from '../components/LayoutWithSidebar/LayoutWithSidebar'
 
 function FollowingPage() {
   const params = useParams()
@@ -27,7 +27,7 @@ function FollowingPage() {
   if (loading) return <p>Loading...</p>
 
   return user ? (
-    <Layout>
+    <LayoutWithSidebar>
       <main>
         <PageHeader>
           <div className="bar">
@@ -49,7 +49,7 @@ function FollowingPage() {
 
         <div>{users && users.map((user) => <ProfileItem key={user.id} user={user} />)}</div>
       </main>
-    </Layout>
+    </LayoutWithSidebar>
   ) : (
     <p>This accoun't doesn't exists</p>
   )

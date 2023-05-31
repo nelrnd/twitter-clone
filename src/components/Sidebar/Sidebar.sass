@@ -1,0 +1,125 @@
+@use '../../App'
+
+.Sidebar
+  width: 258px
+  margin: 16px 0
+  top: 0
+  bottom: 0
+  position: fixed
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  z-index: 2
+
+  .top
+    display: flex
+    flex-direction: column
+    gap: 24px
+
+  .icon
+    display: block
+    width: 52px
+    height: 52px
+    border-radius: 24px
+    display: grid
+    place-content: center
+    background-color: white
+    transition: background-color 0.2s ease-in-out
+
+  .icon:hover
+    background-color: App.$grey
+
+  .icon svg
+    width: 30px
+    height: 30px
+
+  nav a
+    display: block
+    padding: 4px 0
+
+  .tab
+    width: fit-content
+    font-size: 20px
+    padding: 12px
+    padding-right: 28px
+    padding-left: 16px
+    border-radius: 1000px
+    display: flex
+    align-items: center
+    gap: 20px
+    transition: background-color 0.2s ease-in-out
+
+    &.active
+      font-weight: bold
+
+    svg
+      width: 26.25px
+      height: 26.25px
+
+  a:hover .tab
+    background-color: App.$grey
+
+  .bottom
+    position: relative
+
+  .manage-user
+    padding: 12px
+    border-radius: 1000px
+    display: grid
+    grid-template-columns: auto 1fr auto
+    align-items: center
+    gap: 12px
+    position: relative
+    cursor: pointer
+    transition: background-color 0.2s ease-in-out
+
+    svg
+      width: 20px
+      height: 20px
+
+    &:hover
+      background-color: App.$grey
+
+  .popup
+    display: none
+    position: absolute
+    z-index: 10
+    bottom: 125%
+    border-radius: 16px
+    padding: 16px 0
+    width: 100%
+    background-color: white
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.1))
+
+    &.open
+      display: block
+
+    ul
+      list-style-type: none
+
+    li
+      font-weight: bold
+      padding: 12px 16px
+      transition: background-color 0.2s ease-in-out
+      cursor: pointer
+
+      &:hover
+        background-color: App.$ghost
+
+    svg
+      position: absolute
+      top: 100%
+      left: 50%
+      transform: translateX(-50%)
+
+  .manage-user-backdrop
+    display: none
+    position: fixed
+    z-index: 5
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+
+    &.open
+      display: block

@@ -1,15 +1,15 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { CollectionReference, collection, limit, query, where } from 'firebase/firestore'
-import { db } from '../firebase'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
+import { db } from '../firebase'
 import { User } from '../types'
 import useAuthRedirect from '../hooks/useAuthRedirect'
-import Layout from '../components/Layout/Layout'
 import ProfileHeader from '../components/ProfileHeader/ProfileHeader'
 import Feed from '../components/Feed/Feed'
 import PageHeader from '../components/PageHeader/PageHeader'
 import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
+import LayoutWithSidebar from '../components/LayoutWithSidebar/LayoutWithSidebar'
 
 function ProfilePage() {
   const params = useParams()
@@ -28,7 +28,7 @@ function ProfilePage() {
   if (loading) return <p>Loading...</p>
 
   return user ? (
-    <Layout>
+    <LayoutWithSidebar>
       <main>
         <PageHeader>
           <div className="bar">
@@ -44,7 +44,7 @@ function ProfilePage() {
         <ProfileHeader user={user} />
         <Feed postIds={user.posts} />
       </main>
-    </Layout>
+    </LayoutWithSidebar>
   ) : (
     <p>This account doesn't exists</p>
   )
