@@ -1,0 +1,30 @@
+@use '../../App'
+
+.TweetComposer
+  padding: 12px 16px
+  border-bottom: solid 1px App.$dark-10
+  display: grid
+  grid-template-columns: auto 1fr
+  align-items: start
+  gap: 12px
+
+  .input
+    font-size: 20px
+    line-height: 135%
+    padding-top: 12px
+    position: relative
+
+  .placeholder
+    color: App.$dark-70
+    position: absolute
+    pointer-events: none
+  
+  div[contenteditable="true"]
+    outline: none
+
+  .bottom-bar
+    padding-top: 12px
+    margin-top: 12px
+    border-top: solid 1px App.$dark-10
+    display: flex
+    justify-content: flex-end
