@@ -9,6 +9,7 @@ import BackIcon from '../assets/back.svg'
 import Tabs from '../components/Tabs/Tabs'
 import ProfileItem from '../components/ProfileItem/ProfileItem'
 import LayoutWithSidebar from '../components/LayoutWithSidebar/LayoutWithSidebar'
+import useAuthRedirect from '../hooks/useAuthRedirect'
 
 function FollowingPage() {
   const params = useParams()
@@ -16,6 +17,8 @@ function FollowingPage() {
   const [data, loading] = useCollectionData(query(collection(db, 'users') as CollectionReference<User>, where('username', '==', username), limit(1)))
   const user = !!data && data[0]
   const navigate = useNavigate()
+
+  useAuthRedirect()
 
   const usersRef = collection(db, 'users') as CollectionReference<User>
   const arr = user && user.following.length ? user.following : ['_']

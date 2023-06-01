@@ -1,6 +1,9 @@
 import LayoutWithSidebar from '../components/LayoutWithSidebar/LayoutWithSidebar'
+import useAuthRedirect from '../hooks/useAuthRedirect'
 
 function MessagesPage() {
+  useAuthRedirect()
+
   return (
     <LayoutWithSidebar>
       <main>
