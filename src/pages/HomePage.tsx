@@ -1,10 +1,9 @@
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../firebase'
 import useAuthRedirect from '../hooks/useAuthRedirect'
-import Feed from '../components/Feed/Feed'
 import PageHeader from '../components/PageHeader/PageHeader'
-import PostForm from '../components/PostForm/PostForm'
 import LayoutWithSidebar from '../components/LayoutWithSidebar/LayoutWithSidebar'
+import TweetComposer from '../components/TweetComposer/TweetComposer'
 
 function HomePage() {
   const [user, loading] = useAuthState(auth)
@@ -20,8 +19,8 @@ function HomePage() {
             <h2 className="heading">Home</h2>
           </div>
         </PageHeader>
-        <PostForm user={user} />
-        <Feed general={true} />
+
+        <TweetComposer />
       </main>
     </LayoutWithSidebar>
   ) : null

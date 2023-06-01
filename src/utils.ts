@@ -1,12 +1,12 @@
-export function createPostId(): string {
+export function createTweetId(): string {
   const postId = Date.now().toString().slice(-10) + Math.random().toString().slice(-10)
-  return postId.length === 20 ? postId : createPostId()
+  return postId.length === 20 ? postId : createTweetId()
 }
 
 const months: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const secondsIn = { minute: 60, hour: 3600, day: 86400 }
 
-export function getPostTime(ms: number): string {
+export function getTime(ms: number): string {
   const date = new Date(ms)
   const currentDate = new Date()
   const diffInSec = (currentDate.getTime() - date.getTime()) / 1000
@@ -26,4 +26,12 @@ export function getPostTime(ms: number): string {
     }
     return res
   }
+}
+
+export function getTextFromHTML(HTML) {
+  return HTML.toString()
+    .replaceAll('<br>', '')
+    .replaceAll('</div>', '')
+    .split('<div>')
+    .filter((line: string) => line !== '')
 }

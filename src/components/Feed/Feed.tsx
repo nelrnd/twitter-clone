@@ -1,29 +1,17 @@
-import { CollectionReference, collection, orderBy, query, where } from 'firebase/firestore'
-import { db } from '../../firebase'
-import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { Post as PostInter } from '../../types'
-import Post from '../Post/Post'
+import { TweetRef } from '../../types'
+import Tweet from '../Tweet/Tweet'
+import './Feed.sass'
 
-interface FeedProps {
-  general?: boolean
-  postIds?: string[]
+type FeedProps = {
+  tweets: TweetRef[]
   userId?: string
 }
 
-function Feed({ general, postIds, userId }: FeedProps) {
-  const postsRef = collection(db, 'posts') as CollectionReference<PostInter>
-
-  const ordering = orderBy('createdAt', 'desc')
-
-  const postsQuery = general ? query(postsRef, ordering) : postIds?.length ? query(postsRef, where('id', 'in', postIds), ordering) : null
-  const [posts, loading] = useCollectionData(postsQuery)
-
-  if (loading) return <p>Loading...</p>
-
+const Feed: React.FC<FeedProps> = ({ tweets, userId }) => {
   return (
-    <div>
-      {posts?.map((post) => (
-        <Post key={post.id} post={post} inFeedFrom={userId} />
+    <div className="Feed">
+      {tweets.map((tweet) => (
+        <Tweet key={tweet.tweetId} tweetId={tweet.tweetId} retweetedBy={tweet.retweetedAt ? userId : null} />
       ))}
     </div>
   )

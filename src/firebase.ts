@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { GoogleAuthProvider, User, getAuth, signInWithPopup } from 'firebase/auth'
-import { arrayRemove, arrayUnion, doc, getFirestore, setDoc, updateDoc } from 'firebase/firestore'
-import { createPostId } from './utils'
+import { arrayRemove, arrayUnion, doc, getDoc, getFirestore, setDoc, updateDoc } from 'firebase/firestore'
+import { createTweetId } from './utils'
 
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -37,84 +37,12 @@ export async function createUserInFirestore(user: User | null, username: string)
         email: user.email,
         profileURL: user.photoURL || null,
         headerURL: null,
-        posts: [],
-        likedPosts: [],
-        retweetedPosts: [],
+        tweets: [],
+        retweets: [],
+        likes: [],
         following: [],
         followers: [],
         createdAt: Date.now(),
-      })
-    }
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-export async function createPost(text: string[], userId: string): Promise<void> {
-  try {
-    const postId = createPostId()
-    const postRef = doc(db, 'posts', postId)
-    const userRef = doc(db, 'users', userId)
-    await setDoc(postRef, {
-      id: postId,
-      text: text,
-      likes: [],
-      retweets: [],
-      replies: [],
-      createdAt: Date.now(),
-      createdBy: userId,
-    })
-    await updateDoc(userRef, {
-      posts: arrayUnion(postId),
-    })
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-export async function toggleLikePost(postId: string, userId: string | undefined, liked: boolean) {
-  try {
-    if (!userId) return
-    const postRef = doc(db, 'posts', postId)
-    const userRef = doc(db, 'users', userId)
-    if (liked) {
-      await updateDoc(postRef, {
-        likes: arrayRemove(userId),
-      })
-      await updateDoc(userRef, {
-        likedPosts: arrayRemove(postId),
-      })
-    } else {
-      await updateDoc(postRef, {
-        likes: arrayUnion(userId),
-      })
-      await updateDoc(userRef, {
-        likedPosts: arrayUnion(postId),
-      })
-    }
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-export async function toggleRetweetPost(postId: string, userId: string | undefined, retweeted: boolean) {
-  try {
-    if (!userId) return
-    const postRef = doc(db, 'posts', postId)
-    const userRef = doc(db, 'users', userId)
-    if (retweeted) {
-      await updateDoc(postRef, {
-        retweets: arrayRemove(userId),
-      })
-      await updateDoc(userRef, {
-        retweetedPosts: arrayRemove(postId),
-      })
-    } else {
-      await updateDoc(postRef, {
-        retweets: arrayUnion(userId),
-      })
-      await updateDoc(userRef, {
-        retweetedPosts: arrayUnion(postId),
       })
     }
   } catch (err) {
@@ -141,6 +69,87 @@ export async function toggleFollowAccount(userId: string, currentUserId: string 
       await updateDoc(currentUserRef, {
         following: arrayUnion(userId),
       })
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+// Tweet related functions
+
+export async function createTweet(text: string[], userId: string) {
+  try {
+    const tweetId = createTweetId()
+    const tweetRef = doc(db, 'tweets', tweetId)
+    const userRef = doc(db, 'users', userId)
+    const createdAt = Date.now()
+    await setDoc(tweetRef, {
+      id: tweetId,
+      text: text,
+      likes: [],
+      retweets: [],
+      replies: [],
+      createdBy: userId,
+      createdAt: createdAt,
+    })
+    await updateDoc(userRef, {
+      tweets: arrayUnion({ tweetId: tweetId, createdAt: createdAt }),
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export async function toggleLike(tweetId: string, userId: string, liked: boolean) {
+  try {
+    if (!tweetId || !userId) return
+    const tweetRef = doc(db, 'tweets', tweetId)
+    const userRef = doc(db, 'users', userId)
+    if (!liked) {
+      await updateDoc(tweetRef, {
+        likes: arrayUnion(userId),
+      })
+      await updateDoc(userRef, {
+        likes: arrayUnion(tweetId),
+      })
+    } else {
+      await updateDoc(tweetRef, {
+        likes: arrayRemove(userId),
+      })
+      await updateDoc(userRef, {
+        likes: arrayRemove(tweetId),
+      })
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export async function toggleRetweet(tweetId: string, userId: string, retweeted: boolean) {
+  try {
+    if (!tweetId || !userId) return
+    const tweetRef = doc(db, 'tweets', tweetId)
+    const userRef = doc(db, 'users', userId)
+    if (!retweeted) {
+      await updateDoc(tweetRef, {
+        retweets: arrayUnion(userId),
+      })
+      await updateDoc(userRef, {
+        retweets: arrayUnion({ tweetId: tweetId, retweetedAt: Date.now() }),
+      })
+    } else {
+      await updateDoc(tweetRef, {
+        retweets: arrayRemove(userId),
+      })
+      const userSnapshot = await getDoc(userRef)
+      const userData = userSnapshot.data()
+      if (!userData) return
+      const index = userData.retweets.findIndex((tweet: { tweetId: string }) => tweet.tweetId === tweetId)
+      if (index !== -1) {
+        await updateDoc(userRef, {
+          retweets: arrayRemove(userData.retweets[index]),
+        })
+      }
     }
   } catch (err) {
     console.error(err)

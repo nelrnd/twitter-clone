@@ -37,12 +37,14 @@ function ProfilePage() {
             </IconButton>
             <div>
               <h2 className="heading">{user.name}</h2>
-              <p className="small grey">{user.posts.concat(user.retweetedPosts).length} Tweets</p>
+              <p className="small grey">{user.tweets.length + user.retweets.length} Tweets</p>
             </div>
           </div>
         </PageHeader>
+
         <ProfileHeader user={user} />
-        <Feed postIds={user.posts.concat(user.retweetedPosts)} userId={user.id} />
+
+        <Feed tweets={[...user.tweets, ...user.retweets].sort((a, b) => (b.createdAt || b.retweetedAt || 0) - (a.createdAt || a.retweetedAt || 0))} userId={user.id} />
       </main>
     </LayoutWithSidebar>
   ) : (
