@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { GoogleAuthProvider, User, getAuth, signInWithPopup } from 'firebase/auth'
-import { arrayRemove, arrayUnion, doc, getDoc, getFirestore, setDoc, updateDoc } from 'firebase/firestore'
+import { arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, getFirestore, limit, query, setDoc, updateDoc, where } from 'firebase/firestore'
 import { createTweetId } from './utils'
 
 const config = {
@@ -45,6 +45,17 @@ export async function createUserInFirestore(user: User | null, username: string)
         createdAt: Date.now(),
       })
     }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export async function checkIfAccountExists(email: string) {
+  try {
+    const usersCollection = collection(db, 'users')
+    const userQuery = query(usersCollection, where('email', '==', email), limit(1))
+    const snapshot = await getDocs(userQuery)
+    return !snapshot.empty
   } catch (err) {
     console.error(err)
   }
