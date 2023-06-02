@@ -1,16 +1,18 @@
 import './Buttons.sass'
 
-interface ButtonProps {
+type ButtonProps = {
   children: string | JSX.Element | JSX.Element[]
-  type?: string
+  style?: string
   size?: string
   disabled?: boolean
-  handleClick: () => unknown | void
+  onClick: () => unknown
 }
 
-function Button({ children, type = 'dark', size = 'medium', handleClick, disabled }: ButtonProps) {
+const Button: React.FC<ButtonProps> = ({ children, style = 'dark', size = 'medium', onClick, disabled = false }) => {
+  const className = `Button ${style} ${size}`
+
   return (
-    <button className={`Button ${type} ${size}`} onClick={handleClick} disabled={disabled}>
+    <button className={className} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   )
