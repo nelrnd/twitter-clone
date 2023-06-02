@@ -1,0 +1,25 @@
+@use '../../App'
+
+.Divider
+  width: 100%
+  position: relative
+  user-select: none
+
+.Divider::before
+  content: ''
+  display: block
+  height: 1px
+  width: 100%
+  background-color: App.$dark-30
+  position: absolute
+  top: 50%
+  
+.Divider_text
+  font-size: 17px
+  font-weight: bold
+  width: fit-content
+  margin: auto
+  padding: 0 8px
+  background-color: white
+  position: relative
+  z-index: 1
