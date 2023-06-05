@@ -1,3 +1,5 @@
+@use '../../App'
+
 .JoinLayout_wrapper
   width: 100%
   height: 100%
@@ -29,7 +31,9 @@
     margin-bottom: 32px
 
   .subtitle
-    margin-bottom: 46px
+    color: App.$dark-70
+    margin-bottom: 32px
+    margin-top: -26px
 
   .Button
     width: 100%
@@ -50,6 +54,11 @@
     position: absolute
     top: 8px
     left: 8px
+
+  .top-bar
+    font-size: 20px
+    font-weight: bold
+    margin-bottom: 32px
 
 .TwitterIcon
   margin-bottom: 32px

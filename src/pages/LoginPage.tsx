@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth, checkIfAccountExists, joinWithGoogle } from '../firebase'
+import { auth, checkIfEmailExists, joinWithGoogle } from '../firebase'
 import JoinLayout, { TwitterIcon } from '../components/JoinLayout/JoinLayout'
 import GoogleIcon from '../assets/google.png'
 import Button from '../components/Buttons/Button'
@@ -77,7 +77,7 @@ const LoginPage: React.FC = () => {
 const LoginPage_EnterEmail: React.FC<EnterEmailProps> = ({ email, setEmail, setStage, setError }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const accountExists = await checkIfAccountExists(email)
+    const accountExists = await checkIfEmailExists(email)
     if (accountExists) {
       setStage(STAGES[1])
     } else {

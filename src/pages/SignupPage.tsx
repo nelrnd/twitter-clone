@@ -1,141 +1,20 @@
-import { auth, checkIfAccountExists, createUserInFirestore, joinWithGoogle } from '../firebase'
-import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
+import { auth, checkIfEmailExists, checkIfUsernameExists, createUserInFirestore, joinWithGoogle } from '../firebase'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { checkEmailFormat } from '../utils'
 import useUserData from '../hooks/useUserData'
 import JoinLayout, { TwitterIcon } from '../components/JoinLayout/JoinLayout'
 import Button from '../components/Buttons/Button'
 import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
-
-const STAGES = ['JOIN', 'CREATE_ACCOUNT', 'PICK_PASSWORD', 'PICK_USERNAME']
-
-function RegisterPage() {
-  // current stage
-  const [stage, setStage] = useState(STAGES[0])
-  const [user] = useAuthState(auth)
-  const [userData, dataLoading] = useUserData((!!user && user.uid) || '_')
-  const navigate = useNavigate()
-
-  const [name, setName] = useState('')
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
-  const changeName = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)
-  const changeUsername = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)
-  const changeEmail = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
-  const changePassword = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)
-
-  useEffect(() => {
-    if (user) {
-      if (userData) navigate('/home')
-      else setStage(STAGES[3])
-    }
-  }, [user, userData, navigate])
-
-  if (user && dataLoading) return <p>Loading...</p>
-
-  switch (stage) {
-    case 'JOIN':
-      return <RegisterPage_Join setStage={setStage} />
-    case 'CREATE_ACCOUNT':
-      return <RegisterPage_CreateAccount setStage={setStage} name={name} changeName={changeName} email={email} changeEmail={changeEmail} />
-    case 'PICK_PASSWORD':
-      return <RegisterPage_PickPassword password={password} changePassword={changePassword} email={email} name={name} />
-    case 'PICK_USERNAME':
-      return <RegisterPage_PickUsername username={username} changeUsername={changeUsername} />
-    default:
-      return null
-  }
-}
-
-function RegisterPage_Join({ setStage }: { setStage: React.Dispatch<React.SetStateAction<string>> }) {
-  return (
-    <div>
-      <h1>Join Twitter today</h1>
-      <button onClick={joinWithGoogle}>Sign up with Google</button>
-      <button onClick={() => setStage(STAGES[1])}>Create account</button>
-      <p>
-        Have an account already? <Link to="/login">Log in</Link>
-      </p>
-    </div>
-  )
-}
-
-
-
-function RegisterPage_CreateAccount({ setStage, name, changeName, email, changeEmail }: CreateAccountProps) {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setStage(STAGES[2])
-  }
-
-  return (
-    <div>
-      <h1>Create your account</h1>
-
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="name">Name</label>
-        <input type="text" id="name" value={name} onChange={changeName} />
-        <label htmlFor="email">Email</label>
-        <input type="email" id="email" value={email} onChange={changeEmail} />
-        <button>Next</button>
-      </form>
-    </div>
-  )
-}
-
-function RegisterPage_PickPassword({ password, changePassword, email, name }: { password: string; changePassword: (e: React.ChangeEvent<HTMLInputElement>) => void; email: string; name: string }) {
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const result = await createUserWithEmailAndPassword(auth, email, password)
-    if (result.user) {
-      await updateProfile(result.user, {
-        displayName: name,
-      })
-    }
-  }
-
-  return (
-    <div>
-      <h1>You'll need a password</h1>
-      <p>Make sure it's 8 characters or more.</p>
-
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="password">Password</label>
-        <input type="password" id="password" value={password} onChange={changePassword} />
-        <button>Next</button>
-      </form>
-    </div>
-  )
-}
-
-function RegisterPage_PickUsername({ username, changeUsername }: { username: string; changeUsername: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
-  const navigate = useNavigate()
-
-  const handleClick = async () => {
-    if (!username) return
-    await createUserInFirestore(auth.currentUser, username)
-    navigate('/home')
-  }
-
-  return (
-    <div>
-      <h1>What should we call you?</h1>
-      <p>Your @username is unique. You can always change it later.</p>
-      <label htmlFor="username">Username</label>
-      <input type="text" id="username" value={username} onChange={changeUsername} />
-      <button onClick={handleClick}>Next</button>
-    </div>
-  )
-}
-
 import GoogleIcon from '../assets/google.png'
 import Divider from '../components/Divider/Divider'
 import TextInput from '../components/TextInput/TextInput'
-import { checkEmailFormat } from '../utils'
+import Loader from '../components/Loader/Loader'
+
+const STAGES = ['JOIN', 'CREATE_ACCOUNT', 'PICK_PASSWORD', 'PICK_USERNAME']
 
 type StageProps = {
   setStage: (stage: string) => void
@@ -153,20 +32,37 @@ type PickPasswordProps = {
   setStage: (stage: string) => void
   password: string
   setPassword: (e: string) => void
+  email: string
+  name: string
 }
 
 const SignupPage: React.FC = () => {
   const [currentStage, setStage] = useState(STAGES[0])
+  const [user] = useAuthState(auth)
+  const [userData, dataLoading] = useUserData(user?.uid || '_')
+  const navigate = useNavigate()
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  useEffect(() => {
+    if (userData) {
+      navigate('/home')
+    } else if (user) {
+      setStage(STAGES[3])
+    }
+  }, [user, userData, navigate])
+
+  if (dataLoading) {
+    return <JoinLayout paddingSize='large'><Loader /></JoinLayout>
+  }
+
   return (
     <JoinLayout paddingSize={currentStage === 'JOIN' ? 'large' : 'small'}>
       {currentStage === 'JOIN' && <SignupPage_Join setStage={setStage} />}
       {currentStage === 'CREATE_ACCOUNT' && <SignupPage_CreateAccount setStage={setStage} name={name} setName={setName} email={email} setEmail={setEmail} />}
-      {currentStage === 'PICK_PASSWORD' && <SignupPage_PickPassword setStage={setStage} password={password} setPassword={setPassword} />}
+      {currentStage === 'PICK_PASSWORD' && <SignupPage_PickPassword setStage={setStage} password={password} setPassword={setPassword} email={email} name={name} />}
       {currentStage === 'PICK_USERNAME' && <SignupPage_PickUsername />}
     </JoinLayout>
   )
@@ -177,7 +73,7 @@ const SignupPage_Join: React.FC<StageProps> = ({ setStage }) => {
     <>
       <TwitterIcon />
       <h1 className="centered">Join Twitter today</h1>
-      <Button style="outline rgl">
+      <Button style="outline rgl" onClick={joinWithGoogle}>
         <img src={GoogleIcon} alt="Google icon" />
         Sign up with Google
       </Button>
@@ -214,7 +110,7 @@ const SignupPage_CreateAccount: React.FC<CreateAccountProps> = ({ setStage, name
           return
         }
         emailValidationTimeout.current = Math.random()
-        const emailExists = await checkIfAccountExists(email)
+        const emailExists = await checkIfEmailExists(email)
         if (emailExists) {
           setEmailError('Email has already been taken.')
         } else {
@@ -249,7 +145,7 @@ const SignupPage_CreateAccount: React.FC<CreateAccountProps> = ({ setStage, name
       <IconButton onClick={() => setStage(STAGES[0])}>
         <BackIcon />
       </IconButton>
-      <div className="top-bar">Step 1 of 5</div>
+      <div className="top-bar">Step 1 of 2</div>
       <h1>Create your account</h1>
       <form onSubmit={handleSubmit}>
         <TextInput label="Name" value={name} setValue={setName} />
@@ -262,7 +158,7 @@ const SignupPage_CreateAccount: React.FC<CreateAccountProps> = ({ setStage, name
   )
 }
 
-const SignupPage_PickPassword: React.FC<PickPasswordProps> = ({ setStage, password, setPassword }) => {
+const SignupPage_PickPassword: React.FC<PickPasswordProps> = ({ setStage, password, setPassword, email, name }) => {
   const [passwordError, setPasswordError] = useState('')
   const timeoutId = useRef<number | null>(null)
 
@@ -287,9 +183,14 @@ const SignupPage_PickPassword: React.FC<PickPasswordProps> = ({ setStage, passwo
     }
   }, [password])
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setStage(STAGES[3])
+    const result = await createUserWithEmailAndPassword(auth, email, password)
+    if (result.user) {
+      await updateProfile(result.user, {
+        displayName: name
+      })
+    }
   }
 
   return (
@@ -297,7 +198,7 @@ const SignupPage_PickPassword: React.FC<PickPasswordProps> = ({ setStage, passwo
     <IconButton onClick={() => setStage(STAGES[1])}>
       <BackIcon />
     </IconButton>
-    <div className="top-bar">Step 2 of 5</div>
+    <div className="top-bar">Step 2 of 2</div>
       <h1>You'll need a password</h1>
       <p className="subtitle">Make sure it's 8 characters or more.</p>
       <form onSubmit={handleSubmit}>
@@ -310,18 +211,69 @@ const SignupPage_PickPassword: React.FC<PickPasswordProps> = ({ setStage, passwo
 
 const SignupPage_PickUsername: React.FC = () => {
   const [username, setUsername] = useState('')
+  const [error, setError] = useState('')
+  const [canNext, setCanNext] = useState(false)
+  const [checkAgain, setCheckAgain] = useState<number>(0)
+  const timeoutId = useRef<number | null>(null)
+  const navigate = useNavigate()
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    (async () => {
+      setError('')
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current)
+        timeoutId.current = null
+      }
+      if (username) {
+        if (username.length < 5) {
+          const errorText = 'Your username must be longer than 4 characters.'
+          const timeout = window.setTimeout(() => setError(errorText), 800)
+          timeoutId.current = timeout
+          setCheckAgain(Date.now())
+          return
+        }
+        timeoutId.current = Date.now()
+        setCheckAgain(Date.now())
+        const usernameExists = await checkIfUsernameExists(username)
+        timeoutId.current = null
+        if (usernameExists) {
+          setError('That username has been taken. Please choose another.')
+          return
+        }
+        timeoutId.current = null
+        setCheckAgain(Date.now())
+      }
+      return () => {
+        if (timeoutId.current) {
+          clearTimeout(timeoutId.current)
+          timeoutId.current = null
+        }
+      }
+    })()
+  }, [username])
+
+  useEffect(() => {
+    if (username.length < 5 || error || timeoutId.current) {
+      setCanNext(false)
+    } else {
+      setCanNext(true)
+    }
+  }, [username, error, checkAgain])
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // do something
+    await createUserInFirestore(auth.currentUser, username)
+    navigate('/home')
   }
 
   return (
     <>
-      <h1>What would you like to be called?</h1>
-      <p className="grey">You @username is unique. You can always change it later.</p>
+      <TwitterIcon />
+      <h1>What should we call you?</h1>
+      <p className="subtitle">You @username is unique. You can always change it later.</p>
       <form onSubmit={handleSubmit}>
-        <TextInput label="Username" value={username} setValue={setUsername} />
+        <TextInput label="Username" value={username} setValue={setUsername} error={error} />
+        <Button size='large' disabled={!canNext}>Next</Button>
       </form>
     </>
   )

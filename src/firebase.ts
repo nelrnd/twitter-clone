@@ -50,10 +50,18 @@ export async function createUserInFirestore(user: User | null, username: string)
   }
 }
 
-export async function checkIfAccountExists(email: string) {
+export async function checkIfEmailExists(email: string) {
+  return await checkIfUserPropExists('email', email)
+}
+
+export async function checkIfUsernameExists(username: string) {
+  return await checkIfUserPropExists('username', username)
+}
+
+async function checkIfUserPropExists(prop: string, value: string) {
   try {
     const usersCollection = collection(db, 'users')
-    const userQuery = query(usersCollection, where('email', '==', email), limit(1))
+    const userQuery = query(usersCollection, where(prop, '==', value), limit(1))
     const snapshot = await getDocs(userQuery)
     return !snapshot.empty
   } catch (err) {

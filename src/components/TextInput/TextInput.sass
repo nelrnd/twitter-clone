@@ -43,3 +43,15 @@
 
   input:disabled + label
     color: #AAB1B7 !important
+
+  .error
+    color: App.$red
+    font-size: 13px
+    margin: 4px 8px
+
+  &.invalid input
+    border-color: App.$red
+    outline-color: App.$red
+
+  &.invalid label
+    color: App.$red !important

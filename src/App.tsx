@@ -6,7 +6,7 @@ import { UserContext } from './contexts/UserContext'
 import HomePage from './pages/HomePage'
 import ProfilePage from './pages/ProfilePage'
 import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
+import SignupPage from './pages/SignupPage'
 import useUserData from './hooks/useUserData'
 import FollowingPage from './pages/FollowingPage'
 import FollowersPage from './pages/FollowersPage'
@@ -29,7 +29,7 @@ function App() {
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/messages" element={<MessagesPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<RegisterPage />} />
+          <Route path="/signup" element={<SignupPage />} />
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>
