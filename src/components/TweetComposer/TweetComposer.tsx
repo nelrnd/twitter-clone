@@ -26,7 +26,7 @@ const TweetComposer: React.FC = () => {
     <div className="TweetComposer">
       <div>
         <Link to={`/${user.username}`}>
-          <Avatar profileURL={user.profileURL} />
+          <Avatar src={user.profileURL} />
         </Link>
       </div>
 
@@ -36,7 +36,7 @@ const TweetComposer: React.FC = () => {
           <div contentEditable={true} ref={elem} onInput={handleInput}></div>
         </div>
         <div className="bottom-bar">
-          <Button handleClick={tweet} type="primary" disabled={!text}>
+          <Button onClick={tweet} style="primary" disabled={!text}>
             Tweet
           </Button>
         </div>

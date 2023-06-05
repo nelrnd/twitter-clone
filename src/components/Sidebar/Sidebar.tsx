@@ -98,7 +98,7 @@ function Sidebar() {
               </div>
 
               <div className="manage-user" onClick={openManage}>
-                <Avatar profileURL={user.profileURL} size="sm" />
+                <Avatar profileURL={user.profileURL} size={40} />
                 <div>
                   <h3>{user.name}</h3>
                   <p className="grey">@{user.username}</p>

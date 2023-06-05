@@ -4,25 +4,12 @@
   background-position: center
   transition: filter 0.2s ease-in-out
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05)
+  overflow: hidden
 
-  &.xl
-    width: 134px
-    height: 134px
-  &.l
-    width: 64px
-    height: 64px
-  &.m
-    width: 48px
-    height: 48px
-  &.sm
-    width: 40px
-    height: 40px
-  &.s
-    width: 32px
-    height: 32px
-  &.xs
-    width: 18px
-    height: 18px
+  img
+    width: 100%
+    height: 100%
+    object-fit: cover
 
 a > .Avatar:hover
   filter: brightness(0.9)
