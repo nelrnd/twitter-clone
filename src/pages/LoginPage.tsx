@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth, joinWithGoogle } from '../firebase'
+import { auth, checkIfAccountExists, joinWithGoogle } from '../firebase'
 import JoinLayout, { TwitterIcon } from '../components/JoinLayout/JoinLayout'
 import GoogleIcon from '../assets/google.png'
 import Button from '../components/Buttons/Button'
@@ -11,11 +11,14 @@ import TextInput from '../components/TextInput/TextInput'
 import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
 import Loader from '../components/Loader/Loader'
+import Alert from '../components/Alert/Alert'
 
 type EnterEmailProps = {
   email: string
   setEmail: (email: string) => void
   setStage: (stage: string) => void
+  setError: (error: string) => void
+  setNewError: (error: boolean) => void
 }
 
 type EnterPasswordProps = {
@@ -29,17 +32,35 @@ const LoginPage: React.FC = () => {
   const [currentStage, setStage] = useState(STAGES[0])
   const [user, loading] = useAuthState(auth)
   const [email, setEmail] = useState('')
+  const [error, setError] = useState('')
+  const [newError, setNewError] = useState(false)
+
+  useEffect(() => {
+    let timeoutId: number | null = null
+    if (error) {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+      timeoutId = window.setTimeout(() => setError(''), 4000)
+      setNewError(false)
+    }
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [error, newError])
 
   return user ? (
     <Navigate to="/home" replace />
   ) : (
-    <JoinLayout>
+    <JoinLayout paddingSize={currentStage === 'ENTER_EMAIL' ? 'large' : 'small'}>
       {loading ? (
         <Loader />
       ) : (
         <>
           <TwitterIcon />
-          {currentStage === 'ENTER_EMAIL' && <LoginPage_EnterEmail email={email} setEmail={setEmail} setStage={setStage} />}
+          {currentStage === 'ENTER_EMAIL' && <LoginPage_EnterEmail email={email} setEmail={setEmail} setStage={setStage} setError={setError} setNewError={setNewError} />}
           {currentStage === 'ENTER_PASSWORD' && <LoginPage_EnterPassword email={email} setStage={setStage} />}
           <p className="bottom-text">
             Don't have an account?{' '}
@@ -49,19 +70,26 @@ const LoginPage: React.FC = () => {
           </p>
         </>
       )}
+      <Alert text={error} />
     </JoinLayout>
   )
 }
 
-const LoginPage_EnterEmail: React.FC<EnterEmailProps> = ({ email, setEmail, setStage }) => {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+const LoginPage_EnterEmail: React.FC<EnterEmailProps> = ({ email, setEmail, setStage, setError, setNewError }) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setStage(STAGES[1])
+    const accountExists = await checkIfAccountExists(email)
+    if (accountExists) {
+      setStage(STAGES[1])
+    } else {
+      setError('Sorry, we could not find your account.')
+      setNewError(true)
+    }
   }
 
   return (
     <>
-      <h1>Sign in to Twitter</h1>
+      <h1 className="centered">Sign in to Twitter</h1>
       <Button style="outline rgl" onClick={joinWithGoogle}>
         <img src={GoogleIcon} alt="Google icon" />
         Sign in with Google
