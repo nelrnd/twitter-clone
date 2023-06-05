@@ -64,13 +64,7 @@ function RegisterPage_Join({ setStage }: { setStage: React.Dispatch<React.SetSta
   )
 }
 
-type CreateAccountProps = {
-  setStage: React.Dispatch<React.SetStateAction<string>>
-  name: string
-  changeName: (e: React.ChangeEvent<HTMLInputElement>) => void
-  email: string
-  changeEmail: (e: React.ChangeEvent<HTMLInputElement>) => void
-}
+
 
 function RegisterPage_CreateAccount({ setStage, name, changeName, email, changeEmail }: CreateAccountProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -147,14 +141,32 @@ type StageProps = {
   setStage: (stage: string) => void
 }
 
+type CreateAccountProps = {
+  setStage: (stage: string) => void
+  name: string
+  setName: (e:string) => void
+  email: string
+  setEmail: (e: string) => void
+}
+
+type PickPasswordProps = {
+  setStage: (stage: string) => void
+  password: string
+  setPassword: (e: string) => void
+}
+
 const SignupPage: React.FC = () => {
   const [currentStage, setStage] = useState(STAGES[0])
+
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   return (
     <JoinLayout paddingSize={currentStage === 'JOIN' ? 'large' : 'small'}>
       {currentStage === 'JOIN' && <SignupPage_Join setStage={setStage} />}
-      {currentStage === 'CREATE_ACCOUNT' && <SignupPage_CreateAccount setStage={setStage} />}
-      {currentStage === 'PICK_PASSWORD' && <SignupPage_PickPassword setStage={setStage} />}
+      {currentStage === 'CREATE_ACCOUNT' && <SignupPage_CreateAccount setStage={setStage} name={name} setName={setName} email={email} setEmail={setEmail} />}
+      {currentStage === 'PICK_PASSWORD' && <SignupPage_PickPassword setStage={setStage} password={password} setPassword={setPassword} />}
       {currentStage === 'PICK_USERNAME' && <SignupPage_PickUsername />}
     </JoinLayout>
   )
@@ -181,9 +193,7 @@ const SignupPage_Join: React.FC<StageProps> = ({ setStage }) => {
   )
 }
 
-const SignupPage_CreateAccount: React.FC<StageProps> = ({ setStage }) => {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+const SignupPage_CreateAccount: React.FC<CreateAccountProps> = ({ setStage, name, setName, email, setEmail }) => {
   const [canNext, setCanNext] = useState(false)
   const [emailError, setEmailError] = useState('')
   const [checkAgain, setCheckAgain] = useState<number>(0)
@@ -252,8 +262,30 @@ const SignupPage_CreateAccount: React.FC<StageProps> = ({ setStage }) => {
   )
 }
 
-const SignupPage_PickPassword: React.FC<StageProps> = ({ setStage }) => {
-  const [password, setPassword] = useState('')
+const SignupPage_PickPassword: React.FC<PickPasswordProps> = ({ setStage, password, setPassword }) => {
+  const [passwordError, setPasswordError] = useState('')
+  const timeoutId = useRef<number | null>(null)
+
+  useEffect(() => {
+    setPasswordError('')
+    if (timeoutId.current) {
+      clearTimeout(timeoutId.current)
+      timeoutId.current = null
+    }
+    if (password) {
+      if (password.length < 8) {
+        const errorText = 'Your password needs to be at least 8 characters. Please enter a longer one.'
+        const timeout = window.setTimeout(() => setPasswordError(errorText), 800)
+        timeoutId.current = timeout
+      }
+    }
+    return () => {
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current)
+        timeoutId.current = null
+      }
+    }
+  }, [password])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -262,11 +294,15 @@ const SignupPage_PickPassword: React.FC<StageProps> = ({ setStage }) => {
 
   return (
     <>
+    <IconButton onClick={() => setStage(STAGES[1])}>
+      <BackIcon />
+    </IconButton>
+    <div className="top-bar">Step 2 of 5</div>
       <h1>You'll need a password</h1>
-      <p className="grey">Make sure it's 8 characters or more.</p>
+      <p className="subtitle">Make sure it's 8 characters or more.</p>
       <form onSubmit={handleSubmit}>
-        <TextInput type="password" label="Password" value={password} setValue={setPassword} />
-        <Button>Next</Button>
+        <TextInput type="password" label="Password" value={password} setValue={setPassword} error={passwordError} />
+        <Button size='large' disabled={!password || password.length < 8}>Next</Button>
       </form>
     </>
   )
