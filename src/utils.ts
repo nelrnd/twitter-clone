@@ -28,10 +28,15 @@ export function getTime(ms: number): string {
   }
 }
 
-export function getTextFromHTML(HTML) {
+export function getTextFromHTML(HTML: string) {
   return HTML.toString()
     .replaceAll('<br>', '')
     .replaceAll('</div>', '')
     .split('<div>')
     .filter((line: string) => line !== '')
+}
+
+export function checkEmailFormat(email: string) {
+  // eslint-disable-next-line no-useless-escape
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
 }
