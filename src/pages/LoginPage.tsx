@@ -12,18 +12,19 @@ import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
 import Loader from '../components/Loader/Loader'
 import Alert from '../components/Alert/Alert'
+import { FirebaseError } from 'firebase/app'
 
 type EnterEmailProps = {
   email: string
   setEmail: (email: string) => void
   setStage: (stage: string) => void
-  setError: (error: string) => void
-  setNewError: (error: boolean) => void
+  setError: (error: { text: string }) => void
 }
 
 type EnterPasswordProps = {
   email: string
   setStage: (stage: string) => void
+  setError: (error: { text: string }) => void
 }
 
 const STAGES = ['ENTER_EMAIL', 'ENTER_PASSWORD']
@@ -32,8 +33,7 @@ const LoginPage: React.FC = () => {
   const [currentStage, setStage] = useState(STAGES[0])
   const [user, loading] = useAuthState(auth)
   const [email, setEmail] = useState('')
-  const [error, setError] = useState('')
-  const [newError, setNewError] = useState(false)
+  const [error, setError] = useState({ text: '' })
 
   useEffect(() => {
     let timeoutId: number | null = null
@@ -41,15 +41,14 @@ const LoginPage: React.FC = () => {
       if (timeoutId) {
         clearTimeout(timeoutId)
       }
-      timeoutId = window.setTimeout(() => setError(''), 4000)
-      setNewError(false)
+      timeoutId = window.setTimeout(() => setError({ text: '' }), 4000)
     }
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId)
       }
     }
-  }, [error, newError])
+  }, [error])
 
   return user ? (
     <Navigate to="/home" replace />
@@ -60,8 +59,8 @@ const LoginPage: React.FC = () => {
       ) : (
         <>
           <TwitterIcon />
-          {currentStage === 'ENTER_EMAIL' && <LoginPage_EnterEmail email={email} setEmail={setEmail} setStage={setStage} setError={setError} setNewError={setNewError} />}
-          {currentStage === 'ENTER_PASSWORD' && <LoginPage_EnterPassword email={email} setStage={setStage} />}
+          {currentStage === 'ENTER_EMAIL' && <LoginPage_EnterEmail email={email} setEmail={setEmail} setStage={setStage} setError={setError} />}
+          {currentStage === 'ENTER_PASSWORD' && <LoginPage_EnterPassword email={email} setStage={setStage} setError={setError} />}
           <p className="bottom-text">
             Don't have an account?{' '}
             <Link to="/signup" className="link">
@@ -70,20 +69,19 @@ const LoginPage: React.FC = () => {
           </p>
         </>
       )}
-      <Alert text={error} />
+      <Alert text={error.text} />
     </JoinLayout>
   )
 }
 
-const LoginPage_EnterEmail: React.FC<EnterEmailProps> = ({ email, setEmail, setStage, setError, setNewError }) => {
+const LoginPage_EnterEmail: React.FC<EnterEmailProps> = ({ email, setEmail, setStage, setError }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const accountExists = await checkIfAccountExists(email)
     if (accountExists) {
       setStage(STAGES[1])
     } else {
-      setError('Sorry, we could not find your account.')
-      setNewError(true)
+      setError({ text: 'Sorry, we could not find your account.' })
     }
   }
 
@@ -103,12 +101,20 @@ const LoginPage_EnterEmail: React.FC<EnterEmailProps> = ({ email, setEmail, setS
   )
 }
 
-const LoginPage_EnterPassword: React.FC<EnterPasswordProps> = ({ email, setStage }) => {
+const LoginPage_EnterPassword: React.FC<EnterPasswordProps> = ({ email, setStage, setError }) => {
   const [password, setPassword] = useState('')
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    signInWithEmailAndPassword(auth, email, password)
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        if (error.code === 'auth/wrong-password') {
+          setError({ text: 'Wrong password!' })
+        }
+      }
+    }
   }
 
   return (
@@ -120,7 +126,9 @@ const LoginPage_EnterPassword: React.FC<EnterPasswordProps> = ({ email, setStage
       <form onSubmit={handleSubmit}>
         <TextInput type="email" label="Email" value={email} setValue={() => null} disabled={true} />
         <TextInput type="password" label="Password" value={password} setValue={setPassword} />
-        <Button size="large">Log in</Button>
+        <Button size="large" disabled={!password}>
+          Log in
+        </Button>
       </form>
     </>
   )
