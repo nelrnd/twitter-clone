@@ -1,0 +1,60 @@
+.JoinLayout_wrapper
+  width: 100%
+  height: 100%
+  padding: 32px
+  overflow: hidden
+  background-color: rgba(0, 0, 0, 0.35)
+  display: flex
+  justify-content: center
+  align-items: center
+  position: relative
+
+.JoinLayout
+  width: 600px
+  max-width: 100%
+  height: 550px
+  max-height: 100%
+  overflow-y: auto
+  background-color: white
+  border-radius: 16px
+  position: relative
+
+  &.padding-large
+    padding: 16px 150px
+
+  &.padding-small
+    padding: 16px 80px
+
+  h1
+    margin-bottom: 32px
+
+  .subtitle
+    margin-bottom: 46px
+
+  .Button
+    width: 100%
+    margin-top: 24px
+
+  h1 + .Button,
+  .Divider + .Button
+    margin-top: 0
+
+  .bottom-text
+    text-align: left
+    margin-top: 48px
+
+  .TextInput + .TextInput
+    margin-top: 24px
+
+  .IconButton
+    position: absolute
+    top: 8px
+    left: 8px
+
+.TwitterIcon
+  margin-bottom: 32px
+  text-align: center
+
+  svg
+    width: 26.25px
+    height: 26.25px

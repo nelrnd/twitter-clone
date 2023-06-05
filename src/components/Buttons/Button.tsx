@@ -1,11 +1,11 @@
 import './Buttons.sass'
 
 type ButtonProps = {
-  children: string | JSX.Element | JSX.Element[]
+  children: string | JSX.Element | (string | JSX.Element)[]
   style?: string
   size?: string
   disabled?: boolean
-  onClick: () => unknown
+  onClick?: () => unknown
 }
 
 const Button: React.FC<ButtonProps> = ({ children, style = 'dark', size = 'medium', onClick, disabled = false }) => {
