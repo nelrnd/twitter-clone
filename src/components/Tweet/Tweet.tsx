@@ -54,7 +54,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet, retweetedBy }) => {
       {retweetedBy ? <RetweetBar retweetedBy={retweetedBy} /> : null}
       <div>
         <Link to={`/${user.username}`}>
-          <Avatar profileURL={user.profileURL} />
+          <Avatar src={user.profileURL} />
         </Link>
       </div>
 

@@ -22,12 +22,12 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
     <header className="ProfileHeader">
       <div className="banner" style={{ backgroundImage: `url(${user.headerURL})` }}></div>
 
-      <Avatar profileURL={user.profileURL} size="xl" />
+      <Avatar src={user.profileURL} size={134} />
 
       <div className="content">
         <div className="action-bar">
           {isCurrentUser ? (
-            <Button handleClick={handleClick} type="outline">
+            <Button onClick={handleClick} style="outline">
               Edit profile
             </Button>
           ) : (

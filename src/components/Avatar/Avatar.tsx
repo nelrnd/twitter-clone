@@ -2,7 +2,7 @@ import defaultProfile from '../../assets/default_profile.png'
 import './Avatar.sass'
 
 type AvatarProps = {
-  src?: string
+  src?: string | null
   size?: number
   onClick?: () => unknown
 }
