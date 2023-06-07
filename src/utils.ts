@@ -1,6 +1,6 @@
-export function createTweetId(): string {
+export function createId(): string {
   const postId = Date.now().toString().slice(-10) + Math.random().toString().slice(-10)
-  return postId.length === 20 ? postId : createTweetId()
+  return postId.length === 20 ? postId : createId()
 }
 
 const months: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -32,6 +32,7 @@ export function getTextFromHTML(HTML: string) {
   return HTML.toString()
     .replaceAll('<br>', '')
     .replaceAll('</div>', '')
+    .replaceAll('&nbsp;', ' ')
     .split('<div>')
     .filter((line: string) => line !== '')
 }

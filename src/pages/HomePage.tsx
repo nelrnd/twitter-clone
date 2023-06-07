@@ -1,21 +1,16 @@
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '../firebase'
 import useAuthRedirect from '../hooks/useAuthRedirect'
 import PageHeader from '../components/PageHeader/PageHeader'
 import LayoutWithSidebar from '../components/LayoutWithSidebar/LayoutWithSidebar'
 import TweetComposer from '../components/TweetComposer/TweetComposer'
+import { useContext } from 'react'
+import { UserContext } from '../contexts/UserContext'
 import Feed from '../components/Feed/Feed'
-import useUserData from '../hooks/useUserData'
-import Loader from '../components/Loader/Loader'
 
 function HomePage() {
-  const [user, loading] = useAuthState(auth)
-  const [userData, dataLoading] = useUserData(user?.uid)
+  const user = useContext(UserContext)
   useAuthRedirect()
 
-  if (loading || dataLoading) return <Loader />
-
-  return user && userData ? (
+  return user ? (
     <LayoutWithSidebar>
       <main className="home">
         <PageHeader>
@@ -26,7 +21,7 @@ function HomePage() {
 
         <TweetComposer />
 
-        <Feed tweets={[...userData.tweets, ...userData.retweets]} userId={user.uid} />
+        <Feed userIds={[user.id, ...user.following]} />
       </main>
     </LayoutWithSidebar>
   ) : null

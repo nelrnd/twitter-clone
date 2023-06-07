@@ -19,7 +19,7 @@ const TweetComposer: React.FC = () => {
     const tweetText = getTextFromHTML(elem.current.innerHTML)
     setText('')
     elem.current.innerHTML = ''
-    createTweet(tweetText, user?.id)
+    createTweet(tweetText, [], user?.id)
   }
 
   return user ? (

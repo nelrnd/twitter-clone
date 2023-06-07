@@ -5,7 +5,7 @@ import { db } from '../firebase'
 import { User } from '../types'
 import useAuthRedirect from '../hooks/useAuthRedirect'
 import ProfileHeader from '../components/ProfileHeader/ProfileHeader'
-import Feed from '../components/Feed/Feed'
+import Feed, { ProfileFeed } from '../components/Feed/Feed'
 import PageHeader from '../components/PageHeader/PageHeader'
 import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
@@ -32,7 +32,7 @@ function ProfilePage() {
       <main>
         <PageHeader>
           <div className="bar">
-            <IconButton handleClick={goBack}>
+            <IconButton onClick={goBack}>
               <BackIcon />
             </IconButton>
             <div>

@@ -1,7 +1,9 @@
 import { useContext } from 'react'
-import { UserContext } from '../../contexts/UserContext'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
+import { doc } from 'firebase/firestore'
+import { db, toggleLikeTweet, toggleRetweetTweet } from '../../firebase'
 import { Link } from 'react-router-dom'
-import { toggleLike, toggleRetweet } from '../../firebase'
+import { UserContext } from '../../contexts/UserContext'
 import { Tweet as TweetType } from '../../types'
 import { getTime } from '../../utils'
 import useTweetData from '../../hooks/useTweetData'
@@ -26,6 +28,10 @@ type TweetProps = {
   retweetedBy: string | null | undefined
 }
 
+type TweetBottomBarProps = {
+  tweet: TweetType
+}
+
 type RetweetBarProps = {
   retweetedBy: string
 }
@@ -37,15 +43,7 @@ const PreTweet: React.FC<PreTweetProps> = ({ tweetId, retweetedBy }) => {
 }
 
 const Tweet: React.FC<TweetProps> = ({ tweet, retweetedBy }) => {
-  const [user, loading] = useUserData(tweet.createdBy)
-  const currentUser = useContext(UserContext)
-
-  const liked = tweet.likes.includes(currentUser?.id)
-  const retweeted = tweet.retweets.includes(currentUser?.id)
-
-  const like = () => toggleLike(tweet.id, currentUser?.id, liked)
-  const retweet = () => toggleRetweet(tweet.id, currentUser?.id, retweeted)
-  const reply = () => console.log('reply')
+  const [user, loading] = useUserData(tweet.userId)
 
   if (loading) return <Loader />
 
@@ -66,32 +64,47 @@ const Tweet: React.FC<TweetProps> = ({ tweet, retweetedBy }) => {
           <Link to={`/${user.username}`}>
             <p className="grey">@{user.username}</p>
           </Link>
-          <p className="grey">· {getTime(tweet.createdAt)}</p>
+          <p className="grey">· {getTime(tweet.timestamp)}</p>
         </header>
 
         <main>
-          {tweet.text.map((line, id) => (
+          {tweet.content.map((line, id) => (
             <p key={id}>{line}</p>
           ))}
         </main>
 
-        <footer>
-          <div onClick={like} className={`action like ${liked ? 'active' : ''}`}>
-            {liked ? <LikeFilledIcon /> : <LikeIcon />}
-            {tweet.likes.length || ''}
-          </div>
-          <div onClick={retweet} className={`action retweet ${retweeted ? 'active' : ''}`}>
-            <RetweetIcon />
-            {tweet.retweets.length || ''}
-          </div>
-          <div onClick={reply} className="action reply">
-            <ReplyIcon />
-            {tweet.replies.length || ''}
-          </div>
-        </footer>
+        <TweetBottomBar tweet={tweet} />
       </div>
     </article>
   ) : null
+}
+
+const TweetBottomBar: React.FC<TweetBottomBarProps> = ({ tweet }) => {
+  const user = useContext(UserContext)
+
+  const [liked] = useDocumentData(doc(db, 'tweets', tweet.id, 'likes', user?.id || '_'))
+  const [retweeted] = useDocumentData(doc(db, 'tweets', tweet.id, 'retweets', user?.id || '_'))
+
+  const like = () => toggleLikeTweet(tweet.id, user?.id, !!liked)
+  const retweet = () => toggleRetweetTweet(tweet.id, user?.id, !!retweeted)
+  const reply = () => console.log('reply')
+
+  return (
+    <footer>
+      <div onClick={like} className={`action like ${liked ? 'active' : ''}`}>
+        {liked ? <LikeFilledIcon /> : <LikeIcon />}
+        {tweet.likesCount || ''}
+      </div>
+      <div onClick={retweet} className={`action retweet ${retweeted ? 'active' : ''}`}>
+        <RetweetIcon />
+        {tweet.retweetsCount || ''}
+      </div>
+      <div onClick={reply} className="action reply">
+        <ReplyIcon />
+        {tweet.repliesCount || ''}
+      </div>
+    </footer>
+  )
 }
 
 const RetweetBar: React.FC<RetweetBarProps> = ({ retweetedBy }) => {

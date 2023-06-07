@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { GoogleAuthProvider, User, getAuth, signInWithPopup } from 'firebase/auth'
-import { arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, getFirestore, limit, query, setDoc, updateDoc, where } from 'firebase/firestore'
-import { createTweetId } from './utils'
+import { arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, getFirestore, increment, limit, query, setDoc, updateDoc, where } from 'firebase/firestore'
+import { createId } from './utils'
 
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -26,25 +26,54 @@ export async function joinWithGoogle() {
   }
 }
 
-export async function createUserInFirestore(user: User | null, username: string) {
+export async function createUser(user: User | null, username: string) {
   try {
-    if (user) {
-      const userRef = doc(db, 'users', user.uid)
-      await setDoc(userRef, {
-        id: user.uid,
-        username: username,
-        name: user.displayName,
-        email: user.email,
-        profileURL: user.photoURL || null,
-        headerURL: null,
-        tweets: [],
-        retweets: [],
-        likes: [],
-        following: [],
-        followers: [],
-        createdAt: Date.now(),
-      })
-    }
+    if (!user) return
+
+    const userRef = doc(db, 'users', user.uid)
+    await setDoc(userRef, {
+      id: user.uid,
+      username: username,
+      name: user.displayName,
+      email: user.email,
+      bio: '',
+      profileURL: user.photoURL || null,
+      headerURL: null,
+      following: [],
+      followers: [],
+      joinedAt: Date.now(),
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export async function createTweet(content: string[], media: string[], userId: string) {
+  try {
+    if ((!content.length && !media.length) || !userId) return
+    // create tweet doc and add it to database
+    const tweetId = createId()
+    const tweetRef = doc(db, 'tweets', tweetId)
+    await setDoc(tweetRef, {
+      id: tweetId,
+      content: content,
+      media: media,
+      userId: userId,
+      timestamp: Date.now(),
+      likesCount: 0,
+      retweetsCount: 0,
+      repliesCount: 0,
+    })
+    // create tweet ref in feed
+    const tweetRefId = createId()
+    const tweetRefRef = doc(db, 'feed', tweetRefId)
+    await setDoc(tweetRefRef, {
+      id: tweetRefId,
+      tweetId: tweetId,
+      userId: userId,
+      type: 'tweet',
+      timestamp: Date.now(),
+    })
   } catch (err) {
     console.error(err)
   }
@@ -94,81 +123,43 @@ export async function toggleFollowAccount(userId: string, currentUserId: string 
   }
 }
 
-// Tweet related functions
-
-export async function createTweet(text: string[], userId: string) {
+const updateTweetCount = async (tweetId: string, key: string, value: number) => {
   try {
-    const tweetId = createTweetId()
     const tweetRef = doc(db, 'tweets', tweetId)
-    const userRef = doc(db, 'users', userId)
-    const createdAt = Date.now()
-    await setDoc(tweetRef, {
-      id: tweetId,
-      text: text,
-      likes: [],
-      retweets: [],
-      replies: [],
-      createdBy: userId,
-      createdAt: createdAt,
-    })
-    await updateDoc(userRef, {
-      tweets: arrayUnion({ tweetId: tweetId, createdAt: createdAt }),
+    await updateDoc(tweetRef, {
+      [key]: increment(value),
     })
   } catch (err) {
     console.error(err)
   }
 }
 
-export async function toggleLike(tweetId: string, userId: string, liked: boolean) {
+export const toggleLikeTweet = async (tweetId: string, userId: string, liked: boolean) => {
   try {
     if (!tweetId || !userId) return
-    const tweetRef = doc(db, 'tweets', tweetId)
-    const userRef = doc(db, 'users', userId)
+    const likeRef = doc(db, 'tweets', tweetId, 'likes', userId)
     if (!liked) {
-      await updateDoc(tweetRef, {
-        likes: arrayUnion(userId),
-      })
-      await updateDoc(userRef, {
-        likes: arrayUnion(tweetId),
-      })
+      setDoc(likeRef, { userId: userId, timestamp: Date.now() })
+      updateTweetCount(tweetId, 'likesCount', 1)
     } else {
-      await updateDoc(tweetRef, {
-        likes: arrayRemove(userId),
-      })
-      await updateDoc(userRef, {
-        likes: arrayRemove(tweetId),
-      })
+      deleteDoc(likeRef)
+      updateTweetCount(tweetId, 'likesCount', -1)
     }
   } catch (err) {
     console.error(err)
   }
 }
 
-export async function toggleRetweet(tweetId: string, userId: string, retweeted: boolean) {
+export const toggleRetweetTweet = async (tweetId: string, userId: string, retweeted: boolean) => {
   try {
     if (!tweetId || !userId) return
-    const tweetRef = doc(db, 'tweets', tweetId)
-    const userRef = doc(db, 'users', userId)
+    const retweetRef = doc(db, 'tweets', tweetId, 'retweets', userId)
     if (!retweeted) {
-      await updateDoc(tweetRef, {
-        retweets: arrayUnion(userId),
-      })
-      await updateDoc(userRef, {
-        retweets: arrayUnion({ tweetId: tweetId, retweetedAt: Date.now() }),
-      })
+      setDoc(retweetRef, { userId: userId, timestamp: Date.now() })
+      updateTweetCount(tweetId, 'retweetsCount', 1)
     } else {
-      await updateDoc(tweetRef, {
-        retweets: arrayRemove(userId),
-      })
-      const userSnapshot = await getDoc(userRef)
-      const userData = userSnapshot.data()
-      if (!userData) return
-      const index = userData.retweets.findIndex((tweet: { tweetId: string }) => tweet.tweetId === tweetId)
-      if (index !== -1) {
-        await updateDoc(userRef, {
-          retweets: arrayRemove(userData.retweets[index]),
-        })
-      }
+      deleteDoc(retweetRef)
+      updateTweetCount(tweetId, 'retweetsCount', -1)
     }
   } catch (err) {
     console.error(err)

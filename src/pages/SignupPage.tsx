@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { auth, checkIfEmailExists, checkIfUsernameExists, createUserInFirestore, joinWithGoogle } from '../firebase'
+import { auth, checkIfEmailExists, checkIfUsernameExists, createUser, joinWithGoogle } from '../firebase'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
@@ -23,7 +23,7 @@ type StageProps = {
 type CreateAccountProps = {
   setStage: (stage: string) => void
   name: string
-  setName: (e:string) => void
+  setName: (e: string) => void
   email: string
   setEmail: (e: string) => void
 }
@@ -55,7 +55,11 @@ const SignupPage: React.FC = () => {
   }, [user, userData, navigate])
 
   if (dataLoading) {
-    return <JoinLayout paddingSize='large'><Loader /></JoinLayout>
+    return (
+      <JoinLayout paddingSize="large">
+        <Loader />
+      </JoinLayout>
+    )
   }
 
   return (
@@ -188,22 +192,24 @@ const SignupPage_PickPassword: React.FC<PickPasswordProps> = ({ setStage, passwo
     const result = await createUserWithEmailAndPassword(auth, email, password)
     if (result.user) {
       await updateProfile(result.user, {
-        displayName: name
+        displayName: name,
       })
     }
   }
 
   return (
     <>
-    <IconButton onClick={() => setStage(STAGES[1])}>
-      <BackIcon />
-    </IconButton>
-    <div className="top-bar">Step 2 of 2</div>
+      <IconButton onClick={() => setStage(STAGES[1])}>
+        <BackIcon />
+      </IconButton>
+      <div className="top-bar">Step 2 of 2</div>
       <h1>You'll need a password</h1>
       <p className="subtitle">Make sure it's 8 characters or more.</p>
       <form onSubmit={handleSubmit}>
         <TextInput type="password" label="Password" value={password} setValue={setPassword} error={passwordError} />
-        <Button size='large' disabled={!password || password.length < 8}>Next</Button>
+        <Button size="large" disabled={!password || password.length < 8}>
+          Next
+        </Button>
       </form>
     </>
   )
@@ -262,7 +268,7 @@ const SignupPage_PickUsername: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    await createUserInFirestore(auth.currentUser, username)
+    await createUser(auth.currentUser, username)
     navigate('/home')
   }
 
@@ -273,7 +279,9 @@ const SignupPage_PickUsername: React.FC = () => {
       <p className="subtitle">You @username is unique. You can always change it later.</p>
       <form onSubmit={handleSubmit}>
         <TextInput label="Username" value={username} setValue={setUsername} error={error} />
-        <Button size='large' disabled={!canNext}>Next</Button>
+        <Button size="large" disabled={!canNext}>
+          Next
+        </Button>
       </form>
     </>
   )
