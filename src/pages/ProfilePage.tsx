@@ -5,7 +5,7 @@ import { db } from '../firebase'
 import { User } from '../types'
 import useAuthRedirect from '../hooks/useAuthRedirect'
 import ProfileHeader from '../components/ProfileHeader/ProfileHeader'
-import Feed, { ProfileFeed } from '../components/Feed/Feed'
+import Feed from '../components/Feed/Feed'
 import PageHeader from '../components/PageHeader/PageHeader'
 import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
@@ -37,14 +37,14 @@ function ProfilePage() {
             </IconButton>
             <div>
               <h2 className="heading">{user.name}</h2>
-              <p className="small grey">{user.tweets.length + user.retweets.length} Tweets</p>
+              <p className="small grey">{/* to do */} Tweets</p>
             </div>
           </div>
         </PageHeader>
 
         <ProfileHeader user={user} />
 
-        <Feed tweets={[...user.tweets, ...user.retweets].sort((a, b) => (b.createdAt || b.retweetedAt || 0) - (a.createdAt || a.retweetedAt || 0))} userId={user.id} />
+        <Feed userIds={[user.id]} />
       </main>
     </LayoutWithSidebar>
   ) : (

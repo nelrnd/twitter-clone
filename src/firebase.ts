@@ -16,7 +16,7 @@ const app = initializeApp(config)
 export const auth = getAuth(app)
 export const db = getFirestore(app)
 
-export async function joinWithGoogle() {
+export const joinWithGoogle = async () => {
   try {
     const provider = new GoogleAuthProvider()
     const result = await signInWithPopup(auth, provider)
@@ -26,7 +26,7 @@ export async function joinWithGoogle() {
   }
 }
 
-export async function createUser(user: User | null, username: string) {
+export const createUser = async (user: User | null, username: string) => {
   try {
     if (!user) return
 
@@ -48,13 +48,12 @@ export async function createUser(user: User | null, username: string) {
   }
 }
 
-export async function createTweet(content: string[], media: string[], userId: string) {
+export const createTweet = async (content: string[], media: string[], userId: string) => {
   try {
     if ((!content.length && !media.length) || !userId) return
-    // create tweet doc and add it to database
     const tweetId = createId()
     const tweetRef = doc(db, 'tweets', tweetId)
-    await setDoc(tweetRef, {
+    setDoc(tweetRef, {
       id: tweetId,
       content: content,
       media: media,
@@ -64,14 +63,22 @@ export async function createTweet(content: string[], media: string[], userId: st
       retweetsCount: 0,
       repliesCount: 0,
     })
-    // create tweet ref in feed
-    const tweetRefId = createId()
-    const tweetRefRef = doc(db, 'feed', tweetRefId)
-    await setDoc(tweetRefRef, {
-      id: tweetRefId,
+    createRefInFeed(tweetId, userId, 'tweet')
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const createRefInFeed = async (tweetId: string, userId: string, type: string) => {
+  try {
+    if (!tweetId || !userId || !type) return
+    const id = createId()
+    const ref = doc(db, 'feed', id)
+    await setDoc(ref, {
+      id: id,
       tweetId: tweetId,
       userId: userId,
-      type: 'tweet',
+      type: type,
       timestamp: Date.now(),
     })
   } catch (err) {
@@ -79,15 +86,25 @@ export async function createTweet(content: string[], media: string[], userId: st
   }
 }
 
-export async function checkIfEmailExists(email: string) {
+const deleteRefInFeed = async (tweetId: string, userId: string, type: string) => {
+  try {
+    const refQuery = query(collection(db, 'feed'), where('tweetId', '==', tweetId), where('userId', '==', userId), where('type', '==', type))
+    const snapshot = await getDocs(refQuery)
+    snapshot.forEach((doc) => deleteDoc(doc.ref))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const checkIfEmailExists = async (email: string) => {
   return await checkIfUserPropExists('email', email)
 }
 
-export async function checkIfUsernameExists(username: string) {
+export const checkIfUsernameExists = async (username: string) => {
   return await checkIfUserPropExists('username', username)
 }
 
-async function checkIfUserPropExists(prop: string, value: string) {
+const checkIfUserPropExists = async (prop: string, value: string) => {
   try {
     const usersCollection = collection(db, 'users')
     const userQuery = query(usersCollection, where(prop, '==', value), limit(1))
@@ -98,7 +115,7 @@ async function checkIfUserPropExists(prop: string, value: string) {
   }
 }
 
-export async function toggleFollowAccount(userId: string, currentUserId: string | undefined, followed: boolean) {
+export const toggleFollowAccount = async (userId: string, currentUserId: string | undefined, followed: boolean) => {
   try {
     if (!currentUserId) return
     const userRef = doc(db, 'users', userId)
@@ -157,9 +174,11 @@ export const toggleRetweetTweet = async (tweetId: string, userId: string, retwee
     if (!retweeted) {
       setDoc(retweetRef, { userId: userId, timestamp: Date.now() })
       updateTweetCount(tweetId, 'retweetsCount', 1)
+      createRefInFeed(tweetId, userId, 'retweet')
     } else {
       deleteDoc(retweetRef)
       updateTweetCount(tweetId, 'retweetsCount', -1)
+      deleteRefInFeed(tweetId, userId, 'retweet')
     }
   } catch (err) {
     console.error(err)
