@@ -1,0 +1,44 @@
+@use '../../App'
+
+.TextAreaInput
+  position: relative
+  width: 100%
+  padding-top: 24px
+  border: solid 1px App.$dark-30
+  border-radius: 4px
+  overflow: hidden
+  outline: solid 2px transparent
+
+  &:focus-within
+    outline-color: App.$blue
+    border-color: transparent
+
+  textarea
+    font-size: 18px
+    display: block
+    height: 72px
+    width: 100%
+    resize: none
+    border: none
+    outline: none
+    padding: 8px
+    padding-top: 0
+
+  label
+    position: absolute
+    top: 0
+    left: 0
+    padding: 8px
+    color: App.$dark-70
+    font-size: 13px
+    pointer-events: none
+    transition: all 0.1s ease-in-out
+
+  textarea:placeholder-shown + label
+    font-size: 17px
+    top: calc(16.6px - 8px)
+
+  textarea:focus + label
+    font-size: 13px
+    top: 0
+    color: App.$blue
