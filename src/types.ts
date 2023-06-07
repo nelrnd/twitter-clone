@@ -7,7 +7,9 @@ export type User = {
   profileURL: string | null
   headerURL: string | null
   following: string[]
-  followers: []
+  followers: string[]
+  tweetsCount: number,
+  likesCount: number,
   joinedAt: number
 }
 

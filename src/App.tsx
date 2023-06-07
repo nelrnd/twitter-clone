@@ -24,6 +24,7 @@ function App() {
           <Route path="/" element={<Navigate to="/home" replace={true} />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/:username" element={<ProfilePage />} />
+          <Route path="/:username/likes" element={<ProfilePage />} />
           <Route path="/:username/following" element={<FollowingPage />} />
           <Route path="/:username/followers" element={<FollowersPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />

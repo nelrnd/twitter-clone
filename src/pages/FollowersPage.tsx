@@ -34,7 +34,7 @@ function FollowersPage() {
       <main>
         <PageHeader>
           <div className="bar">
-            <IconButton handleClick={goBack}>
+            <IconButton onClick={goBack}>
               <BackIcon />
             </IconButton>
             <div>

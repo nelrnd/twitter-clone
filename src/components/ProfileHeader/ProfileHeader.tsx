@@ -14,9 +14,9 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
   const handleClick = () => {
     console.log('ok')
   }
-  const currentUserId = auth.currentUser?.uid
+  const currentUserId: string | undefined = auth.currentUser?.uid
   const isCurrentUser = user.id === currentUserId
-  const followed = (currentUserId && user.followers.includes(currentUserId)) || false
+  const followed: boolean = (currentUserId && user.followers.includes(currentUserId)) || false
 
   return (
     <header className="ProfileHeader">
@@ -38,11 +38,11 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
         <p className="username">@{user.username}</p>
 
         <div className="stat-bar">
-          <Link to="following" className="small">
+          <Link to={`/${user.username}/following`} className="small">
             <span className="bold">{user.following.length} </span>
             <span className="grey">Following</span>
           </Link>
-          <Link to="followers" className="small">
+          <Link to={`/${user.username}/followers`} className="small">
             <span className="bold">{user.followers.length} </span>
             <span className="grey">Followers</span>
           </Link>

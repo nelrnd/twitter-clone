@@ -41,6 +41,8 @@ export const createUser = async (user: User | null, username: string) => {
       headerURL: null,
       following: [],
       followers: [],
+      tweetsCount: 0,
+      likesCount: 0,
       joinedAt: Date.now(),
     })
   } catch (err) {
@@ -64,6 +66,7 @@ export const createTweet = async (content: string[], media: string[], userId: st
       repliesCount: 0,
     })
     createRefInFeed(tweetId, userId, 'tweet')
+    updateUserCount(userId, 'tweetsCount', 1)
   } catch (err) {
     console.error(err)
   }
@@ -151,16 +154,29 @@ const updateTweetCount = async (tweetId: string, key: string, value: number) => 
   }
 }
 
+const updateUserCount = async (userId: string, key: string, value: number) => {
+  try {
+    const userRef = doc(db, 'users', userId)
+    await updateDoc(userRef, {
+      [key]: increment(value)
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const toggleLikeTweet = async (tweetId: string, userId: string, liked: boolean) => {
   try {
     if (!tweetId || !userId) return
     const likeRef = doc(db, 'tweets', tweetId, 'likes', userId)
     if (!liked) {
-      setDoc(likeRef, { userId: userId, timestamp: Date.now() })
+      setDoc(likeRef, { userId: userId, tweetId: tweetId, timestamp: Date.now() })
       updateTweetCount(tweetId, 'likesCount', 1)
+      updateUserCount(userId, 'likesCount', 1)
     } else {
       deleteDoc(likeRef)
       updateTweetCount(tweetId, 'likesCount', -1)
+      updateUserCount(userId, 'likesCount', -1)
     }
   } catch (err) {
     console.error(err)
@@ -175,10 +191,12 @@ export const toggleRetweetTweet = async (tweetId: string, userId: string, retwee
       setDoc(retweetRef, { userId: userId, timestamp: Date.now() })
       updateTweetCount(tweetId, 'retweetsCount', 1)
       createRefInFeed(tweetId, userId, 'retweet')
+      updateUserCount(userId, 'tweetsCount', 1)
     } else {
       deleteDoc(retweetRef)
       updateTweetCount(tweetId, 'retweetsCount', -1)
       deleteRefInFeed(tweetId, userId, 'retweet')
+      updateUserCount(userId, 'tweetsCount', -1)
     }
   } catch (err) {
     console.error(err)
