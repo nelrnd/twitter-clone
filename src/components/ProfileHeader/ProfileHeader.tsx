@@ -51,7 +51,7 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
           </div>
         </div>
       </header>
-      <EditProfileModal show={show} setShow={setShow} />
+      <EditProfileModal show={show} setShow={setShow} name={user.name} bio={user.bio} userId={user.id} />
     </>
   )
 }

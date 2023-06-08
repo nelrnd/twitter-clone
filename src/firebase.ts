@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { GoogleAuthProvider, User, getAuth, signInWithPopup } from 'firebase/auth'
+import { GoogleAuthProvider, User, getAuth, signInWithPopup, updateProfile } from 'firebase/auth'
 import { arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, getFirestore, increment, limit, query, setDoc, updateDoc, where } from 'firebase/firestore'
 import { createId } from './utils'
 
@@ -45,6 +45,20 @@ export const createUser = async (user: User | null, username: string) => {
       likesCount: 0,
       joinedAt: Date.now(),
     })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const updateUserInfo = async (updatedInfo: { name?: string; bio?: string }, userId: string) => {
+  try {
+    if (updatedInfo.name && auth.currentUser) {
+      await updateProfile(auth.currentUser, {
+        displayName: updatedInfo.name,
+      })
+    }
+    const userRef = doc(db, 'users', userId)
+    await updateDoc(userRef, updatedInfo)
   } catch (err) {
     console.error(err)
   }
@@ -158,7 +172,7 @@ const updateUserCount = async (userId: string, key: string, value: number) => {
   try {
     const userRef = doc(db, 'users', userId)
     await updateDoc(userRef, {
-      [key]: increment(value)
+      [key]: increment(value),
     })
   } catch (err) {
     console.error(err)
