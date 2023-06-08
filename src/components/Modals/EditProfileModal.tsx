@@ -4,12 +4,11 @@ import TextInput from '../TextInput/TextInput'
 import Modal from './Modal'
 import Avatar from '../Avatar/Avatar'
 import TextAreaInput from '../TextInput/TextAreaInput'
-import { storage, updateUserInfo, uploadImage } from '../../firebase'
+import { updateUserInfo, uploadImage } from '../../firebase'
 import { User } from '../../types'
 import IconButton from '../Buttons/IconButton'
 import PhotoIcon from '../../assets/add-photo.svg'
 import CloseIcon from '../../assets/close.svg'
-import { ref } from 'firebase/storage'
 
 type EditProfileModalProps = {
   show: boolean
@@ -21,7 +20,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ show, setShow, user
   const [newName, setName] = useState(user.name)
   const [newBio, setBio] = useState(user.bio)
   const [newProfileURL, setProfileURL] = useState(user.profileURL)
-  const [newProfileFile, setNewProfileFile] = useState<File | null>(null)
+  const [newProfileFile, setProfileFile] = useState<File | null>(null)
+  const [newHeaderURL, setHeaderURL] = useState(user.headerURL)
+  const [newHeaderFile, setHeaderFile] = useState<File | null>(null)
 
   useEffect(() => {
     if (newProfileFile) {
@@ -30,8 +31,17 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ show, setShow, user
     }
   }, [newProfileFile])
 
+  useEffect(() => {
+    if (newHeaderFile) {
+      const url = URL.createObjectURL(newHeaderFile)
+      setHeaderURL(url)
+    } else {
+      setHeaderURL(null)
+    }
+  }, [newHeaderFile])
+
   const save = async () => {
-    const updatedInfo: { name?: string; bio?: string; profileURL?: string } = {}
+    const updatedInfo: { name?: string; bio?: string; profileURL?: string; headerURL?: string } = {}
     if (newName !== user.name) {
       updatedInfo.name = newName
     }
@@ -41,6 +51,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ show, setShow, user
     if (newProfileFile) {
       const url = await uploadImage(newProfileFile, 'profiles', user.id)
       updatedInfo.profileURL = url
+    }
+    if (newHeaderFile) {
+      const url = await uploadImage(newHeaderFile, 'headers', user.id)
+      updatedInfo.headerURL = url
     }
     if (Object.keys(updatedInfo).length !== 0) {
       await updateUserInfo(updatedInfo, user.id)
@@ -55,9 +69,17 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ show, setShow, user
         <Button onClick={save}>Save</Button>
       </div>
 
-      <div className="banner" />
+      <div className="banner-wrapper">
+        <div className="row gap-16">
+          <UploadButton setFile={setHeaderFile} />
+          <IconButton style="dark">
+            <CloseIcon />
+          </IconButton>
+        </div>
+        <div className="banner" style={{ backgroundImage: `url(${newHeaderURL}` }} />
+      </div>
       <div className="Avatar-wrapper">
-        <UploadButton setFile={setNewProfileFile} />
+        <UploadButton setFile={setProfileFile} />
         <Avatar src={newProfileURL} size={116} />
       </div>
       <TextInput label="Name" value={newName} setValue={setName} />

@@ -1,3 +1,5 @@
+@use '../../App'
+
 .Modal_wrapper
   position: fixed
   z-index: 100
@@ -56,21 +58,36 @@
     width: 116px
     height: 116px
 
-    label
-      cursor: pointer
-      width: fit-content
-
-    label button
-      pointer-events: none
-
   .Avatar
     border: solid 4px white
     box-shadow: none
     position: absolute
     z-index: -1
 
+  .banner-wrapper
+    height: 195px
+    width: 100%
+    position: absolute
+    display: grid
+    place-content: center
+
+    .row
+      z-index: 1
+
   .banner
     height: 195px
     width: 100%
     position: absolute
     background-color: #B2B2B2
+    background-size: cover
+    background-position: center
+
+  label
+    cursor: pointer
+    width: fit-content
+
+  label button
+    pointer-events: none
+
+  label:hover button
+    background-color: rgba(App.$dark-70, 50%)
