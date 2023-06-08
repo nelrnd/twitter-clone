@@ -1,0 +1,61 @@
+.Modal_wrapper
+  position: absolute
+  z-index: 100
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  display: grid
+  place-content: center
+
+.Modal_backdrop
+  position: absolute
+  z-index: -1
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  background-color: rgba(0, 0, 0, 0.4)
+
+.Modal
+  background-color: white
+  border-radius: 16px
+  position: relative
+  max-height: 650px
+  overflow-y: auto
+
+  .IconButton.close
+    position: absolute
+    top: 8px
+    left: 8px
+
+  .top-bar
+    height: 52px
+    padding: 16px
+    padding-left: 70px
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+    .heading
+      margin-bottom: 0
+
+  .TextInput,
+  .TextAreaInput
+    margin: 0 16px 24px
+    width: initial
+
+  .Avatar
+    margin-top: 150px
+    margin-bottom: 16px
+    margin-left: 16px
+    border: solid 4px white
+    box-shadow: none
+    position: relative
+    z-index: 1
+
+  .banner
+    height: 195px
+    width: 100%
+    position: absolute
+    background-color: #B2B2B2

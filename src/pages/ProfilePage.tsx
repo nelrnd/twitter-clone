@@ -39,16 +39,19 @@ function ProfilePage() {
             </IconButton>
             <div>
               <h2 className="heading">{user.name}</h2>
-              <p className="small grey">
-                {!location.pathname.includes('likes') ? user.tweetsCount + ' Tweets' : user.likesCount + ' Likes'}
-              </p>
+              <p className="small grey">{!location.pathname.includes('likes') ? user.tweetsCount + ' Tweets' : user.likesCount + ' Likes'}</p>
             </div>
           </div>
         </PageHeader>
 
         <ProfileHeader user={user} />
 
-        <Tabs tabs={[{text: 'Tweets', link: `/${user.username}`, active: !location.pathname.includes('likes')}, {text: 'Likes', link: `/${user.username}/likes`, active: location.pathname.includes('likes')}]} />
+        <Tabs
+          tabs={[
+            { text: 'Tweets', link: `/${user.username}`, active: !location.pathname.includes('likes') },
+            { text: 'Likes', link: `/${user.username}/likes`, active: location.pathname.includes('likes') },
+          ]}
+        />
 
         {!location.pathname.includes('likes') ? <Feed userIds={[user.id]} /> : <LikeFeed userId={user.id} />}
       </main>

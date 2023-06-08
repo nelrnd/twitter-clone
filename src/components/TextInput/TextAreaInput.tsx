@@ -14,9 +14,7 @@ const TextAreaInput: React.FC<TextAreaInputProps> = ({ label, value, setValue })
 
   return (
     <div className="TextAreaInput" onClick={() => elem.current?.focus()}>
-      <textarea id={id} onChange={handleChange} placeholder=" " ref={elem}>
-        {value}
-      </textarea>
+      <textarea id={id} value={value} onChange={handleChange} placeholder=" " ref={elem}></textarea>
       <label htmlFor={id}>{label}</label>
     </div>
   )
