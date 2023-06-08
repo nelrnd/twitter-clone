@@ -2,13 +2,14 @@ import './Buttons.sass'
 
 type IconButtonProps = {
   children: JSX.Element
-  onClick: () => void
+  onClick?: () => void
+  style?: string
   type?: string
 }
 
-const IconButton: React.FC<IconButtonProps> = ({ children, onClick, type }) => {
+const IconButton: React.FC<IconButtonProps> = ({ children, onClick, style, type }) => {
   return (
-    <button className={`IconButton ${type || ''}`} onClick={onClick}>
+    <button className={`IconButton ${style || ''} ${type || ''}`} onClick={onClick}>
       {children}
     </button>
   )

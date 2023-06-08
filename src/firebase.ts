@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app'
 import { GoogleAuthProvider, User, getAuth, signInWithPopup, updateProfile } from 'firebase/auth'
 import { arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, getFirestore, increment, limit, query, setDoc, updateDoc, where } from 'firebase/firestore'
 import { createId } from './utils'
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -15,6 +16,7 @@ const config = {
 const app = initializeApp(config)
 export const auth = getAuth(app)
 export const db = getFirestore(app)
+export const storage = getStorage()
 
 export const joinWithGoogle = async () => {
   try {
@@ -50,12 +52,13 @@ export const createUser = async (user: User | null, username: string) => {
   }
 }
 
-export const updateUserInfo = async (updatedInfo: { name?: string; bio?: string }, userId: string) => {
+export const updateUserInfo = async (updatedInfo: { name?: string; bio?: string; profileURL?: string }, userId: string) => {
   try {
-    if (updatedInfo.name && auth.currentUser) {
-      await updateProfile(auth.currentUser, {
-        displayName: updatedInfo.name,
-      })
+    if (auth.currentUser) {
+      const update: { displayName?: string; photoURL?: string } = {}
+      if (updatedInfo.name) update.displayName = updatedInfo.name
+      if (updatedInfo.profileURL) update.photoURL = updatedInfo.profileURL
+      await updateProfile(auth.currentUser, update)
     }
     const userRef = doc(db, 'users', userId)
     await updateDoc(userRef, updatedInfo)
@@ -212,6 +215,19 @@ export const toggleRetweetTweet = async (tweetId: string, userId: string, retwee
       deleteRefInFeed(tweetId, userId, 'retweet')
       updateUserCount(userId, 'tweetsCount', -1)
     }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const uploadImage = async (file: File, path: string, userId: string) => {
+  try {
+    if (!file || !path || !userId) return
+    const completePath = `${path}/${userId}.${file.name.split('.').pop()}`
+    const imageRef = ref(storage, completePath)
+    await uploadBytes(imageRef, file)
+    const url = await getDownloadURL(imageRef)
+    return url
   } catch (err) {
     console.error(err)
   }

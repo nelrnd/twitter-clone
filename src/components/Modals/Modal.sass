@@ -1,5 +1,5 @@
 .Modal_wrapper
-  position: absolute
+  position: fixed
   z-index: 100
   top: 0
   right: 0
@@ -45,14 +45,29 @@
     margin: 0 16px 24px
     width: initial
 
-  .Avatar
+  .Avatar-wrapper
     margin-top: 150px
     margin-bottom: 16px
     margin-left: 16px
-    border: solid 4px white
-    box-shadow: none
     position: relative
     z-index: 1
+    display: grid
+    place-content: center
+    width: 116px
+    height: 116px
+
+    label
+      cursor: pointer
+      width: fit-content
+
+    label button
+      pointer-events: none
+
+  .Avatar
+    border: solid 4px white
+    box-shadow: none
+    position: absolute
+    z-index: -1
 
   .banner
     height: 195px

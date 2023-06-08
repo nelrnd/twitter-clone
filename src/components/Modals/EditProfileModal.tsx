@@ -1,33 +1,50 @@
-import { useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import Button from '../Buttons/Button'
 import TextInput from '../TextInput/TextInput'
 import Modal from './Modal'
 import Avatar from '../Avatar/Avatar'
 import TextAreaInput from '../TextInput/TextAreaInput'
-import { updateUserInfo } from '../../firebase'
+import { storage, updateUserInfo, uploadImage } from '../../firebase'
+import { User } from '../../types'
+import IconButton from '../Buttons/IconButton'
+import PhotoIcon from '../../assets/add-photo.svg'
+import CloseIcon from '../../assets/close.svg'
+import { ref } from 'firebase/storage'
 
 type EditProfileModalProps = {
   show: boolean
   setShow: (show: boolean) => void
-  name: string
-  bio: string
-  userId: string
+  user: User
 }
 
-const EditProfileModal: React.FC<EditProfileModalProps> = ({ show, setShow, name, bio, userId }) => {
-  const [newName, setName] = useState(name)
-  const [newBio, setBio] = useState(bio)
+const EditProfileModal: React.FC<EditProfileModalProps> = ({ show, setShow, user }) => {
+  const [newName, setName] = useState(user.name)
+  const [newBio, setBio] = useState(user.bio)
+  const [newProfileURL, setProfileURL] = useState(user.profileURL)
+  const [newProfileFile, setNewProfileFile] = useState<File | null>(null)
+
+  useEffect(() => {
+    if (newProfileFile) {
+      const url = URL.createObjectURL(newProfileFile)
+      setProfileURL(url)
+    }
+  }, [newProfileFile])
 
   const save = async () => {
-    const updatedInfo: { name?: string; bio?: string } = {}
-    if (newName !== name) {
+    const updatedInfo: { name?: string; bio?: string; profileURL?: string } = {}
+    if (newName !== user.name) {
       updatedInfo.name = newName
     }
-    if (newBio !== bio) {
+    if (newBio !== user.bio) {
       updatedInfo.bio = newBio
     }
-    if (Object.keys(updatedInfo).length === 0) return
-    await updateUserInfo(updatedInfo, userId)
+    if (newProfileFile) {
+      const url = await uploadImage(newProfileFile, 'profiles', user.id)
+      updatedInfo.profileURL = url
+    }
+    if (Object.keys(updatedInfo).length !== 0) {
+      await updateUserInfo(updatedInfo, user.id)
+    }
     setShow(false)
   }
 
@@ -39,10 +56,39 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ show, setShow, name
       </div>
 
       <div className="banner" />
-      <Avatar size={116} />
+      <div className="Avatar-wrapper">
+        <UploadButton setFile={setNewProfileFile} />
+        <Avatar src={newProfileURL} size={116} />
+      </div>
       <TextInput label="Name" value={newName} setValue={setName} />
       <TextAreaInput label="Bio" value={newBio} setValue={setBio} />
     </Modal>
+  )
+}
+
+type UploadButtonProps = {
+  setFile: (file: File) => void
+}
+
+const UploadButton: React.FC<UploadButtonProps> = ({ setFile }) => {
+  const id = Math.random().toString()
+
+  const updateProfileFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = (e.target.files && e.target.files[0]) || null
+    if (file) {
+      setFile(file)
+    }
+  }
+
+  return (
+    <>
+      <label htmlFor={id}>
+        <IconButton style="dark">
+          <PhotoIcon />
+        </IconButton>
+      </label>
+      <input type="file" id={id} accept="image/*" style={{ display: 'none' }} onChange={updateProfileFile} />
+    </>
   )
 }
 
