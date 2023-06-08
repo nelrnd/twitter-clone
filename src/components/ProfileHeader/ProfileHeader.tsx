@@ -39,6 +39,8 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
           <h2 className="heading">{user.name}</h2>
           <p className="username">@{user.username}</p>
 
+          {user.bio != '' && <div className="bio">{user.bio}</div>}
+
           <div className="stat-bar">
             <Link to={`/${user.username}/following`} className="small">
               <span className="bold">{user.following.length} </span>
