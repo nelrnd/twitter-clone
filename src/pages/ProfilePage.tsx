@@ -4,7 +4,7 @@ import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { db } from '../firebase'
 import { User } from '../types'
 import useAuthRedirect from '../hooks/useAuthRedirect'
-import ProfileHeader from '../components/ProfileHeader/ProfileHeader'
+import ProfileHeader, { NoMatchingAccount } from '../components/ProfileHeader/ProfileHeader'
 import Feed, { LikeFeed } from '../components/Feed/Feed'
 import PageHeader from '../components/PageHeader/PageHeader'
 import IconButton from '../components/Buttons/IconButton'
@@ -13,8 +13,7 @@ import LayoutWithSidebar from '../components/LayoutWithSidebar/LayoutWithSidebar
 import Tabs from '../components/Tabs/Tabs'
 
 function ProfilePage() {
-  const params = useParams()
-  const username = params.username
+  const { username } = useParams<'username'>()
   const navigate = useNavigate()
   const location = useLocation()
   // Get user data
@@ -57,7 +56,19 @@ function ProfilePage() {
       </main>
     </LayoutWithSidebar>
   ) : (
-    <p>This account doesn't exists</p>
+    <LayoutWithSidebar>
+      <main>
+        <PageHeader>
+          <div className="bar">
+            <IconButton onClick={goBack}>
+              <BackIcon />
+            </IconButton>
+            <h2 className="heading">Profile</h2>
+          </div>
+        </PageHeader>
+        <NoMatchingAccount username={username} />
+      </main>
+    </LayoutWithSidebar>
   )
 }
 

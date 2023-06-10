@@ -24,7 +24,9 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
       <header className="ProfileHeader">
         <div className="banner" style={{ backgroundImage: `url(${user.headerURL})` }}></div>
 
-        <Avatar src={user.profileURL} size={134} />
+        <Link to={`/${user.username}/photo`}>
+          <Avatar src={user.profileURL} size={134} />
+        </Link>
 
         <div className="content">
           <div className="action-bar">
@@ -58,4 +60,26 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
   )
 }
 
+type NoMatchingAccountProps = {
+  username?: string
+}
+
+const NoMatchingAccount: React.FC<NoMatchingAccountProps> = ({ username }) => {
+  return (
+    <>
+      <header className="NoMatchingAccount">
+        <div className="blank_banner"></div>
+        <div className="blank_avatar"></div>
+        <h2>@{username}</h2>
+
+        <div className="no-found-text">
+          <p className="big">This account doesn’t exist</p>
+          <p className="grey">Try searching for another.</p>
+        </div>
+      </header>
+    </>
+  )
+}
+
 export default ProfileHeader
+export { NoMatchingAccount }

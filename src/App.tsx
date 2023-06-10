@@ -1,5 +1,5 @@
 import './App.sass'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { auth } from './firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { UserContext } from './contexts/UserContext'
@@ -19,20 +19,18 @@ function App() {
 
   return (
     <UserContext.Provider value={userData}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/home" replace={true} />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/:username" element={<ProfilePage />} />
-          <Route path="/:username/likes" element={<ProfilePage />} />
-          <Route path="/:username/following" element={<FollowingPage />} />
-          <Route path="/:username/followers" element={<FollowersPage />} />
-          <Route path="/notifications" element={<NotificationsPage />} />
-          <Route path="/messages" element={<MessagesPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-        </Routes>
-      </BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/home" replace={true} />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/:username" element={<ProfilePage />} />
+        <Route path="/:username/likes" element={<ProfilePage />} />
+        <Route path="/:username/following" element={<FollowingPage />} />
+        <Route path="/:username/followers" element={<FollowersPage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/messages" element={<MessagesPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+      </Routes>
     </UserContext.Provider>
   )
 }
