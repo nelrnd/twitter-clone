@@ -1,0 +1,29 @@
+.PhotoModal_wrapper
+  position: fixed
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  display: flex
+  justify-content: center
+  align-items: center
+  z-index: 100
+
+  .IconButton
+    position: absolute
+    top: 16px
+    left: 16px
+
+  > img
+    max-width: 90%
+    max-height: 90%
+    display: block
+
+.PhotoModal_backdrop
+  background-color: rgba(0, 0, 0, 0.9)
+  position: fixed
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  z-index: -1

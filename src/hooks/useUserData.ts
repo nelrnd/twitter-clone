@@ -1,11 +1,20 @@
-import { DocumentReference, doc } from 'firebase/firestore'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
+import { CollectionReference, DocumentReference, collection, doc, limit, query, where } from 'firebase/firestore'
+import { useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore'
 import { db } from '../firebase'
 import { User } from '../types'
 
-type DocumentData = [User | null | undefined, boolean]
+type HookReturn = [User | null | undefined, boolean]
 
-export default function useUserData(userId: string | undefined): DocumentData {
+const useUserDataWithId = (userId: string | undefined): HookReturn => {
   const [user, loading] = useDocumentData(doc(db, 'users', userId || '_') as DocumentReference<User | null>)
   return [user, loading]
 }
+
+const useUserDataWithUsername = (username: string | undefined): HookReturn => {
+  const q = query(collection(db, 'users') as CollectionReference<User | null>, where('username', '==', username), limit(1))
+  const [data, loading] = useCollectionData(q)
+  const user = data && data[0]
+  return [user, loading]
+}
+
+export { useUserDataWithId, useUserDataWithUsername }

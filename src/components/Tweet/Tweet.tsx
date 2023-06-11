@@ -7,7 +7,7 @@ import { UserContext } from '../../contexts/UserContext'
 import { Tweet as TweetType } from '../../types'
 import { getTime } from '../../utils'
 import useTweetData from '../../hooks/useTweetData'
-import useUserData from '../../hooks/useUserData'
+import { useUserDataWithId } from '../../hooks/useUserData'
 import Avatar from '../Avatar/Avatar'
 import Loader from '../Loader/Loader'
 import './Tweet.sass'
@@ -43,7 +43,7 @@ const PreTweet: React.FC<PreTweetProps> = ({ tweetId, retweetedBy }) => {
 }
 
 const Tweet: React.FC<TweetProps> = ({ tweet, retweetedBy }) => {
-  const [user, loading] = useUserData(tweet.userId)
+  const [user, loading] = useUserDataWithId(tweet.userId)
 
   if (loading) return <Loader />
 
@@ -108,7 +108,7 @@ const TweetBottomBar: React.FC<TweetBottomBarProps> = ({ tweet }) => {
 }
 
 const RetweetBar: React.FC<RetweetBarProps> = ({ retweetedBy }) => {
-  const [user, loading] = useUserData(retweetedBy)
+  const [user, loading] = useUserDataWithId(retweetedBy)
   const currentUser = useContext(UserContext)
 
   if (loading || !user) return null

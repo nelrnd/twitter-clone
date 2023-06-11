@@ -11,6 +11,7 @@ import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
 import LayoutWithSidebar from '../components/LayoutWithSidebar/LayoutWithSidebar'
 import Tabs from '../components/Tabs/Tabs'
+import Loader from '../components/Loader/Loader'
 
 function ProfilePage() {
   const { username } = useParams<'username'>()
@@ -26,7 +27,7 @@ function ProfilePage() {
 
   const goBack = () => navigate('/')
 
-  if (loading) return <p>Loading...</p>
+  if (loading) return <Loader />
 
   return user ? (
     <LayoutWithSidebar>

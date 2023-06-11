@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { checkEmailFormat } from '../utils'
-import useUserData from '../hooks/useUserData'
+import { useUserDataWithId } from '../hooks/useUserData'
 import JoinLayout, { TwitterIcon } from '../components/JoinLayout/JoinLayout'
 import Button from '../components/Buttons/Button'
 import IconButton from '../components/Buttons/IconButton'
@@ -39,7 +39,7 @@ type PickPasswordProps = {
 const SignupPage: React.FC = () => {
   const [currentStage, setStage] = useState(STAGES[0])
   const [user] = useAuthState(auth)
-  const [userData, dataLoading] = useUserData(user?.uid || '_')
+  const [userData, dataLoading] = useUserDataWithId(user?.uid || '_')
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
@@ -100,7 +100,7 @@ const SignupPage_CreateAccount: React.FC<CreateAccountProps> = ({ setStage, name
   const emailValidationTimeout = useRef<number | null>(null)
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       setEmailError('')
       if (emailValidationTimeout.current) {
         clearTimeout(emailValidationTimeout.current)
@@ -224,7 +224,7 @@ const SignupPage_PickUsername: React.FC = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       setError('')
       if (timeoutId.current) {
         clearTimeout(timeoutId.current)

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { User } from '../../types'
 import { auth } from '../../firebase'
 import Avatar from '../Avatar/Avatar'
@@ -16,15 +16,18 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
   const currentUserId: string | undefined = auth.currentUser?.uid
   const isCurrentUser = user.id === currentUserId
   const followed: boolean = (currentUserId && user.followers.includes(currentUserId)) || false
+  const location = useLocation()
 
   const [show, setShow] = useState(false)
 
   return (
     <>
       <header className="ProfileHeader">
-        <div className="banner" style={{ backgroundImage: `url(${user.headerURL})` }}></div>
+        <Link to={`/${user.username}/header_photo`} state={{ backgroundLocation: location }}>
+          <div className="banner" style={{ backgroundImage: `url(${user.headerURL})` }}></div>
+        </Link>
 
-        <Link to={`/${user.username}/photo`}>
+        <Link to={`/${user.username}/photo`} state={{ backgroundLocation: location }}>
           <Avatar src={user.profileURL} size={134} />
         </Link>
 
