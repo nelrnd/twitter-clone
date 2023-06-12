@@ -56,7 +56,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet, retweetedBy }) => {
         </Link>
       </div>
 
-      <div>
+      <div className="content">
         <header>
           <Link to={`/${user.username}`}>
             <h3 className="name">{user.name}</h3>
