@@ -1,29 +1,20 @@
 @use '../../App'
 
 .TweetComposer
-  padding: 12px 16px
-  border-bottom: solid 1px App.$dark-10
-  display: grid
-  grid-template-columns: auto 1fr
-  align-items: start
-  gap: 12px
+  @include App.tweet-layout
 
-  .main
-    width: 100%
-    overflow: hidden
-
-  .input
+  .text-input-wrapper
     font-size: 20px
     line-height: 135%
     padding-top: 12px
     position: relative
 
-  .placeholder
+  .text-input-placeholder
     color: App.$dark-70
     position: absolute
     pointer-events: none
-  
-  div[contenteditable="true"]
+
+  .text-input
     outline: none
     overflow-wrap: break-word
     word-wrap: break-word
@@ -36,14 +27,86 @@
     justify-content: space-between
     align-items: center
 
-    > div
+    .left-part,
+    .right-part
       display: flex
       align-items: center
       gap: 16px
 
-  .progressbar_wrapper
+  .progress-bar-wrapper
     width: 32px
     height: 32px
     display: flex
     justify-content: center
     align-items: center
+
+  .CircularProgressbar-trail
+    stroke: App.$dark-10
+
+  .CircularProgressbar-path
+    stroke: App.$blue
+  .warning .CircularProgressbar-path
+    stroke: #FDD71F
+  .error .CircularProgressbar-path
+    stroke: App.$red
+
+  .CircularProgressbar-text
+    font-size: 40px
+    fill: App.$dark-70
+  .error .CircularProgressbar-text
+    fill: App.$red
+    
+  .MediaInput
+    width: 36px
+    height: 36px
+    border-radius: 18px
+    display: flex
+    justify-content: center
+    align-items: center
+    color: App.$blue
+    cursor: pointer
+
+    &:hover
+      background-color: rgba(App.$blue, 10%)
+
+    svg
+      width: 20px
+      height: 20px
+
+  .photo-previews
+    margin-top: 16px
+    display: grid
+    gap: 12px
+
+  .photo-previews.layout-2
+    grid-template-columns: 1fr 1fr
+    height: 288px
+
+  .photo-previews.layout-3
+    grid-template-columns: 1fr 1fr
+    grid-template-rows: 1fr 1fr
+    height: 288px
+
+    .PhotoPreview:first-of-type
+      grid-row: span 2
+
+  .photo-previews.layout-4
+    grid-template-columns: 1fr 1fr
+    grid-template-rows: 1fr 1fr
+    height: 288px
+
+  .PhotoPreview
+    position: relative
+    border-radius: 16px
+    overflow: hidden
+
+    .IconButton
+      position: absolute
+      top: 6px
+      left: 6px
+
+    img
+      width: 100%
+      height: 100%
+      display: block
+      object-fit: cover

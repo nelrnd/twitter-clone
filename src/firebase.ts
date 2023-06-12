@@ -67,7 +67,7 @@ export const updateUserInfo = async (updatedInfo: { name?: string; bio?: string;
   }
 }
 
-export const createTweet = async (content: string[], media: string[], userId: string) => {
+export const createTweet = async (content: string[], media: File[], userId: string) => {
   try {
     if ((!content.length && !media.length) || !userId) return
     const tweetId = createId()

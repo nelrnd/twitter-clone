@@ -73,3 +73,16 @@ a > .name:hover
 
 .gap-16
   gap: 16px
+
+
+@mixin tweet-layout
+  width: 100%
+  padding: 12px 16px
+  display: grid
+  grid-template-columns: auto 1fr
+  align-items: start
+  gap: 12px
+  border-bottom: solid 1px $dark-10
+
+  .right-col
+    overflow: hidden
