@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { doc } from 'firebase/firestore'
 import { db, toggleLikeTweet, toggleRetweetTweet } from '../../firebase'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { UserContext } from '../../contexts/UserContext'
 import { Tweet as TweetType } from '../../types'
 import { getTime } from '../../utils'
@@ -45,11 +45,12 @@ const PreTweet: React.FC<PreTweetProps> = ({ tweetId, retweetedBy }) => {
 
 const Tweet: React.FC<TweetProps> = ({ tweet, retweetedBy }) => {
   const [user, loading] = useUserDataWithId(tweet.userId)
+  const navigate = useNavigate()
 
   if (loading) return <Loader />
 
   return user ? (
-    <article className="Tweet">
+    <article className="Tweet" onClick={() => navigate(`/${user.username}/status/${tweet.id}`)}>
       {retweetedBy ? <RetweetBar retweetedBy={retweetedBy} /> : null}
       <div>
         <Link to={`/${user.username}`}>
@@ -94,9 +95,18 @@ const TweetBottomBar: React.FC<TweetBottomBarProps> = ({ tweet }) => {
   const [liked] = useDocumentData(doc(db, 'tweets', tweet.id, 'likes', user?.id || '_'))
   const [retweeted] = useDocumentData(doc(db, 'tweets', tweet.id, 'retweets', user?.id || '_'))
 
-  const like = () => toggleLikeTweet(tweet.id, user?.id, !!liked)
-  const retweet = () => toggleRetweetTweet(tweet.id, user?.id, !!retweeted)
-  const reply = () => console.log('reply')
+  const like = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    toggleLikeTweet(tweet.id, user?.id, !!liked)
+  }
+  const retweet = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    toggleRetweetTweet(tweet.id, user?.id, !!retweeted)
+  }
+  const reply = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    console.log('reply')
+  }
 
   return (
     <footer>

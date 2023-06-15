@@ -28,6 +28,16 @@ export function getTime(ms: number): string {
   }
 }
 
+export function getLongTime(ms: number): string {
+  const date = new Date(ms)
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  const month = months[date.getMonth()]
+  const day = date.getDate()
+  const year = date.getFullYear()
+  return hours + ':' + minutes + ' · ' + month + ' ' + day + ', ' + year
+}
+
 export function getTextFromHTML(HTML: string) {
   return HTML.toString()
     .replaceAll('<br>', '')

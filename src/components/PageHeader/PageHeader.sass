@@ -1,21 +1,18 @@
 @use '../../App'
 
-.PageHeader
-  background-color: rgba(255, 255, 255, 0.8)
-  backdrop-filter: blur(20px)
+header.PageHeader
   position: sticky
   top: 0
   z-index: 1
+  background-color: rgba(white, 0.8)
+  height: 52px
+  padding: 8px
+  display: flex
+  align-items: center
+  gap: 24px
+  backdrop-filter: blur(20px)
 
-  div.bar
-    height: 52px
-    padding: 8px
+  > .content
     display: flex
-    align-items: center
-    gap: 24px
-
-    .heading
-      margin-bottom: 2px
-
-.home > .PageHeader
-  border-bottom: solid 1px App.$dark-10
+    flex-direction: column
+    gap: 2px

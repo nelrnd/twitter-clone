@@ -7,8 +7,6 @@ import useAuthRedirect from '../hooks/useAuthRedirect'
 import ProfileHeader, { NoMatchingAccount } from '../components/ProfileHeader/ProfileHeader'
 import Feed, { LikeFeed } from '../components/Feed/Feed'
 import PageHeader from '../components/PageHeader/PageHeader'
-import IconButton from '../components/Buttons/IconButton'
-import BackIcon from '../assets/back.svg'
 import LayoutWithSidebar from '../components/LayoutWithSidebar/LayoutWithSidebar'
 import Tabs from '../components/Tabs/Tabs'
 import Loader from '../components/Loader/Loader'
@@ -32,16 +30,9 @@ function ProfilePage() {
   return user ? (
     <LayoutWithSidebar>
       <main>
-        <PageHeader>
-          <div className="bar">
-            <IconButton onClick={goBack}>
-              <BackIcon />
-            </IconButton>
-            <div>
-              <h2 className="heading">{user.name}</h2>
-              <p className="small grey">{!location.pathname.includes('likes') ? user.tweetsCount + ' Tweets' : user.likesCount + ' Likes'}</p>
-            </div>
-          </div>
+        <PageHeader goBack={true} onClick={goBack}>
+          <h2 className="heading">{user.name}</h2>
+          <p className="small grey">{!location.pathname.includes('likes') ? user.tweetsCount + ' Tweets' : user.likesCount + ' Likes'}</p>
         </PageHeader>
 
         <ProfileHeader user={user} />
@@ -59,13 +50,8 @@ function ProfilePage() {
   ) : (
     <LayoutWithSidebar>
       <main>
-        <PageHeader>
-          <div className="bar">
-            <IconButton onClick={goBack}>
-              <BackIcon />
-            </IconButton>
-            <h2 className="heading">Profile</h2>
-          </div>
+        <PageHeader goBack={true} onClick={goBack}>
+          <h2 className="heading">Profile</h2>
         </PageHeader>
         <NoMatchingAccount username={username} />
       </main>

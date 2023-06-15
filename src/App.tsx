@@ -13,6 +13,7 @@ import FollowersPage from './pages/FollowersPage'
 import NotificationsPage from './pages/NotificationsPage'
 import MessagesPage from './pages/MessagesPage'
 import PhotoModal from './components/Modals/PhotoModal'
+import TweetPage from './pages/TweetPage'
 
 function App() {
   const [user] = useAuthState(auth)
@@ -26,6 +27,7 @@ function App() {
         <Route path="/" element={<Navigate to="/home" replace={true} />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/:username" element={<ProfilePage />} />
+        <Route path="/:username/status/:tweetId" element={<TweetPage />} />
         <Route path="/:username/likes" element={<ProfilePage />} />
         <Route path="/:username/following" element={<FollowingPage />} />
         <Route path="/:username/followers" element={<FollowersPage />} />

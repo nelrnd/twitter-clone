@@ -57,7 +57,7 @@ function Sidebar() {
       link: (user && `/${user.username}`) || '',
       icon: ProfileIcon,
       iconFilled: ProfileIconFilled,
-      active: user && pathname.split('/')[1] === user.username,
+      active: user && pathname.split('/')[1] === user.username && !pathname.includes('status'),
     },
   ]
 
