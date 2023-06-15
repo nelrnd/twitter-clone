@@ -32,23 +32,16 @@ function FollowersPage() {
   return user ? (
     <LayoutWithSidebar>
       <main>
-        <PageHeader>
-          <div className="bar">
-            <IconButton onClick={goBack}>
-              <BackIcon />
-            </IconButton>
-            <div>
-              <h2 className="heading">{user.name}</h2>
-              <p className="grey small">@{username}</p>
-            </div>
-          </div>
-          <Tabs
-            tabs={[
-              { text: 'Followers', link: `/${username}/followers`, active: true },
-              { text: 'Following', link: `/${username}/following`, active: false },
-            ]}
-          />
+        <PageHeader goBack={true} onClick={goBack}>
+          <h2 className="heading">{user.name}</h2>
+          <p className="grey small">@{username}</p>
         </PageHeader>
+        <Tabs
+          tabs={[
+            { text: 'Followers', link: `/${username}/followers`, active: true },
+            { text: 'Following', link: `/${username}/following`, active: false },
+          ]}
+        />
 
         <div>{users && users.map((user) => <ProfileItem key={user.id} user={user} />)}</div>
       </main>

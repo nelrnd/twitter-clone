@@ -53,13 +53,13 @@ const Tweet: React.FC<TweetProps> = ({ tweet, retweetedBy }) => {
     <article className="Tweet" onClick={() => navigate(`/${user.username}/status/${tweet.id}`)}>
       {retweetedBy ? <RetweetBar retweetedBy={retweetedBy} /> : null}
       <div>
-        <Link to={`/${user.username}`}>
+        <Link to={`/${user.username}`} onClick={(e: React.MouseEvent) => e.stopPropagation()}>
           <Avatar src={user.profileURL} />
         </Link>
       </div>
 
       <div className="content">
-        <header>
+        <header onClick={(e: React.MouseEvent) => e.stopPropagation()}>
           <Link to={`/${user.username}`}>
             <h3 className="name">{user.name}</h3>
           </Link>

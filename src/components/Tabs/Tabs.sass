@@ -1,14 +1,39 @@
 @use '../../App'
 
+.PageHeader + .Tabs
+  position: sticky
+  top: 52px
+  background-color: rgba(white, 0.8)
+  backdrop-filter: blur(20px)
+
 .Tabs
-  display: grid
+  background-color: white
   border-bottom: solid 1px App.$dark-10
+  display: grid
+  grid-auto-flow: column
 
-.Tab
-  height: 52px
-  cursor: pointer
+  .tab
+    height: 52px
+    cursor: pointer
 
-  div.text
+    &:hover
+      background-color: App.$grey
+
+    &.active .text
+      color: App.$dark-100
+      font-weight: bold
+
+    &.active .text::after
+      content: ''
+      display: block
+      height: 4px
+      width: 100%
+      background-color: App.$blue
+      border-radius: 2px
+      position: absolute
+      bottom: 0
+
+  .text
     color: App.$dark-70
     font-weight: 500
     width: fit-content
@@ -18,22 +43,3 @@
     display: flex
     align-items: center
     position: relative
-
-  &.active
-
-    div.text
-      color: App.$dark-100
-      font-weight: bold
-
-      &::after
-        content: ''
-        display: block
-        height: 4px
-        width: 100%
-        background-color: App.$blue
-        border-radius: 2px
-        position: absolute
-        bottom: 0
-
-  &:hover
-    background-color: App.$grey
