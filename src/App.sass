@@ -83,6 +83,22 @@ a > .name:hover
   align-items: start
   gap: 12px
   border-bottom: solid 1px $dark-10
-
   .right-col
     overflow: hidden
+
+@mixin photo-previews-layout
+  display: grid
+  gap: 10px
+  &.layout-2
+    grid-template-columns: 1fr 1fr
+    height: 288px
+  &.layout-3
+    grid-template-columns: 1fr 1fr
+    grid-template-rows: 1fr 1fr
+    height: 288px
+    .PhotoPreview:first-of-type
+      grid-row: span 2
+  &.layout-4
+    grid-template-columns: 1fr 1fr
+    grid-template-rows: 1fr 1fr
+    height: 288px

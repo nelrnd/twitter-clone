@@ -17,6 +17,7 @@ import LikeIcon from '../../assets/heart.svg'
 import LikeFilledIcon from '../../assets/heart-filled.svg'
 import RetweetIcon from '../../assets/retweet.svg'
 import ReplyIcon from '../../assets/comment.svg'
+import PhotoPreview from '../PhotoPreview/PhotoPreview'
 
 type PreTweetProps = {
   tweetId: string
@@ -71,6 +72,14 @@ const Tweet: React.FC<TweetProps> = ({ tweet, retweetedBy }) => {
           {tweet.content.map((line, id) => (
             <p key={id}>{line}</p>
           ))}
+
+          {tweet.media.length > 0 && (
+            <div className={`photo-previews layout-${tweet.media.length}`}>
+              {tweet.media.map((photo, id) => (
+                <PhotoPreview key={'photo_' + id} src={photo} />
+              ))}
+            </div>
+          )}
         </main>
 
         <TweetBottomBar tweet={tweet} />

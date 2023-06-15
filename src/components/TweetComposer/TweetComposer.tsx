@@ -12,6 +12,7 @@ import MediaIcon from '../../assets/media.svg'
 import CloseIcon from '../../assets/close.svg' 
 import 'react-circular-progressbar/dist/styles.css'
 import './TweetComposer.sass'
+import PhotoPreview from '../PhotoPreview/PhotoPreview'
 
 const MAX_LENGTH = 280
 
@@ -62,12 +63,14 @@ const TweetComposer: React.FC = () => {
   }
 
   const tweet = () => {
-    if (!text || text.length > MAX_LENGTH) return
+    if ((!text || text.length > MAX_LENGTH) && !files.length) return
     const formattedText = getTextFromHTML(textInput.current?.innerHTML || '')
     setText('')
+    const filesCopy = files
+    setFiles([])
     if (textInput.current) textInput.current.innerHTML = ''
     if (mediaInput.current) mediaInput.current.value = ''
-    createTweet(formattedText, files, user?.id)
+    createTweet(formattedText, filesCopy, user?.id)
   }
 
   const probar_dim = text.length < MAX_LENGTH - 20 ? 22 : 32
@@ -89,7 +92,11 @@ const TweetComposer: React.FC = () => {
         {files.length > 0 && (
           <div className={`photo-previews ${files.length > 1 ? `layout-${files.length}` : ''}`}>
             {files.map((file, id) => (
-              <PhotoPreview key={'photo-preview-' + id} src={URL.createObjectURL(file)} onClick={() => removeMedia(id)} />
+              <PhotoPreview key={'photo-preview-' + id} src={URL.createObjectURL(file)}>
+                <IconButton onClick={() => removeMedia(id)} style='dark small'>
+                  <CloseIcon />
+                </IconButton>
+              </PhotoPreview>
             ))}
           </div>
         )}
@@ -138,21 +145,5 @@ const MediaInput = forwardRef<HTMLInputElement, MediaInputProps>(({onChange, dis
     </label>
   )
 })
-
-type PhotoPreviewProps = {
-  src: string
-  onClick: () => void
-}
-
-const PhotoPreview: React.FC<PhotoPreviewProps> = ({src, onClick}) => {
-  return (
-    <div className="PhotoPreview">
-      <IconButton onClick={onClick} style='dark small'>
-        <CloseIcon />
-      </IconButton>
-      <img src={src} />
-    </div>
-  )
-}
 
 export default TweetComposer
