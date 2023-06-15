@@ -49,11 +49,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ show, setShow, user
       updatedInfo.bio = newBio
     }
     if (newProfileFile) {
-      const url = await uploadImage(newProfileFile, 'profiles', user.id)
+      const url = await uploadImage(newProfileFile, `profiles/${user.id}`)
       updatedInfo.profileURL = url
     }
     if (newHeaderFile) {
-      const url = await uploadImage(newHeaderFile, 'headers', user.id)
+      const url = await uploadImage(newHeaderFile, `headers/${user.id}`)
       updatedInfo.headerURL = url
     }
     if (Object.keys(updatedInfo).length !== 0) {

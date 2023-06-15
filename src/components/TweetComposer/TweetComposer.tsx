@@ -3,86 +3,16 @@ import { UserContext } from '../../contexts/UserContext'
 import { Link } from 'react-router-dom'
 import { createTweet } from '../../firebase'
 import { getTextFromHTML } from '../../utils'
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
 import Avatar from '../Avatar/Avatar'
 import Button from '../Buttons/Button'
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
+import IconButton from '../Buttons/IconButton'
+import Alert from '../Alert/Alert'
+import MediaIcon from '../../assets/media.svg'
+import CloseIcon from '../../assets/close.svg' 
 import 'react-circular-progressbar/dist/styles.css'
 import './TweetComposer.sass'
 
-import MediaIcon from '../../assets/media.svg'
-import IconButton from '../Buttons/IconButton'
-import CloseIcon from '../../assets/close.svg' 
-import Alert from '../Alert/Alert'
-/*
-const MAX_LENGTH = 280
-
-const TweetComposer: React.FC = () => {
-  const user = useContext(UserContext)
-  const [text, setText] = useState('')
-  const elem = useRef<HTMLDivElement>(null)
-  const html = useRef('')
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    html.current = e.target.value
-    const text = elem.current?.textContent || ''
-    setText(text)
-  }
-
-  const handleMediaChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (files.length)
-  }
-
-  const tweet = () => {
-    if (!text || !elem.current) return
-    const tweetText = getTextFromHTML(elem.current.innerHTML)
-    setText('')
-    elem.current.innerHTML = ''
-    createTweet(tweetText, [], user?.id)
-  }
-
-  return user ? (
-    <div className="TweetComposer">
-      <div>
-        <Link to={`/${user.username}`}>
-          <Avatar src={user.profileURL} />
-        </Link>
-      </div>
-
-      <div className="main">
-        <div className="input">
-          <div className="placeholder">{text ? '' : 'What is happening?!'}</div>
-          <ContentEditable innerRef={elem} html={html.current} onChange={handleChange} />
-        </div>
-        <div className="bottom-bar">
-          <div>
-            <label htmlFor="upload-media">IMAGE</label>
-            <input type="file" id="upload-media" accept="image/*" multiple={true} onChange={handleMediaChange} />
-          </div>
-          <div>
-            <div className="progressbar_wrapper">
-              {!!text.length && (
-                <div style={{ width: text.length < MAX_LENGTH - 20 ? '22px' : '32px', height: text.length < MAX_LENGTH - 20 ? '22px' : '32px' }}>
-                  <CircularProgressbar
-                    value={text.length}
-                    maxValue={MAX_LENGTH}
-                    text={text.length >= MAX_LENGTH - 20 ? (MAX_LENGTH - text.length).toString() : ''}
-                    strokeWidth={text.length < MAX_LENGTH - 20 ? 9 : 6.25}
-                    styles={buildStyles({ pathTransitionDuration: 0, pathColor: text.length < MAX_LENGTH - 20 ? '#1D9BF0' : text.length < MAX_LENGTH ? '#FDD71F' : '#F4212E', trailColor: '#EFF3F4', textColor: text.length < MAX_LENGTH ? '#536471' : '#F4212E', textSize: '40px' })}
-                  />
-                </div>
-              )}
-            </div>
-            <Button onClick={tweet} style="primary" disabled={!text || text.length > MAX_LENGTH}>
-              Tweet
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  ) : null
-}
-*/
 const MAX_LENGTH = 280
 
 const TweetComposer: React.FC = () => {
@@ -154,7 +84,7 @@ const TweetComposer: React.FC = () => {
       <div className="right-col">
         <div className="text-input-wrapper">
           {!text && <div className="text-input-placeholder">What is happening?!</div>}
-          <div className="text-input" contentEditable={true} onInput={handleTextChange} />
+          <div className="text-input" contentEditable={true} onInput={handleTextChange} ref={textInput} />
         </div>
         {files.length > 0 && (
           <div className={`photo-previews ${files.length > 1 ? `layout-${files.length}` : ''}`}>
@@ -182,7 +112,7 @@ const TweetComposer: React.FC = () => {
                 )}
               </div>
             </div>
-            <Button style="primary" onClick={tweet} disabled={!text || text.length > MAX_LENGTH}>
+            <Button style="primary" onClick={tweet} disabled={(!text || text.length > MAX_LENGTH) && !files.length}>
               Tweet
             </Button>
           </div>

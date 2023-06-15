@@ -72,10 +72,19 @@ export const createTweet = async (content: string[], media: File[], userId: stri
     if ((!content.length && !media.length) || !userId) return
     const tweetId = createId()
     const tweetRef = doc(db, 'tweets', tweetId)
+
+    const mediaURLs = []
+    if (media.length) {
+      for (let i = 0; i < media.length; i++) {
+        const url = await uploadImage(media[i], `/tweets/${tweetId}/photo_${i}`)
+        mediaURLs.push(url)
+      }
+    }
+
     setDoc(tweetRef, {
       id: tweetId,
       content: content,
-      media: media,
+      media: mediaURLs,
       userId: userId,
       timestamp: Date.now(),
       likesCount: 0,
@@ -220,10 +229,10 @@ export const toggleRetweetTweet = async (tweetId: string, userId: string, retwee
   }
 }
 
-export const uploadImage = async (file: File, path: string, userId: string) => {
+export const uploadImage = async (file: File, path: string) => {
   try {
-    if (!file || !path || !userId) return
-    const completePath = `${path}/${userId}.${file.name.split('.').pop()}`
+    if (!file || !path) return
+    const completePath = `${path}.${file.name.split('.').pop()}`
     const imageRef = ref(storage, completePath)
     await uploadBytes(imageRef, file)
     const url = await getDownloadURL(imageRef)
