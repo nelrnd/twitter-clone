@@ -1,4 +1,4 @@
-import { ChangeEvent, forwardRef, useContext, useRef, useState } from 'react'
+import { ChangeEvent, forwardRef, useContext, useEffect, useRef, useState } from 'react'
 import { UserContext } from '../../contexts/UserContext'
 import { Link } from 'react-router-dom'
 import { createTweet } from '../../firebase'
@@ -11,7 +11,8 @@ import './TweetComposer.sass'
 
 import MediaIcon from '../../assets/media.svg'
 import IconButton from '../Buttons/IconButton'
-import CloseIcon from '../../assets/close.svg'
+import CloseIcon from '../../assets/close.svg' 
+import Alert from '../Alert/Alert'
 /*
 const MAX_LENGTH = 280
 
@@ -91,12 +92,33 @@ const TweetComposer: React.FC = () => {
   const [files, setFiles] = useState<File[]>([])
   const textInput = useRef<HTMLDivElement>(null)
   const mediaInput = useRef<HTMLInputElement>(null)
+  const [error, setError] = useState({text: ''})
+
+  useEffect(() => {
+    let timeoutId: number | null = null
+    if (error) {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+      timeoutId = window.setTimeout(() => setError({ text: '' }), 4000)
+    }
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [error])
 
   const handleTextChange = (e: ChangeEvent<HTMLDivElement>) => setText(e.target.textContent || '')
+
   const handleMediaChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newFiles = e.target.files
     if (newFiles && newFiles.length) {
-      setFiles([...files, ...newFiles])
+      if ([...newFiles, ...files].length > 4) {
+        setError({text: 'Please choose up to 4 photos.'})
+      } else {
+        setFiles([...files, ...newFiles])
+      }
     }
     if (mediaInput.current) {
       mediaInput.current.files = null
@@ -143,7 +165,7 @@ const TweetComposer: React.FC = () => {
         )}
         <div className="bottom-bar">
           <div className="left-part">
-            <MediaInput ref={mediaInput} onChange={handleMediaChange} />
+            <MediaInput ref={mediaInput} onChange={handleMediaChange} disabled={files.length >= 4} multiple={files.length < 3} />
           </div>
           <div className="right-part">
             <div className="progress-bar-wrapper">
@@ -166,19 +188,23 @@ const TweetComposer: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Alert text={error.text} />
     </div>
   ) : null
 }
 
 type MediaInputProps = {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void
+  disabled: boolean
+  multiple: boolean
 }
 
-const MediaInput = forwardRef<HTMLInputElement, MediaInputProps>(({onChange}, ref) => {
+const MediaInput = forwardRef<HTMLInputElement, MediaInputProps>(({onChange, disabled, multiple}, ref) => {
   return (
-    <label htmlFor="media" className='MediaInput'>
+    <label htmlFor="media" className={`MediaInput ${disabled ? 'disabled' : ''}`}>
       <MediaIcon />
-      <input type="file" id="media" accept="image/*" multiple style={{ display: 'none' }} ref={ref} onChange={onChange} />
+      <input type="file" id="media" accept="image/*" multiple={multiple} style={{ display: 'none' }} ref={ref} onChange={onChange} disabled={disabled} />
     </label>
   )
 })
