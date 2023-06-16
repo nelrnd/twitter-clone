@@ -1,0 +1,98 @@
+@use '../../App'
+
+@mixin action-item($color: black)
+  color: App.$dark-70
+  font-size: 13px
+  display: flex
+  align-items: center
+  gap: 4px
+  &:hover
+    color: $color
+    svg
+      background-color: rgba($color, 10%)
+  &.active
+    color: $color
+  svg
+    width: 18px
+    height: 18px
+    padding: 8px
+    border-radius: 1000px
+    box-sizing: content-box
+
+.TweetCard
+  @include App.tweet-layout
+  position: relative
+  background-color: white
+  cursor: pointer
+  transition: all 0.2s ease-in-out
+
+  &:hover
+    background-color: App.$ghost
+
+  .left-col
+    position: relative
+    z-index: 1
+
+  header
+    width: fit-content
+    margin-bottom: 4px
+    position: relative
+    z-index: 1
+    display: flex
+    align-items: baseline
+    gap: 4px
+
+  main
+    width: 100%
+    line-height: 135%
+    margin-bottom: 4px
+    overflow-wrap: break-word
+    word-wrap: break-word
+
+  main p
+    pointer-events: none
+
+  .photo-previews
+    @include App.photo-previews-layout
+    margin-top: 12px
+    position: relative
+    z-index: 1
+
+  .StatsActionsBar
+    list-style-type: none
+    display: flex
+    justify-content: center
+    align-items: center
+    gap: 64px
+
+    li
+      position: relative
+      z-index: 1
+
+    li.like
+      @include action-item(App.$red)
+
+    li.retweet
+      @include action-item(App.$green)
+
+    li.reply
+      @include action-item(App.$blue)
+
+  .background
+    position: absolute
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    z-index: 0
+
+.RetweetBar
+  color: App.$dark-70
+  font-size: 14px
+  font-weight: 500
+  display: contents
+
+  svg
+    width: 16px
+    height: 16px
+    margin-left: auto

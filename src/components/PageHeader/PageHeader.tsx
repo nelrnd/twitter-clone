@@ -17,8 +17,8 @@ import './PageHeader.sass'
 
 type PageHeaderProps = {
   children: string | JSX.Element | JSX.Element[]
-  goBack: boolean
-  onClick: () => void
+  goBack?: boolean
+  onClick?: () => void
 }
 
 const PageHeader:React.FC<PageHeaderProps> = ({children, goBack, onClick}) => {

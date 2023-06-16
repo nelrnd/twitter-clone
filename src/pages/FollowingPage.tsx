@@ -4,8 +4,6 @@ import { CollectionReference, collection, limit, query, where } from 'firebase/f
 import { useNavigate, useParams } from 'react-router-dom'
 import { User } from '../types'
 import PageHeader from '../components/PageHeader/PageHeader'
-import IconButton from '../components/Buttons/IconButton'
-import BackIcon from '../assets/back.svg'
 import Tabs from '../components/Tabs/Tabs'
 import ProfileItem from '../components/ProfileItem/ProfileItem'
 import LayoutWithSidebar from '../components/LayoutWithSidebar/LayoutWithSidebar'

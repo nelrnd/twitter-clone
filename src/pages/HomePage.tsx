@@ -19,9 +19,7 @@ const HomePage: React.FC<HomePageProps> = ({ children }) => {
       <LayoutWithSidebar>
         <main className="home">
           <PageHeader>
-            <div className="bar">
-              <h2 className="heading">Home</h2>
-            </div>
+            <h2 className="heading">Home</h2>
           </PageHeader>
 
           <TweetComposer />
