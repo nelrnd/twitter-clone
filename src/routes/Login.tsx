@@ -29,7 +29,7 @@ type EnterPasswordProps = {
 
 const STAGES = ['ENTER_EMAIL', 'ENTER_PASSWORD']
 
-const LoginPage: React.FC = () => {
+const Login: React.FC = () => {
   const [currentStage, setStage] = useState(STAGES[0])
   const [user, loading] = useAuthState(auth)
   const [email, setEmail] = useState('')
@@ -59,8 +59,8 @@ const LoginPage: React.FC = () => {
       ) : (
         <>
           <TwitterIcon />
-          {currentStage === 'ENTER_EMAIL' && <LoginPage_EnterEmail email={email} setEmail={setEmail} setStage={setStage} setError={setError} />}
-          {currentStage === 'ENTER_PASSWORD' && <LoginPage_EnterPassword email={email} setStage={setStage} setError={setError} />}
+          {currentStage === 'ENTER_EMAIL' && <Login_EnterEmail email={email} setEmail={setEmail} setStage={setStage} setError={setError} />}
+          {currentStage === 'ENTER_PASSWORD' && <Login_EnterPassword email={email} setStage={setStage} setError={setError} />}
           <p className="bottom-text">
             Don't have an account?{' '}
             <Link to="/signup" className="link">
@@ -74,7 +74,7 @@ const LoginPage: React.FC = () => {
   )
 }
 
-const LoginPage_EnterEmail: React.FC<EnterEmailProps> = ({ email, setEmail, setStage, setError }) => {
+const Login_EnterEmail: React.FC<EnterEmailProps> = ({ email, setEmail, setStage, setError }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const accountExists = await checkIfEmailExists(email)
@@ -101,7 +101,7 @@ const LoginPage_EnterEmail: React.FC<EnterEmailProps> = ({ email, setEmail, setS
   )
 }
 
-const LoginPage_EnterPassword: React.FC<EnterPasswordProps> = ({ email, setStage, setError }) => {
+const Login_EnterPassword: React.FC<EnterPasswordProps> = ({ email, setStage, setError }) => {
   const [password, setPassword] = useState('')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -134,4 +134,4 @@ const LoginPage_EnterPassword: React.FC<EnterPasswordProps> = ({ email, setStage
   )
 }
 
-export default LoginPage
+export default Login

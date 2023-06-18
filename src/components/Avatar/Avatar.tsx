@@ -3,13 +3,14 @@ import './Avatar.sass'
 
 type AvatarProps = {
   src?: string | null
-  size?: number
+  size: number
   onClick?: () => unknown
+  blank?: boolean
 }
 
-const Avatar: React.FC<AvatarProps> = ({ src, size = 48, onClick }) => (
+const Avatar: React.FC<AvatarProps> = ({ src, size, onClick, blank }) => (
   <div className={`Avatar ${size}`} onClick={onClick} style={{ width: size + 'px', height: size + 'px' }}>
-    <img src={src || defaultProfile} referrerPolicy="no-referrer" alt="avatar" />
+    {!blank && <img src={src || defaultProfile} referrerPolicy="no-referrer" alt="avatar" />}
   </div>
 )
 

@@ -1,23 +1,27 @@
 import IconButton from '../Buttons/IconButton'
 import CloseIcon from '../../assets/close.svg'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { useUserDataWithUsername } from '../../hooks/useUserData'
-import Loader from '../Loader/Loader'
+import { Navigate, useLocation, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import Avatar from '../Avatar/Avatar'
 import './PhotoModal.sass'
+import { User } from '../../types'
 
 const PhotoModal: React.FC = () => {
+  const [user]: [user: User] = useOutletContext()
   const { username } = useParams<'username'>()
   const location = useLocation()
-  const photoType = location.pathname.split('/').pop()
   const navigate = useNavigate()
+  const photoType: string | undefined = location.pathname.split('/').pop()
 
-  const [user, loading] = useUserDataWithUsername(username)
+  const goBack = () => {
+    if (location.state?.backgroundLocation) {
+      navigate(location.state.backgroundLocation.pathname)
+    } else {
+      navigate('/home')
+    }
+  }
 
-  const goBack = () => navigate(`/${username}`)
-
-  if (!loading && !user) {
-    goBack()
+  if (!user) {
+    return <Navigate to={'/' + username} />
   }
 
   return (
@@ -26,11 +30,10 @@ const PhotoModal: React.FC = () => {
         <CloseIcon />
       </IconButton>
 
-      {loading && <Loader />}
+      { photoType === 'photo' && <Avatar src={user.profileURL} size={400} /> }
+      { photoType === 'header_photo' && <img src={user.headerURL || ''} /> }
 
-      {user && (photoType === 'photo' ? <Avatar src={user.profileURL} size={400} /> : <img src={user.headerURL || ''} />)}
-
-      <div className="PhotoModal_backdrop" onClick={goBack} />
+      <div className="backdrop" onClick={goBack}/>
     </div>
   )
 }

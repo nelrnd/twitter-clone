@@ -1,13 +1,13 @@
 import { useContext } from 'react'
-import { useUserDataWithId } from '../../hooks/useUserData'
-import { Tweet } from '../../types'
-import Loader from '../Loader/Loader'
+import { Tweet, User } from '../../types'
 import PhotoPreview from '../PhotoPreview/PhotoPreview'
 import ProfileInfo from '../ProfileInfo/ProfileInfo'
 import { UserContext } from '../../contexts/UserContext'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { doc } from 'firebase/firestore'
 import { db, toggleLikeTweet, toggleRetweetTweet } from '../../firebase'
+import { getLongTime } from '../../utils'
+import { Link, useLocation } from 'react-router-dom'
 import './TweetMain.sass'
 
 // Icons
@@ -15,18 +15,18 @@ import LikeIcon from '../../assets/heart.svg'
 import LikeFilledIcon from '../../assets/heart-filled.svg'
 import RetweetIcon from '../../assets/retweet.svg'
 import ReplyIcon from '../../assets/comment.svg'
-import { getLongTime } from '../../utils'
 
 type TweetProps = {
   tweet: Tweet
+  user: User
 }
 
-const TweetMain: React.FC<TweetProps> = ({ tweet }) => {
-  const [user, loading] = useUserDataWithId(tweet.userId)
+type BarProps = {
+  tweet: Tweet
+}
 
-  if (loading) return <Loader />
-
-  return user ? (
+const TweetMain: React.FC<TweetProps> = ({ tweet, user }) => {
+  return (
     <article className="TweetMain">
       <ProfileInfo user={user} />
 
@@ -51,29 +51,35 @@ const TweetMain: React.FC<TweetProps> = ({ tweet }) => {
 
       <ActionsBar tweet={tweet} />
     </article>
-  ) : null
+  )
 }
 
-const DateBar: React.FC<TweetProps> = ({tweet}) => (
+const DateBar: React.FC<BarProps> = ({tweet}) => (
   <div className="DateBar small grey">{getLongTime(tweet.timestamp)}</div>
 )
 
-const StatsBar: React.FC<TweetProps> = ({ tweet }) => {
+const StatsBar: React.FC<BarProps> = ({ tweet }) => {
   const { likesCount, retweetsCount, repliesCount } = tweet
+  const location = useLocation()
+
   return (
     <ul className="StatsBar small">
       {likesCount > 0 && (
         <li>
-          <strong>{likesCount}</strong>
-          {' '}
-          <span className="grey">{likesCount > 1 ? 'Likes' : 'Like'}</span>
+          <Link to="likes" state={{backgroundLocation: location}}>
+            <strong>{likesCount}</strong>
+            {' '}
+            <span className="grey">{likesCount > 1 ? 'Likes' : 'Like'}</span>
+          </Link>
         </li>
       )}
       {retweetsCount > 0 && (
         <li>
-          <strong>{retweetsCount}</strong>
-          {' '}
-          <span className="grey">{retweetsCount > 1 ? 'Retweets' : 'Retweet'}</span>
+          <Link to="retweets" state={{backgroundLocation: location}}>
+            <strong>{retweetsCount}</strong>
+            {' '}
+            <span className="grey">{retweetsCount > 1 ? 'Retweets' : 'Retweet'}</span>
+          </Link>
         </li>
       )}
       {repliesCount > 0 && (
@@ -87,7 +93,7 @@ const StatsBar: React.FC<TweetProps> = ({ tweet }) => {
   )
 }
 
-const ActionsBar: React.FC<TweetProps> = ({ tweet }) => {
+const ActionsBar: React.FC<BarProps> = ({ tweet }) => {
   const user = useContext(UserContext)
 
   const [liked] = useDocumentData(doc(db, 'tweets', tweet.id, 'likes', user?.id || '_'))

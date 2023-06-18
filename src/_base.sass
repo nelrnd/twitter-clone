@@ -1,0 +1,28 @@
+$ghost: #F7F7F7
+$dark-10: #EFF3F4
+$dark-30: #CFD9DE
+
+@mixin tweet-layout
+  width: 100%
+  padding: 12px 16px
+  display: grid
+  grid-template-columns: auto 1fr
+  align-items: start
+  gap: 12px
+  .right-col
+    overflow: hidden
+
+@mixin full-absolute
+  position: absolute
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+
+.heading-1
+  font-size: 32px
+  margin-bottom: 8px
+
+.heading-2
+  font-size: 20px
+  margin-bottom: 4px

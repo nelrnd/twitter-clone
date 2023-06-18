@@ -12,7 +12,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({user}) => {
   return (
     <div className="ProfileInfo">
       <Link to={link}>
-        <Avatar src={user.profileURL} />
+        <Avatar src={user.profileURL} size={40} />
       </Link>
       <div className="names">
         <Link to={link}>

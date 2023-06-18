@@ -1,19 +1,23 @@
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import Sidebar from '../Sidebar/Sidebar'
 import './Layout.sass'
+import { useContext } from 'react'
+import { UserContext } from '../../contexts/UserContext'
 
-type LayoutProps = {
-  children: string | JSX.Element | JSX.Element[]
-}
+const Layout: React.FC = () => {
+  const user = useContext(UserContext)
+  const location = useLocation()
 
-const Layout: React.FC<LayoutProps> = ({children}) => {
-  return (
+  if (location.pathname === '/') return <Navigate to="/home" replace={true} />
+
+  return user ? (
     <div className="Layout">
       <Sidebar />
       <div className="right-part">
-        {children}
+        <Outlet />
       </div>
     </div>
-  )
+  ) : <Outlet />
 }
 
 export default Layout

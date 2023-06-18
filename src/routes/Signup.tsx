@@ -36,7 +36,7 @@ type PickPasswordProps = {
   name: string
 }
 
-const SignupPage: React.FC = () => {
+const Signup: React.FC = () => {
   const [currentStage, setStage] = useState(STAGES[0])
   const [user] = useAuthState(auth)
   const [userData, dataLoading] = useUserDataWithId(user?.uid || '_')
@@ -64,15 +64,15 @@ const SignupPage: React.FC = () => {
 
   return (
     <JoinLayout paddingSize={currentStage === 'JOIN' ? 'large' : 'small'}>
-      {currentStage === 'JOIN' && <SignupPage_Join setStage={setStage} />}
-      {currentStage === 'CREATE_ACCOUNT' && <SignupPage_CreateAccount setStage={setStage} name={name} setName={setName} email={email} setEmail={setEmail} />}
-      {currentStage === 'PICK_PASSWORD' && <SignupPage_PickPassword setStage={setStage} password={password} setPassword={setPassword} email={email} name={name} />}
-      {currentStage === 'PICK_USERNAME' && <SignupPage_PickUsername />}
+      {currentStage === 'JOIN' && <Signup_Join setStage={setStage} />}
+      {currentStage === 'CREATE_ACCOUNT' && <Signup_CreateAccount setStage={setStage} name={name} setName={setName} email={email} setEmail={setEmail} />}
+      {currentStage === 'PICK_PASSWORD' && <Signup_PickPassword setStage={setStage} password={password} setPassword={setPassword} email={email} name={name} />}
+      {currentStage === 'PICK_USERNAME' && <Signup_PickUsername />}
     </JoinLayout>
   )
 }
 
-const SignupPage_Join: React.FC<StageProps> = ({ setStage }) => {
+const Signup_Join: React.FC<StageProps> = ({ setStage }) => {
   return (
     <>
       <TwitterIcon />
@@ -93,14 +93,14 @@ const SignupPage_Join: React.FC<StageProps> = ({ setStage }) => {
   )
 }
 
-const SignupPage_CreateAccount: React.FC<CreateAccountProps> = ({ setStage, name, setName, email, setEmail }) => {
+const Signup_CreateAccount: React.FC<CreateAccountProps> = ({ setStage, name, setName, email, setEmail }) => {
   const [canNext, setCanNext] = useState(false)
   const [emailError, setEmailError] = useState('')
   const [checkAgain, setCheckAgain] = useState<number>(0)
   const emailValidationTimeout = useRef<number | null>(null)
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       setEmailError('')
       if (emailValidationTimeout.current) {
         clearTimeout(emailValidationTimeout.current)
@@ -162,7 +162,7 @@ const SignupPage_CreateAccount: React.FC<CreateAccountProps> = ({ setStage, name
   )
 }
 
-const SignupPage_PickPassword: React.FC<PickPasswordProps> = ({ setStage, password, setPassword, email, name }) => {
+const Signup_PickPassword: React.FC<PickPasswordProps> = ({ setStage, password, setPassword, email, name }) => {
   const [passwordError, setPasswordError] = useState('')
   const timeoutId = useRef<number | null>(null)
 
@@ -215,7 +215,7 @@ const SignupPage_PickPassword: React.FC<PickPasswordProps> = ({ setStage, passwo
   )
 }
 
-const SignupPage_PickUsername: React.FC = () => {
+const Signup_PickUsername: React.FC = () => {
   const [username, setUsername] = useState('')
   const [error, setError] = useState('')
   const [canNext, setCanNext] = useState(false)
@@ -224,7 +224,7 @@ const SignupPage_PickUsername: React.FC = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       setError('')
       if (timeoutId.current) {
         clearTimeout(timeoutId.current)
@@ -287,4 +287,4 @@ const SignupPage_PickUsername: React.FC = () => {
   )
 }
 
-export default SignupPage
+export default Signup

@@ -1,4 +1,4 @@
-@use '../../App'
+@use '../../base'
 
 .Modal_wrapper
   position: fixed
@@ -7,87 +7,57 @@
   right: 0
   bottom: 0
   left: 0
-  display: grid
-  place-content: center
+  display: flex
+  justify-content: center
+  align-items: center
 
 .Modal_backdrop
-  position: absolute
+  @include base.full-absolute
   z-index: -1
-  top: 0
-  right: 0
-  bottom: 0
-  left: 0
   background-color: rgba(0, 0, 0, 0.4)
 
 .Modal
   background-color: white
   border-radius: 16px
   position: relative
-  max-height: 650px
   overflow-y: auto
+  max-width: 100%
+  max-height: 100%
 
-  .IconButton.close
+.Modal.EditProfile
+  .Banner_wrapper
+    width: 100%
+    aspect-ratio: 3 / 1
     position: absolute
-    top: 8px
-    left: 8px
+    z-index: 0
 
-  .top-bar
-    height: 52px
-    padding: 16px
-    padding-left: 70px
-    display: flex
-    justify-content: space-between
-    align-items: center
+    .bar
+      position: absolute
+      top: 50%
+      left: 50%
+      transform: translate(-50%, -50%)
+      z-index: 1
+      display: flex
+      gap: 20px
 
-    .heading
-      margin-bottom: 0
-
-  .TextInput,
-  .TextAreaInput
-    margin: 0 16px 24px
-    width: initial
-
-  .Avatar-wrapper
+  .Avatar_wrapper
+    width: fit-content
     margin-top: 150px
-    margin-bottom: 16px
-    margin-left: 16px
     position: relative
+    left: 16px
     z-index: 1
-    display: grid
-    place-content: center
-    width: 116px
-    height: 116px
+
+    label
+      position: absolute
+      top: 50%
+      left: 50%
+      transform: translate(-50%, -50%)
 
   .Avatar
-    border: solid 4px white
-    box-shadow: none
-    position: absolute
-    z-index: -1
+    outline: solid 4px white
 
-  .banner-wrapper
-    height: 195px
-    width: 100%
-    position: absolute
-    display: grid
-    place-content: center
-
-    .row
-      z-index: 1
-
-  .banner
-    height: 195px
-    width: 100%
-    position: absolute
-    background-color: #B2B2B2
-    background-size: cover
-    background-position: center
-
-  label
-    cursor: pointer
-    width: fit-content
-
-  label button
-    pointer-events: none
-
-  label:hover button
-    background-color: rgba(App.$dark-70, 50%)
+  .text-inputs
+    padding: 16px
+    display: flex
+    flex-direction: column
+    gap: 24px

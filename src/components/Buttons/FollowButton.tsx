@@ -4,15 +4,18 @@ import './Buttons.sass'
 
 interface FollowButtonProps {
   userId: string
-  currentUserId: string | undefined
+  authUserId: string | undefined
   followed: boolean
   size?: string
 }
 
-function FollowButton({ userId, currentUserId, followed, size = 'medium' }: FollowButtonProps) {
+function FollowButton({ userId, authUserId, followed, size = 'medium' }: FollowButtonProps) {
   const [text, setText] = useState(followed ? 'Following' : 'Follow')
 
-  const handleClick = () => toggleFollowAccount(userId, currentUserId, followed)
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    toggleFollowAccount(userId, authUserId, followed)
+  }
 
   useEffect(() => {
     setText(followed ? 'Following' : 'Follow')

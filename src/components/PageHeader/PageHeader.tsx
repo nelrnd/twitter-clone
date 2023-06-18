@@ -17,14 +17,13 @@ import './PageHeader.sass'
 
 type PageHeaderProps = {
   children: string | JSX.Element | JSX.Element[]
-  goBack?: boolean
   onClick?: () => void
 }
 
-const PageHeader:React.FC<PageHeaderProps> = ({children, goBack, onClick}) => {
+const PageHeader: React.FC<PageHeaderProps> = ({children, onClick}) => {
   return (
     <header className="PageHeader">
-      {goBack && (
+      {onClick && (
         <IconButton onClick={onClick}>
           <GoBackIcon />
         </IconButton>

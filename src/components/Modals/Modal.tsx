@@ -1,31 +1,20 @@
-import IconButton from '../Buttons/IconButton'
-import CloseIcon from '../../assets/close.svg'
 import './Modal.sass'
 
 type ModalProps = {
-  children: JSX.Element | JSX.Element[]
-  show: boolean
-  setShow: (show: boolean) => void
-  showCloseBtn: boolean
+  children: string | JSX.Element | (JSX.Element|boolean)[]
+  onClick: () => void
   width: number
+  height: number
+  className?: string
 }
 
-const Modal: React.FC<ModalProps> = ({ children, show, setShow, showCloseBtn, width }) => {
-  const close = () => setShow(false)
-
-  if (!show) return null
-
+const Modal: React.FC<ModalProps> = ({children, onClick, width, height, className}) => {
   return (
     <div className="Modal_wrapper">
-      <div className="Modal" style={{ width: width + 'px' }}>
-        {showCloseBtn && (
-          <IconButton onClick={close} type="close">
-            <CloseIcon />
-          </IconButton>
-        )}
+      <div className={`Modal ${className || ''}`} style={{width: width + 'px', height: height + 'px'}}>
         {children}
       </div>
-      <div className="Modal_backdrop" onClick={close} />
+      <div className="Modal_backdrop" onClick={onClick}/>
     </div>
   )
 }

@@ -81,7 +81,7 @@ const TweetComposer: React.FC = () => {
     <div className="TweetComposer">
       <div className="left-col">
         <Link to={'/' + user.username}>
-          <Avatar src={user.profileURL} />
+          <Avatar src={user.profileURL} size={40} />
         </Link>
       </div>
       <div className="right-col">

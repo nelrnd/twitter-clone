@@ -14,7 +14,7 @@ type TabsProps = {
 const Tabs: React.FC<TabsProps> = ({tabs}) => (
   <div className="Tabs">
     {tabs.map((tab) => (
-      <Link to={tab.link} className={`tab ${tab.active ? 'active' : ''}`}>
+      <Link key={tab.text} to={tab.link} className={`tab ${tab.active ? 'active' : ''}`}>
         <div className="text">{tab.text}</div>
       </Link>
     ))}
