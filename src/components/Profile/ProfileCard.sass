@@ -1,0 +1,19 @@
+@use '../../base'
+
+.ProfileCard
+  @include base.tweet-layout
+  cursor: pointer
+  transition: all 0.2s ease-in-out
+
+  &:hover
+    background-color: base.$ghost
+
+  header
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+  .bio
+    margin-top: 6px
+    white-space: pre-wrap
+    line-height: 135%
