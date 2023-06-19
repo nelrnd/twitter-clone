@@ -22,4 +22,5 @@ export type Tweet = {
   likesCount: number
   retweetsCount: number
   repliesCount: number
+  inReplyTo: {tweetId: string, userId: string} | null
 }

@@ -26,6 +26,19 @@
   cursor: pointer
   transition: all 0.2s ease-in-out
 
+  &.isReply
+    align-items: stretch
+    border-bottom: none
+    .left-col::after
+      content: ''
+      display: block
+      width: 2px
+      background-color: App.$dark-30
+      position: absolute
+      top: 44px
+      bottom: -16px
+      left: 50%
+
   &:hover
     background-color: App.$ghost
 
@@ -96,3 +109,11 @@
     width: 16px
     height: 16px
     margin-left: auto
+
+.ReplyingTo
+  position: relative
+  z-index: 1
+  margin-bottom: 4px
+
+.TweetIndex .ReplyingTo
+  display: none

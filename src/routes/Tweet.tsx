@@ -8,7 +8,7 @@ const Tweet: React.FC = () => {
   const { tweetId } = useParams<'tweetId'>()
   const [tweet, loading] = useTweetData(tweetId)
 
-  if (loading) return <Loader />
+  if (loading) return <main><Loader /></main>
 
   return <Outlet context={[tweet, user]} />
 }

@@ -1,6 +1,6 @@
 import { ChangeEvent, forwardRef, useContext, useEffect, useRef, useState } from 'react'
 import { UserContext } from '../../contexts/UserContext'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { createTweet } from '../../firebase'
 import { getTextFromHTML } from '../../utils'
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
@@ -22,6 +22,13 @@ type TweetComposerProps = {
 
 const TweetComposer: React.FC<TweetComposerProps> = ({onTweet}) => {
   const user = useContext(UserContext)
+  const location = useLocation()
+  const state = location.state
+
+  const inReplyTo = state?.tweet && state?.user ? {
+    tweetId: state.tweet.id,
+    userId: state.user.id
+  } : null
 
   const [text, setText] = useState('')
   const [files, setFiles] = useState<File[]>([])
@@ -31,7 +38,7 @@ const TweetComposer: React.FC<TweetComposerProps> = ({onTweet}) => {
 
   useEffect(() => {
     let timeoutId: number | null = null
-    if (error) {
+    if (error.text) {
       if (timeoutId) {
         clearTimeout(timeoutId)
       }
@@ -74,7 +81,7 @@ const TweetComposer: React.FC<TweetComposerProps> = ({onTweet}) => {
     setFiles([])
     if (textInput.current) textInput.current.innerHTML = ''
     if (mediaInput.current) mediaInput.current.value = ''
-    createTweet(formattedText, filesCopy, user?.id)
+    createTweet(formattedText, filesCopy, user?.id, inReplyTo)
     if (onTweet) {
       onTweet()
     }

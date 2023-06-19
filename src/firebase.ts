@@ -67,7 +67,7 @@ export const updateUserInfo = async (updatedInfo: { name?: string; bio?: string;
   }
 }
 
-export const createTweet = async (content: string[], media: File[], userId: string) => {
+export const createTweet = async (content: string[], media: File[], userId: string, inReplyTo?: {tweetId: string, userId: string} | null) => {
   try {
     if ((!content.length && !media.length) || !userId) return
     const tweetId = createId()
@@ -80,7 +80,6 @@ export const createTweet = async (content: string[], media: File[], userId: stri
         mediaURLs.push(url)
       }
     }
-
     setDoc(tweetRef, {
       id: tweetId,
       content: content,
@@ -90,7 +89,19 @@ export const createTweet = async (content: string[], media: File[], userId: stri
       likesCount: 0,
       retweetsCount: 0,
       repliesCount: 0,
+      inReplyTo: inReplyTo || null
     })
+    if (inReplyTo) {
+      const originalTweetRef = doc(db, 'tweets', inReplyTo.tweetId)
+      const replyRef = doc(db, 'tweets', inReplyTo.tweetId, 'replies', tweetId)
+      updateDoc(originalTweetRef, {
+        repliesCount: increment(1)
+      })
+      setDoc(replyRef, {
+        id: tweetId,
+        timestamp: Date.now()
+      })
+    }
     createRefInFeed(tweetId, userId, 'tweet')
     updateUserCount(userId, 'tweetsCount', 1)
   } catch (err) {

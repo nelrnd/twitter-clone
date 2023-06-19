@@ -7,7 +7,7 @@ import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { doc } from 'firebase/firestore'
 import { db, toggleLikeTweet, toggleRetweetTweet } from '../../firebase'
 import { getLongTime } from '../../utils'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import './TweetMain.sass'
 
 // Icons
@@ -23,6 +23,7 @@ type TweetProps = {
 
 type BarProps = {
   tweet: Tweet
+  user?: User
 }
 
 const TweetMain: React.FC<TweetProps> = ({ tweet, user }) => {
@@ -49,7 +50,7 @@ const TweetMain: React.FC<TweetProps> = ({ tweet, user }) => {
         <StatsBar tweet={tweet} />
       ) : null}
 
-      <ActionsBar tweet={tweet} />
+      <ActionsBar tweet={tweet} user={user} />
     </article>
   )
 }
@@ -93,15 +94,17 @@ const StatsBar: React.FC<BarProps> = ({ tweet }) => {
   )
 }
 
-const ActionsBar: React.FC<BarProps> = ({ tweet }) => {
-  const user = useContext(UserContext)
+const ActionsBar: React.FC<BarProps> = ({ tweet, user }) => {
+  const authUser = useContext(UserContext)
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const [liked] = useDocumentData(doc(db, 'tweets', tweet.id, 'likes', user?.id || '_'))
-  const [retweeted] = useDocumentData(doc(db, 'tweets', tweet.id, 'retweets', user?.id || '_'))
+  const [liked] = useDocumentData(doc(db, 'tweets', tweet.id, 'likes', authUser?.id || '_'))
+  const [retweeted] = useDocumentData(doc(db, 'tweets', tweet.id, 'retweets', authUser?.id || '_'))
 
-  const like = () => toggleLikeTweet(tweet.id, user?.id, !!liked)
-  const retweet = () => toggleRetweetTweet(tweet.id, user?.id, !!retweeted)
-  const reply = () => console.log('reply')
+  const like = () => toggleLikeTweet(tweet.id, authUser?.id, !!liked)
+  const retweet = () => toggleRetweetTweet(tweet.id, authUser?.id, !!retweeted)
+  const reply = () => navigate('/compose/tweet', {state: {backgroundLocation: location, tweet: tweet, user: user}})
 
   return (
     <ul className="ActionsBar">

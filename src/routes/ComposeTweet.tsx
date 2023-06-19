@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import Modal from "../components/Modals/Modal"
 import TweetComposer from "../components/TweetComposer/TweetComposer"
 import ModalHeader from "../components/Modals/ModalHeader"
+import ReplyTweet from "../components/Tweet/ReplyTweet"
 
 const ComposeTweet: React.FC = () => {
   const navigate = useNavigate()
@@ -18,6 +19,7 @@ const ComposeTweet: React.FC = () => {
   return (
     <Modal width={600} onClick={goBack} className="ComposeTweet">
       <ModalHeader onClick={goBack} />
+      <ReplyTweet />
       <TweetComposer onTweet={goBack} />
     </Modal>
   )
