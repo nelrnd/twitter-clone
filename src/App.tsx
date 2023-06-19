@@ -19,6 +19,7 @@ import Likes from './routes/Likes'
 import Retweets from './routes/Retweets'
 import EditProfile from './routes/EditProfile'
 import PhotoModal from './components/Modals/PhotoModal'
+import ComposeTweet from './routes/ComposeTweet'
 
 /*
 function App() {
@@ -104,6 +105,7 @@ const App: React.FC = () => {
               <Route path="retweets" element={<Home><Retweets /></Home>} />
             </Route>
           </Route>
+          <Route path="compose/tweet" element={<Home><ComposeTweet /></Home>} />
           <Route path="settings/profile" element={<Home><EditProfile /></Home>} />
         </Route>
       </Routes>
@@ -116,6 +118,7 @@ const App: React.FC = () => {
               <Route path="retweets" element={<Retweets />} />
             </Route>
           </Route>
+          <Route path="compose/tweet" element={<ComposeTweet />} />
           <Route path="settings/profile" element={<EditProfile />} />
         </Routes>
       )}

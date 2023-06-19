@@ -16,7 +16,7 @@ import GoBackIcon from '../../assets/back.svg'
 import './PageHeader.sass'
 
 type PageHeaderProps = {
-  children: string | JSX.Element | JSX.Element[]
+  children?: string | JSX.Element | JSX.Element[]
   onClick?: () => void
 }
 

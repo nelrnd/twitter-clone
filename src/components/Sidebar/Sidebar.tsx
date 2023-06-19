@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Button from '../Buttons/Button'
 import './Sidebar.sass'
 
@@ -21,6 +21,7 @@ import { auth } from '../../firebase'
 function Sidebar() {
   const [manageOpened, setManageOpened] = useState(false)
   const user = useContext(UserContext)
+  const navigate = useNavigate()
   const location = useLocation()
   const pathname = location.pathname
 
@@ -28,7 +29,7 @@ function Sidebar() {
   const closeManage = () => setManageOpened(false)
 
   const logout = () => signOut(auth)
-  const tweet = () => console.log('tweet')
+  const tweet = () => navigate('/compose/tweet', {state: {backgroundLocation: location}})
 
   const sidebarTabs = [
     {

@@ -3,7 +3,7 @@ import IconButton from '../Buttons/IconButton'
 import './ModalHeader.sass'
 
 type ModalHeaderProps = {
-  children: string | JSX.Element | JSX.Element[]
+  children?: string | JSX.Element | JSX.Element[]
   onClick?: () => void
 }
 

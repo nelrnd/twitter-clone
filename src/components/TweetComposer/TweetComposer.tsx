@@ -16,7 +16,11 @@ import PhotoPreview from '../PhotoPreview/PhotoPreview'
 
 const MAX_LENGTH = 280
 
-const TweetComposer: React.FC = () => {
+type TweetComposerProps = {
+  onTweet?: () => void
+}
+
+const TweetComposer: React.FC<TweetComposerProps> = ({onTweet}) => {
   const user = useContext(UserContext)
 
   const [text, setText] = useState('')
@@ -71,6 +75,9 @@ const TweetComposer: React.FC = () => {
     if (textInput.current) textInput.current.innerHTML = ''
     if (mediaInput.current) mediaInput.current.value = ''
     createTweet(formattedText, filesCopy, user?.id)
+    if (onTweet) {
+      onTweet()
+    }
   }
 
   const probar_dim = text.length < MAX_LENGTH - 20 ? 22 : 32
