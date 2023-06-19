@@ -95,8 +95,8 @@ const App: React.FC = () => {
           <Route path=":username" element={<Profile />}>
             <Route index element={<ProfileIndex />} />
             <Route path="likes" element={<ProfileLikes />} />
-            <Route path="photo" element={<PhotoModal />} />
-            <Route path="header_photo" element={<PhotoModal />} />
+            <Route path="photo" element={<Home><PhotoModal /></Home>} />
+            <Route path="header_photo" element={<Home><PhotoModal /></Home>} />
             <Route path="following" element={<Following />} />
             <Route path="followers" element={<Followers />} />
             <Route path="status/:tweetId" element={<Tweet />}>
@@ -113,6 +113,8 @@ const App: React.FC = () => {
       {state?.backgroundLocation && (
         <Routes>
           <Route path=":username" element={<Profile />}>
+            <Route path="photo" element={<PhotoModal />} />
+            <Route path="header_photo" element={<PhotoModal />} />
             <Route path="status/:tweetId" element={<Tweet />}>
               <Route path="likes" element={<Likes />} />
               <Route path="retweets" element={<Retweets />} />

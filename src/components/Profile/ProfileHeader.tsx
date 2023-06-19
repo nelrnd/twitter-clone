@@ -21,13 +21,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({user}) => {
   return (
     <header className="ProfileHeader">
       {user.headerURL ? (
-        <Link to="header_photo">
+        <Link to="header_photo" state={{backgroundLocation: location}}>
           <Banner src={user.headerURL} />
         </Link>
       ) : (
         <Banner src={user.headerURL} />
       )}
-      <Link to="photo">
+      <Link to="photo" state={{backgroundLocation: location}}>
         <Avatar src={user.profileURL} size={132} />
       </Link>
       <div className="content">
