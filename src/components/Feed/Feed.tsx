@@ -6,11 +6,13 @@ import './Feed.sass'
 import TweetCard from '../Tweet/TweetCard'
 
 type FeedProps = {
-  userIds: string[]
+  userIds: string[] | null
 }
 
 const Feed: React.FC<FeedProps> = ({userIds}) => {
-  const [feed, feedLoading] = useCollectionData(query(collection(db, 'feed'), where('userId', 'in', userIds), orderBy('timestamp', 'desc')))
+  const feedQuery = query(collection(db, 'feed'), userIds?.length ? where('userId', 'in', userIds) : where('timestamp', '>', 0), orderBy('timestamp', 'desc'))
+
+  const [feed, feedLoading] = useCollectionData(feedQuery)
 
   if (feedLoading) return <Loader />
 
