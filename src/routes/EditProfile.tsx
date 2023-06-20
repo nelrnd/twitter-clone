@@ -79,9 +79,11 @@ const EditProfile: React.FC = () => {
       <div className="Banner_wrapper">
         <div className="bar">
           <UploadButton setFile={setHeaderFile} />
-          <IconButton style="dark" onClick={removeHeader}>
-            <CloseIcon />
-          </IconButton>
+          {newHeaderURL && (
+            <IconButton style="dark" onClick={removeHeader}>
+              <CloseIcon />
+            </IconButton>
+          )}
         </div>
         <Banner src={newHeaderURL} />
       </div>
