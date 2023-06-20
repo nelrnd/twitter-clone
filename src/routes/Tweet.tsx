@@ -4,13 +4,13 @@ import Loader from "../components/Loader/Loader"
 import { User } from "../types"
 
 const Tweet: React.FC = () => {
-  const [user]: [user: User] = useOutletContext()
+  const {user}: {user: User} = useOutletContext()
   const { tweetId } = useParams<'tweetId'>()
   const [tweet, loading] = useTweetData(tweetId)
 
   if (loading) return <main><Loader /></main>
 
-  return <Outlet context={[tweet, user]} />
+  return <Outlet context={{tweet, user}} />
 }
 
 export default Tweet

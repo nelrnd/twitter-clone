@@ -101,6 +101,7 @@ const App: React.FC = () => {
             <Route path="followers" element={<Followers />} />
             <Route path="status/:tweetId" element={<Tweet />}>
               <Route index element={<TweetIndex />} />
+              <Route path="photo/:photoId" element={<Home><PhotoModal /></Home>} />
               <Route path="likes" element={<Home><Likes /></Home>} />
               <Route path="retweets" element={<Home><Retweets /></Home>} />
             </Route>
@@ -116,6 +117,7 @@ const App: React.FC = () => {
             <Route path="photo" element={<PhotoModal />} />
             <Route path="header_photo" element={<PhotoModal />} />
             <Route path="status/:tweetId" element={<Tweet />}>
+              <Route path="photo/:photoId" element={<PhotoModal />} />
               <Route path="likes" element={<Likes />} />
               <Route path="retweets" element={<Retweets />} />
             </Route>

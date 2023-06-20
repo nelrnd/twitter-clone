@@ -11,7 +11,7 @@ import { useEffect, useRef } from "react"
 import useTweetData from "../hooks/useTweetData"
 
 const TweetIndex: React.FC = () => {
-  const [tweet, user]: [tweet: Tweet, user: User] = useOutletContext()
+  const {tweet, user}: {tweet: Tweet, user: User} = useOutletContext()
   const navigate = useNavigate()
   const start = useRef<HTMLDivElement>(null)
 

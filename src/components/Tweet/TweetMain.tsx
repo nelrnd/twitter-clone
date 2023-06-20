@@ -27,6 +27,8 @@ type BarProps = {
 }
 
 const TweetMain: React.FC<TweetProps> = ({ tweet, user }) => {
+  const location = useLocation()
+  
   return (
     <article className="TweetMain">
       <ProfileInfo user={user} />
@@ -38,7 +40,9 @@ const TweetMain: React.FC<TweetProps> = ({ tweet, user }) => {
         {tweet.media.length > 0 && (
           <div className={`photo-previews layout-${tweet.media.length}`}>
             {tweet.media.map((photo, id) => (
-              <PhotoPreview src={photo} key={'photo_' + id} />
+              <Link key={'photo_' + id} to={`/${user.username}/status/${tweet.id}/photo/${id + 1}`} state={{backgroundLocation: location, photo: photo}}>
+                <PhotoPreview src={photo} />
+              </Link>
             ))}
           </div>
         )}

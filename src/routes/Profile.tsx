@@ -11,7 +11,7 @@ const Profile: React.FC = () => {
 
   if (loading) return <Loader />
 
-  return <Outlet context={[user]} />
+  return <Outlet context={{user}} />
 }
 
 export default Profile

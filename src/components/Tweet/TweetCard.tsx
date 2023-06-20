@@ -43,6 +43,7 @@ type TweetCardProps = {
 const TweetCard: React.FC<TweetCardProps> = ({tweet, retweetedBy, isReply, onLoad}) => {
   const [user, loading] = useUserDataWithId(tweet?.userId)
   const navigate = useNavigate()
+  const location = useLocation()
   
   useLayoutEffect(() => {
     if (onLoad && !loading) {
@@ -76,7 +77,9 @@ const TweetCard: React.FC<TweetCardProps> = ({tweet, retweetedBy, isReply, onLoa
           {tweet.media.length > 0 && (
             <div className={`photo-previews layout-${tweet.media.length}`}>
               {tweet.media.map((photo, id) => (
-                <PhotoPreview key={'photo_' + id} src={photo} />
+                <Link key={'photo_' + id} to={`/${user.username}/status/${tweet.id}/photo/${id + 1}`} state={{backgroundLocation: location, photo: photo}}>
+                  <PhotoPreview src={photo} />
+                </Link>
               ))}
             </div>
           )}

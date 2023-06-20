@@ -7,7 +7,7 @@ import Feed from "../components/Feed/Feed"
 import ProfileHeader from "../components/Profile/ProfileHeader"
 
 const ProfileIndex: React.FC = () => {
-  const [user]: [user: User] = useOutletContext()
+  const {user}: {user: User} = useOutletContext()
   const navigate = useNavigate()
   const location = useLocation()
 
