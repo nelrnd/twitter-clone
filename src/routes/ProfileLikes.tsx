@@ -4,10 +4,11 @@ import PageHeader from "../components/PageHeader/PageHeader"
 import Tabs from "../components/Tabs/Tabs"
 import ProfileHeader from "../components/Profile/ProfileHeader"
 import LikeFeed from "../components/Feed/LikeFeed"
+import SearchBar from "../components/Search/Search"
 
 const ProfileLikes: React.FC = () => {
   const { username } = useParams<'username'>()
-  const [user]: [user: User] = useOutletContext()
+  const {user}: {user: User} = useOutletContext()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -19,15 +20,21 @@ const ProfileLikes: React.FC = () => {
   const goBack = () => navigate('/home')
 
   return user ? (
-    <main>
-      <PageHeader onClick={goBack}>
-        <h2 className="heading">{user.name}</h2>
-        <p className="small grey">{user.likesCount} Likes</p>
-      </PageHeader>
-      <ProfileHeader user={user} />
-      <Tabs tabs={tabs} />
-      <LikeFeed userId={user.id} />
-    </main>
+    <>
+      <main>
+        <PageHeader onClick={goBack}>
+          <h2 className="heading">{user.name}</h2>
+          <p className="small grey">{user.likesCount} Likes</p>
+        </PageHeader>
+        <ProfileHeader user={user} />
+        <Tabs tabs={tabs} />
+        <LikeFeed userId={user.id} />
+      </main>
+
+      <aside>
+        <SearchBar />
+      </aside>
+    </>
   ) : <Navigate to={"/" + username} />
 }
 

@@ -5,6 +5,7 @@ import TweetComposer from "../components/TweetComposer/TweetComposer"
 import Feed from "../components/Feed/Feed"
 import useAuthRedirect from "../hooks/useAuthRedirect"
 import Tabs from "../components/Tabs/Tabs"
+import SearchBar from "../components/Search/Search"
 
 type HomeProps = {
   children?: string | JSX.Element | JSX.Element[]
@@ -42,6 +43,10 @@ const Home: React.FC<HomeProps> = ({children}) => {
 
         <Feed userIds={currentTab === 'Following' ? [user.id, ...user.following] : null} />
       </main>
+
+      <aside>
+        <SearchBar />
+      </aside>
 
       {children}
     </>

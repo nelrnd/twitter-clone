@@ -5,6 +5,7 @@ import NoProfileHeader from "../components/Profile/NoProfileHeader"
 import Tabs from "../components/Tabs/Tabs"
 import Feed from "../components/Feed/Feed"
 import ProfileHeader from "../components/Profile/ProfileHeader"
+import SearchBar from "../components/Search/Search"
 
 const ProfileIndex: React.FC = () => {
   const {user}: {user: User} = useOutletContext()
@@ -19,27 +20,33 @@ const ProfileIndex: React.FC = () => {
   const goBack = () => navigate('/home')
 
   return (
-    <main>
-      <PageHeader onClick={goBack}>
-        {user ? (
+    <>
+      <main>
+        <PageHeader onClick={goBack}>
+          {user ? (
+            <>
+              <h2 className="heading">{user.name}</h2>
+              <p className="small grey">{tabs[0].active ? user.tweetsCount + ' Tweets' : user.likesCount + ' Likes' }</p>
+            </>
+          ) : (
+            <div className="heading">Profile</div>
+          )}
+        </PageHeader>
+
+        {user ? <ProfileHeader user={user} /> : <NoProfileHeader />}
+
+        {user && 
           <>
-            <h2 className="heading">{user.name}</h2>
-            <p className="small grey">{tabs[0].active ? user.tweetsCount + ' Tweets' : user.likesCount + ' Likes' }</p>
+            <Tabs tabs={tabs} />
+            <Feed userIds={[user.id]} />
           </>
-        ) : (
-          <div className="heading">Profile</div>
-        )}
-      </PageHeader>
+        }
+      </main>
 
-      {user ? <ProfileHeader user={user} /> : <NoProfileHeader />}
-
-      {user && 
-        <>
-          <Tabs tabs={tabs} />
-          <Feed userIds={[user.id]} />
-        </>
-      }
-    </main>
+      <aside>
+        <SearchBar />
+      </aside>
+    </>
   )
 }
 

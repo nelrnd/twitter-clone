@@ -1,0 +1,63 @@
+@use '../../base'
+
+.SearchBar_wrapper
+  position: relative
+  z-index: 3
+  padding: 0 12px
+  background-color: base.$dark-10
+  border-radius: 1000px
+  display: grid
+  grid-template-columns: auto 1fr
+  align-items: center
+  gap: 16px
+
+  svg
+    margin-left: 8px
+    color: base.$dark-70
+    width: 20px
+    height: 20px
+
+  input[type="search"]
+    appearance: none
+    background-color: transparent
+    border: none
+    outline: none
+    font-size: 16px
+    height: 44px
+
+    &::placeholder
+      color: base.$dark-70
+
+.SearchBar_wrapper:focus-within
+  background-color: transparent
+  outline: solid 1px base.$blue
+
+  svg
+    color: base.$blue
+
+.SearchResults
+  position: absolute
+  top: calc(100% + 12px)
+  width: 100%
+  background-color: white
+  border-radius: 16px
+  box-shadow: 0 0 8px rgba(black, 10%)
+
+.SearchResults
+  .ProfileCard
+    align-items: center
+
+    .Avatar
+      width: 56px !important
+      height: 56px !important
+
+    .name:hover
+      text-decoration: none
+
+.Search_backdrop
+  position: fixed
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  z-index: 2

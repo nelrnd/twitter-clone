@@ -9,7 +9,7 @@ import Loader from "../components/Loader/Loader"
 import ProfileCard from "../components/Profile/ProfileCard"
 
 const Retweets: React.FC = () => {
-  const [tweet]: [tweet: Tweet] = useOutletContext()
+  const {tweet}: {tweet: Tweet} = useOutletContext()
   const [retweets, retweetsLoading] = useCollectionData(query(collection(db, 'tweets', tweet.id, 'retweets')))
   const [users, usersLoading] = useCollectionData(retweets?.length ? query(collection(db, 'users') as CollectionReference<User>, where('id', 'in', retweets.map((i) => i.userId))) : null)
   const navigate = useNavigate()
