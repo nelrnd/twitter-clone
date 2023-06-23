@@ -38,6 +38,7 @@
     padding: 4px 0
 
   .tab
+    position: relative
     width: fit-content
     font-size: 20px
     padding: 12px
@@ -56,8 +57,25 @@
       width: 26.25px
       height: 26.25px
 
+    .label
+      position: absolute
+      top: 8px
+      left: 30px
+      color: white
+      background-color: App.$blue
+      font-size: 11px
+      width: 16px
+      height: 16px
+      display: grid
+      place-content: center
+      border-radius: 1000px
+      outline: solid 1px white
+
   a:hover .tab
     background-color: App.$grey
+
+    .label
+      outline-color: App.$grey
 
   .bottom
     position: relative

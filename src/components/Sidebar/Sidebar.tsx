@@ -17,9 +17,11 @@ import { UserContext } from '../../contexts/UserContext'
 import Avatar from '../Avatar/Avatar'
 import { signOut } from 'firebase/auth'
 import { auth } from '../../firebase'
+import { NotificationContext } from '../../contexts/NotificationsContext'
 
 function Sidebar() {
   const [manageOpened, setManageOpened] = useState(false)
+  const notifications = useContext(NotificationContext)
   const user = useContext(UserContext)
   const navigate = useNavigate()
   const location = useLocation()
@@ -45,6 +47,7 @@ function Sidebar() {
       icon: BellIcon,
       iconFilled: BellIconFilled,
       active: pathname === '/notifications',
+      label: notifications?.filter((n) => n.read === false).length
     },
     {
       text: 'Messages',
@@ -75,6 +78,7 @@ function Sidebar() {
               <Link to={tab.link} key={id}>
                 <div className={`tab ${tab.active ? 'active' : ''}`}>
                   {tab.active ? <tab.iconFilled /> : <tab.icon />}
+                  {!!tab.label && <div className='label'>{tab.label}</div>}
                   <span>{tab.text}</span>
                 </div>
               </Link>

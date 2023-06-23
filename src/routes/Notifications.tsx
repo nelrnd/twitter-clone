@@ -1,19 +1,19 @@
-import { useCollectionData } from "react-firebase-hooks/firestore"
 import PageHeader from "../components/PageHeader/PageHeader"
 import SearchBar from "../components/Search/Search"
 import useAuthRedirect from "../hooks/useAuthRedirect"
-import { CollectionReference, collection } from "firebase/firestore"
-import { auth, db } from "../firebase"
-import { useContext } from "react"
-import { UserContext } from "../contexts/UserContext"
-import { TweetCard } from "../components/Tweet/TweetCard"
 import Notification from "../components/Notification/Notification"
-import { Notification as NotifType } from "../types"
+import { useContext, useEffect } from "react"
+import { NotificationContext } from "../contexts/NotificationsContext"
+import { auth, readAllNotifications } from "../firebase"
+
 
 const Notifications: React.FC = () => {
+  const notifications = useContext(NotificationContext)
   useAuthRedirect()
-  const user = useContext(UserContext)
-  const [notifications, loading] = useCollectionData(user ? collection(db, 'users', user.id, 'notifications') as CollectionReference<NotifType> : null)
+
+  useEffect(() => {
+    readAllNotifications(auth.currentUser?.uid)
+  }, [])
 
   return (
     <>

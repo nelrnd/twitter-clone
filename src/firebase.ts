@@ -270,3 +270,14 @@ export const createNotification = async (from: string | undefined, to: string, t
     console.error(err)
   }
 }
+
+export const readAllNotifications = async (userId: string | undefined) => {
+  try {
+    if (!userId) return
+    const notificationsRef = collection(db, 'users', userId, 'notifications')
+    const notifications = await getDocs(notificationsRef)
+    notifications.forEach((doc) => updateDoc(doc.ref, { read: true }))
+  } catch (err) {
+    console.error(err)
+  }
+}
