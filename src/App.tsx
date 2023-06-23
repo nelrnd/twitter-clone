@@ -20,6 +20,7 @@ import Retweets from './routes/Retweets'
 import EditProfile from './routes/EditProfile'
 import PhotoModal from './components/Modals/PhotoModal'
 import ComposeTweet from './routes/ComposeTweet'
+import Notifications from './routes/Notifications'
 
 /*
 function App() {
@@ -108,6 +109,7 @@ const App: React.FC = () => {
           </Route>
           <Route path="compose/tweet" element={<Home><ComposeTweet /></Home>} />
           <Route path="settings/profile" element={<Home><EditProfile /></Home>} />
+          <Route path="notifications" element={<Notifications />} />
         </Route>
       </Routes>
 

@@ -29,7 +29,7 @@ type BarProps = {
 const TweetMain: React.FC<TweetProps> = ({ tweet, user }) => {
   const location = useLocation()
   
-  return (
+  return tweet && user ? (
     <article className="TweetMain">
       <ProfileInfo user={user} />
 
@@ -56,7 +56,7 @@ const TweetMain: React.FC<TweetProps> = ({ tweet, user }) => {
 
       <ActionsBar tweet={tweet} user={user} />
     </article>
-  )
+  ) : null
 }
 
 const DateBar: React.FC<BarProps> = ({tweet}) => (
@@ -98,7 +98,7 @@ const StatsBar: React.FC<BarProps> = ({ tweet }) => {
   )
 }
 
-const ActionsBar: React.FC<BarProps> = ({ tweet, user }) => {
+const ActionsBar: React.FC<TweetProps> = ({ tweet, user }) => {
   const authUser = useContext(UserContext)
   const navigate = useNavigate()
   const location = useLocation()
@@ -106,8 +106,8 @@ const ActionsBar: React.FC<BarProps> = ({ tweet, user }) => {
   const [liked] = useDocumentData(doc(db, 'tweets', tweet.id, 'likes', authUser?.id || '_'))
   const [retweeted] = useDocumentData(doc(db, 'tweets', tweet.id, 'retweets', authUser?.id || '_'))
 
-  const like = () => toggleLikeTweet(tweet.id, authUser?.id, !!liked)
-  const retweet = () => toggleRetweetTweet(tweet.id, authUser?.id, !!retweeted)
+  const like = () => toggleLikeTweet(tweet.id, user.id, !!liked)
+  const retweet = () => toggleRetweetTweet(tweet.id, user.id, !!retweeted)
   const reply = () => navigate('/compose/tweet', {state: {backgroundLocation: location, tweet: tweet, user: user}})
 
   return (

@@ -1,0 +1,27 @@
+@use '../../base'
+
+.Notification
+  @include base.tweet-layout
+  border-bottom: solid 1px base.$dark-10
+  transition: all 0.2s ease-in-out
+  cursor: pointer
+
+  .right-col
+    display: flex
+    flex-direction: column
+    gap: 12px
+
+  .name:hover
+    text-decoration: underline
+
+  &.like svg
+    color: base.$pink
+
+  &.retweet svg
+    color: base.$green
+
+  &.follow svg
+    color: base.$blue
+
+  &:hover
+    background-color: #F7F7F7

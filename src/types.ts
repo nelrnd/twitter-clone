@@ -24,3 +24,11 @@ export type Tweet = {
   repliesCount: number
   inReplyTo: {tweetId: string, userId: string} | null
 }
+
+export type Notification = {
+  from: string
+  type: string
+  tweetId: string | null
+  timestamp: number
+  read: boolean
+}

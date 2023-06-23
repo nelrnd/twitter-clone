@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { GoogleAuthProvider, User, getAuth, signInWithPopup, updateProfile } from 'firebase/auth'
-import { arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, getFirestore, increment, limit, query, setDoc, updateDoc, where } from 'firebase/firestore'
+import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, getFirestore, increment, limit, query, setDoc, updateDoc, where } from 'firebase/firestore'
 import { createId } from './utils'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 
@@ -101,6 +101,7 @@ export const createTweet = async (content: string[], media: File[], userId: stri
         id: tweetId,
         timestamp: Date.now()
       })
+      createNotification(userId, inReplyTo.userId, 'reply', inReplyTo.tweetId)
     }
     createRefInFeed(tweetId, userId, 'tweet')
     updateUserCount(userId, 'tweetsCount', 1)
@@ -161,19 +162,12 @@ export const toggleFollowAccount = async (userId: string, currentUserId: string 
     const userRef = doc(db, 'users', userId)
     const currentUserRef = doc(db, 'users', currentUserId)
     if (followed) {
-      await updateDoc(userRef, {
-        followers: arrayRemove(currentUserId),
-      })
-      await updateDoc(currentUserRef, {
-        following: arrayRemove(userId),
-      })
+      updateDoc(userRef, { followers: arrayRemove(currentUserId) })
+      updateDoc(currentUserRef, { following: arrayRemove(userId) })
     } else {
-      await updateDoc(userRef, {
-        followers: arrayUnion(currentUserId),
-      })
-      await updateDoc(currentUserRef, {
-        following: arrayUnion(userId),
-      })
+      updateDoc(userRef, { followers: arrayUnion(currentUserId) })
+      updateDoc(currentUserRef, { following: arrayUnion(userId) })
+      createNotification(auth.currentUser?.uid, userId, 'follow')
     }
   } catch (err) {
     console.error(err)
@@ -204,16 +198,17 @@ const updateUserCount = async (userId: string, key: string, value: number) => {
 
 export const toggleLikeTweet = async (tweetId: string, userId: string, liked: boolean) => {
   try {
-    if (!tweetId || !userId) return
-    const likeRef = doc(db, 'tweets', tweetId, 'likes', userId)
+    if (!tweetId || !userId || !auth.currentUser?.uid) return
+    const likeRef = doc(db, 'tweets', tweetId, 'likes', auth.currentUser.uid)
     if (!liked) {
-      setDoc(likeRef, { userId: userId, tweetId: tweetId, timestamp: Date.now() })
+      setDoc(likeRef, { userId: auth.currentUser.uid, tweetId: tweetId, timestamp: Date.now() })
       updateTweetCount(tweetId, 'likesCount', 1)
-      updateUserCount(userId, 'likesCount', 1)
+      updateUserCount(auth.currentUser.uid, 'likesCount', 1)
+      createNotification(auth.currentUser.uid, userId, 'like', tweetId)
     } else {
       deleteDoc(likeRef)
       updateTweetCount(tweetId, 'likesCount', -1)
-      updateUserCount(userId, 'likesCount', -1)
+      updateUserCount(auth.currentUser.uid, 'likesCount', -1)
     }
   } catch (err) {
     console.error(err)
@@ -222,18 +217,19 @@ export const toggleLikeTweet = async (tweetId: string, userId: string, liked: bo
 
 export const toggleRetweetTweet = async (tweetId: string, userId: string, retweeted: boolean) => {
   try {
-    if (!tweetId || !userId) return
-    const retweetRef = doc(db, 'tweets', tweetId, 'retweets', userId)
+    if (!tweetId || !userId || !auth.currentUser?.uid) return
+    const retweetRef = doc(db, 'tweets', tweetId, 'retweets', auth.currentUser.uid)
     if (!retweeted) {
-      setDoc(retweetRef, { userId: userId, timestamp: Date.now() })
+      setDoc(retweetRef, { userId: auth.currentUser.uid, timestamp: Date.now() })
       updateTweetCount(tweetId, 'retweetsCount', 1)
-      createRefInFeed(tweetId, userId, 'retweet')
-      updateUserCount(userId, 'tweetsCount', 1)
+      createRefInFeed(tweetId, auth.currentUser.uid, 'retweet')
+      updateUserCount(auth.currentUser.uid, 'tweetsCount', 1)
+      createNotification(auth.currentUser?.uid, userId, 'retweet', tweetId)
     } else {
       deleteDoc(retweetRef)
       updateTweetCount(tweetId, 'retweetsCount', -1)
-      deleteRefInFeed(tweetId, userId, 'retweet')
-      updateUserCount(userId, 'tweetsCount', -1)
+      deleteRefInFeed(tweetId, auth.currentUser.uid, 'retweet')
+      updateUserCount(auth.currentUser.uid, 'tweetsCount', -1)
     }
   } catch (err) {
     console.error(err)
@@ -248,6 +244,28 @@ export const uploadImage = async (file: File, path: string) => {
     await uploadBytes(imageRef, file)
     const url = await getDownloadURL(imageRef)
     return url
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const createNotification = async (from: string | undefined, to: string, type: string, tweetId?: string) => {
+  try {
+    if ((!from || !to) || from === to) return
+    const notificationsRef = collection(db, 'users', to, 'notifications')
+    // if notification already exists, return
+    const notificationQuery = tweetId ? 
+    query(notificationsRef, where('from', '==', from), where('type', '==', type), where('tweetId', '==', tweetId), limit(1)) : 
+    query(notificationsRef, where('from', '==', from), where('type', '==', type), limit(1))
+    const snapshot = await getDocs(notificationQuery)
+    if (!snapshot.empty) return
+    await addDoc(notificationsRef, {
+      from,
+      type,
+      tweetId: tweetId || null,
+      timestamp: Date.now(),
+      read: false
+    })
   } catch (err) {
     console.error(err)
   }
