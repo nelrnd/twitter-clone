@@ -25,6 +25,7 @@ import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { CollectionReference, collection } from 'firebase/firestore'
 import { Notification } from './types'
 import { NotificationContext } from './contexts/NotificationsContext'
+import Messages from './routes/Messages'
 
 const App: React.FC = () => {
   const [user] = useAuthState(auth)
@@ -60,6 +61,7 @@ const App: React.FC = () => {
             <Route path="compose/tweet" element={<Home><ComposeTweet /></Home>} />
             <Route path="settings/profile" element={<Home><EditProfile /></Home>} />
             <Route path="notifications" element={<Notifications />} />
+            <Route path="messages" element={<Messages />} />
           </Route>
         </Routes>
 

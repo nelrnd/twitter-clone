@@ -1,4 +1,4 @@
-@use '../../App'
+@use '../../base'
 
 html, body, #root
   height: 100%
@@ -22,7 +22,7 @@ html, body, #root
     > main
       width: 600px
       min-height: 100%
-      border: solid 1px App.$dark-10
+      border: solid 1px base.$dark-10
       border-top: none
       border-bottom: none
 
@@ -30,3 +30,14 @@ html, body, #root
       width: 350px
       min-height: 100%
       padding: 16px 0
+
+.messages
+  display: grid
+  grid-template-columns: 382px 600px
+
+  > nav
+    border-left: solid 1px base.$dark-10
+
+  > main
+    border-left: solid 1px base.$dark-10
+    border-right: solid 1px base.$dark-10
