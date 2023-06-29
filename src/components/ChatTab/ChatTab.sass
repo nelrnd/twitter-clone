@@ -1,0 +1,52 @@
+@use '../../base'
+
+.ChatTab
+  padding: 1rem
+  display: grid
+  grid-template-columns: auto 1fr
+  align-items: center
+  gap: 12px
+  cursor: pointer
+  transition: all 0.2s ease-in-out
+
+  &.active
+    background-color: base.$dark-10
+    border-right: solid 2px base.$blue
+
+  &:hover
+    background-color: base.$ghost
+
+  .right-col
+    overflow: hidden
+
+  .msg-header
+    margin-bottom: 2px
+    display: grid
+    grid-template-columns: 1fr auto
+    align-items: center
+    gap: 12px
+
+  .msg-header div:first-of-type
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+
+  .msg-text
+    color: base.$dark-70
+    width: 90%
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+
+  &.active .msg-text
+    color: base.$dark
+
+  &.unread .msg-text
+    color: base.$dark
+    font-weight: 500
+
+  .unread-dot
+    width: 8px
+    height: 8px
+    background-color: base.$blue
+    border-radius: 4px
