@@ -32,3 +32,16 @@ export type Notification = {
   timestamp: number
   read: boolean
 }
+
+export type Chat = {
+  id: string
+  members: string[]
+  lastMessage: { text: string | null, from: string | null, timestamp: number | null }
+  unreadCount: { [key: string]: number }
+}
+
+export type Message = {
+  text: string
+  from: string
+  timestamp: number
+}
