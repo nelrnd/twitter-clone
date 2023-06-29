@@ -5,7 +5,7 @@ import { CollectionReference, collection, orderBy, query} from 'firebase/firesto
 import { auth, createChat, createMessage, db } from '../../firebase'
 import { useUserDataWithId } from '../../hooks/useUserData'
 import { Message as MessageType, User } from '../../types'
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import Message from '../Message/Message'
 import SendIcon from '../../assets/send.svg'
 import './ChatRoom.sass'
@@ -50,11 +50,19 @@ type ChatMessagesProps = {
 }
 
 const ChatMessages: React.FC<ChatMessagesProps> = ({messages}) => {
+  const bottom = useRef<HTMLDivElement>(null)
   const checkIfFollowUp = (msg: MessageType, id: number) => !!(messages && messages[id + 1] && messages[id + 1].timestamp - msg.timestamp < 60000 && msg.from === messages[id + 1].from)
+
+  useLayoutEffect(() => {
+    if (bottom.current) {
+      bottom.current.scrollIntoView()
+    } 
+  }, [messages])
 
   return (
     <div className="ChatMessages">
       {messages?.map((msg, id) => <Message key={id} msg={msg} isFollowUp={checkIfFollowUp(msg, id)} />)}
+      <div ref={bottom} />
     </div>
   )
 }
