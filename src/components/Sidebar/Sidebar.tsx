@@ -54,7 +54,7 @@ function Sidebar() {
       link: '/messages',
       icon: MessageIcon,
       iconFilled: MessageIconFilled,
-      active: pathname === '/messages',
+      active: pathname.includes('/messages'),
     },
     {
       text: 'Profile',

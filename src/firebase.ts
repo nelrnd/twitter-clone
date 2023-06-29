@@ -1,8 +1,9 @@
 import { initializeApp } from 'firebase/app'
 import { GoogleAuthProvider, User, getAuth, signInWithPopup, updateProfile } from 'firebase/auth'
 import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, getFirestore, increment, limit, query, setDoc, updateDoc, where } from 'firebase/firestore'
-import { createId } from './utils'
+import { createId, getChatId } from './utils'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
+import { Chat } from './types'
 
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -277,6 +278,48 @@ export const readAllNotifications = async (userId: string | undefined) => {
     const notificationsRef = collection(db, 'users', userId, 'notifications')
     const notifications = await getDocs(notificationsRef)
     notifications.forEach((doc) => updateDoc(doc.ref, { read: true }))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const createChat = async (members: string[]) => {
+  try {
+    const chatId = getChatId(members)
+    if (!chatId) return
+    const chatRef = doc(db, 'chats', chatId)
+    const chat: Chat = {
+      id: chatId,
+      members: members,
+      lastMessage: {text: null, from: null, timestamp: null},
+      unreadCount: {}
+    }
+    members.forEach((m) => chat.unreadCount[m] = 0)
+    await setDoc(chatRef, chat)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const createMessage = async (chatId: string, from: string, text: string) => {
+  try {
+    if (!chatId || !from || !text) return
+    const messageRef = collection(db, 'chats', chatId, 'messages')
+    const message = { text, from, timestamp: Date.now() }
+    await addDoc(messageRef, message)
+    await setLastMessage(chatId, message)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const setLastMessage = async (chatId: string, message: {text: string, from: string, timestamp: number}) => {
+  try {
+    if (!chatId || !message) return
+    const chatRef = doc(db, 'chats', chatId)
+    await updateDoc(chatRef, {
+      lastMessage: {...message}
+    })
   } catch (err) {
     console.error(err)
   }

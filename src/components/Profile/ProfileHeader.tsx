@@ -5,7 +5,9 @@ import Avatar from "../Avatar/Avatar"
 import Button from "../Buttons/Button"
 import FollowButton from "../Buttons/FollowButton"
 import Banner from "./Banner"
+import MessageIcon from '../../assets/message.svg'
 import './ProfileHeader.sass'
+import { getChatId } from "../../utils"
 
 type ProfileHeaderProps = {
   user: User
@@ -17,7 +19,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({user}) => {
   const followed: boolean = (authUserId && user.followers.includes(authUserId)) || false
   const navigate = useNavigate()
   const location = useLocation()
-  
+
   return (
     <header className="ProfileHeader">
       {user.headerURL ? (
@@ -35,7 +37,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({user}) => {
           {sameUser ? (
             <Button style="outline" onClick={() => navigate('/settings/profile', {state: {backgroundLocation: location}})}>Edit profile</Button>
           ) : (
-            <FollowButton userId={user.id} authUserId={authUserId} followed={followed} />
+            <>
+              <Button style="outline icon" onClick={() => navigate(`/messages/${getChatId([user.id, authUserId])}`)}><MessageIcon /></Button>
+              <FollowButton userId={user.id} authUserId={authUserId} followed={followed} />
+            </>
           )}
         </div>
         <h2 className="heading-2">{user.name}</h2>

@@ -34,10 +34,15 @@ html, body, #root
 .messages
   display: grid
   grid-template-columns: 382px 600px
+  height: 100%
+  overflow: hidden
 
   > nav
     border-left: solid 1px base.$dark-10
+    overflow: auto
 
   > main
     border-left: solid 1px base.$dark-10
     border-right: solid 1px base.$dark-10
+    height: 100%
+    overflow-y: hidden

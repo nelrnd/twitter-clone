@@ -1,0 +1,73 @@
+@use '../../base'
+
+.ChatRoom
+  height: 100%
+  overflow-y: hidden
+  display: grid
+  grid-template-rows: auto 1fr auto
+
+.ChatHeader
+  position: sticky
+  top: 0
+  z-index: 2
+  background-color: rgba(white, 0.8)
+  height: 52px
+  padding: 8px 16px
+  display: flex
+  align-items: center
+  gap: 20px
+  backdrop-filter: blur(20px)
+
+  h2
+    margin-bottom: 0
+
+.ChatMessages
+  padding: 16px
+  overflow-y: auto
+
+.ChatInput
+  padding: 12px
+  background-color: white
+  border-top: solid 1px base.$dark-10
+
+  .input_wrapper
+    position: relative
+
+  input
+    display: block
+    width: 100%
+    font-size: 15px
+    padding: 12px
+    background-color: base.$dark-10
+    border: none
+    outline: none
+    border-radius: 12px
+    
+  button
+    position: absolute
+    z-index: 2
+    top: 50%
+    right: 4px
+    transform: translateY(-50%)
+    display: grid
+    place-content: center
+    width: 34px
+    height: 34px
+    border: none
+    border-radius: 1000px
+    cursor: pointer
+    color: base.$blue
+    transition: all 0.2s ease-in-out
+
+    &:hover
+      background-color: rgba(base.$blue, 10%)
+
+    &:disabled
+      opacity: 0.5
+      background-color: transparent
+      cursor: default
+
+    svg
+      display: block
+      width: 20px
+      height: 20px
