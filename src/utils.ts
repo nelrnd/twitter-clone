@@ -38,6 +38,19 @@ export function getLongTime(ms: number): string {
   return hours + ':' + minutes + ' · ' + month + ' ' + day + ', ' + year
 }
 
+export const getMsgTime = (ms: number): string => {
+  const date = new Date(ms)
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  const month = months[date.getMonth()]
+  const day = date.getDate()
+  const year = date.getFullYear()
+  if ((year === new Date().getFullYear()) && (month === months[new Date().getMonth()]) && day === new Date().getDate()) {
+    return hours + ':' + minutes 
+  }
+  return hours + ':' + minutes + ' · ' + month + ' ' + day + ', ' + year
+}
+
 export function getTextFromHTML(HTML: string) {
   return HTML.toString()
     .replaceAll('<br>', '')
@@ -51,3 +64,6 @@ export function checkEmailFormat(email: string) {
   // eslint-disable-next-line no-useless-escape
   return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
 }
+
+
+export const getChatId = (members: (string|undefined)[]) => members.length > 2 ? null : members.sort().join('-')
