@@ -1,5 +1,4 @@
 import { ChangeEvent, forwardRef, useContext, useEffect, useRef, useState } from 'react'
-import { UserContext } from '../../contexts/UserContext'
 import { Link, useLocation } from 'react-router-dom'
 import { createTweet } from '../../firebase'
 import { getTextFromHTML } from '../../utils'
@@ -13,6 +12,7 @@ import CloseIcon from '../../assets/close.svg'
 import 'react-circular-progressbar/dist/styles.css'
 import './TweetComposer.sass'
 import PhotoPreview from '../PhotoPreview/PhotoPreview'
+import { GlobalContext } from '../../contexts/GlobalContext'
 
 const MAX_LENGTH = 280
 
@@ -21,7 +21,7 @@ type TweetComposerProps = {
 }
 
 const TweetComposer: React.FC<TweetComposerProps> = ({onTweet}) => {
-  const user = useContext(UserContext)
+  const { authUser } = useContext(GlobalContext)
   const location = useLocation()
   const state = location.state
 
@@ -81,7 +81,7 @@ const TweetComposer: React.FC<TweetComposerProps> = ({onTweet}) => {
     setFiles([])
     if (textInput.current) textInput.current.innerHTML = ''
     if (mediaInput.current) mediaInput.current.value = ''
-    createTweet(formattedText, filesCopy, user?.id, inReplyTo)
+    createTweet(formattedText, filesCopy, authUser?.id, inReplyTo)
     if (onTweet) {
       onTweet()
     }
@@ -91,11 +91,11 @@ const TweetComposer: React.FC<TweetComposerProps> = ({onTweet}) => {
   const probar_text = text.length >= MAX_LENGTH - 20 ? (MAX_LENGTH - text.length).toString() : ''
   const probar_style = text.length >= MAX_LENGTH ? 'error' : text.length >= MAX_LENGTH - 20 ? 'warning' : ''
 
-  return user ? (
+  return authUser ? (
     <div className="TweetComposer">
       <div className="left-col">
-        <Link to={'/' + user.username}>
-          <Avatar src={user.profileURL} size={40} />
+        <Link to={'/' + authUser.username}>
+          <Avatar src={authUser.profileURL} size={40} />
         </Link>
       </div>
       <div className="right-col">

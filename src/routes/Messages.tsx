@@ -1,25 +1,16 @@
 import { Outlet, useParams } from "react-router-dom"
 import PageHeader from "../components/PageHeader/PageHeader"
-import { useCollectionData } from "react-firebase-hooks/firestore"
-import { CollectionReference, collection, orderBy, query, where } from "firebase/firestore"
-import { auth, db } from "../firebase"
-import Loader from "../components/Loader/Loader"
 import ChatTab from "../components/ChatTab/ChatTab"
-import { Chat } from "../types"
+import { useContext } from "react"
+import { GlobalContext } from "../contexts/GlobalContext"
 
 const Messages: React.FC = () => {
   const { chatId } = useParams<'chatId'>()
-
-  const authUserId = auth.currentUser?.uid
-
-  const chatsCollection = collection(db, 'chats') as CollectionReference<Chat>
-  const chatsQuery = authUserId ? query(chatsCollection, where('members', 'array-contains', authUserId), orderBy('lastMessage.timestamp', 'desc')) : null
-  const [chats, loading] = useCollectionData(chatsQuery)
+  
+  const { chats } = useContext(GlobalContext)
 
   return (
     <div className="messages">
-      {loading ? <Loader /> : 
-      <>
       <nav>
         <PageHeader>
           <h1 className="heading-2">Messages</h1>
@@ -37,7 +28,6 @@ const Messages: React.FC = () => {
           </div>
         }
       </main>
-      </>}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { GoogleAuthProvider, User, getAuth, signInWithPopup, updateProfile } from 'firebase/auth'
-import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, getFirestore, increment, limit, query, setDoc, updateDoc, where } from 'firebase/firestore'
+import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, increment, limit, query, setDoc, updateDoc, where } from 'firebase/firestore'
 import { createId, getChatId } from './utils'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 import { Chat } from './types'
@@ -68,7 +68,7 @@ export const updateUserInfo = async (updatedInfo: { name?: string; bio?: string;
   }
 }
 
-export const createTweet = async (content: string[], media: File[], userId: string, inReplyTo?: {tweetId: string, userId: string} | null) => {
+export const createTweet = async (content: string[], media: File[], userId: string | undefined, inReplyTo?: {tweetId: string, userId: string} | null) => {
   try {
     if ((!content.length && !media.length) || !userId) return
     const tweetId = createId()
@@ -308,6 +308,7 @@ export const createMessage = async (chatId: string, from: string, text: string) 
     const message = { text, from, timestamp: Date.now() }
     await addDoc(messageRef, message)
     await setLastMessage(chatId, message)
+    await incrementUnreadCount(chatId, from)
   } catch (err) {
     console.error(err)
   }
@@ -320,6 +321,40 @@ export const setLastMessage = async (chatId: string, message: {text: string, fro
     await updateDoc(chatRef, {
       lastMessage: {...message}
     })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const incrementUnreadCount = async (chatId: string, authUserId: string) => {
+  try {
+    if (!chatId || !authUserId) return
+    const chatRef = doc(db, 'chats', chatId)
+    const chatSnapshot = await getDoc(chatRef)
+    const chatData = chatSnapshot.data()
+    if (!chatData) return
+    const unreadCount = chatData.unreadCount
+    for (const m in unreadCount) {
+      if (m !== authUserId) {
+        unreadCount[m]++
+      }
+    }
+    await updateDoc(chatRef, { unreadCount })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const readAllMessages = async (chatId: string, authUserId: string) => {
+  try {
+    if (!chatId || !authUserId) return
+    const chatRef = doc(db, 'chats', chatId)
+    const chatSnapshot = await getDoc(chatRef)
+    const chatData = chatSnapshot.data()
+    if (!chatData) return
+    const unreadCount = chatData.unreadCount
+    unreadCount[authUserId] = 0
+    await updateDoc(chatRef, { unreadCount })
   } catch (err) {
     console.error(err)
   }

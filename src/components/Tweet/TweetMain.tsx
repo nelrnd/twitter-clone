@@ -2,7 +2,6 @@ import { useContext } from 'react'
 import { Tweet, User } from '../../types'
 import PhotoPreview from '../PhotoPreview/PhotoPreview'
 import ProfileInfo from '../ProfileInfo/ProfileInfo'
-import { UserContext } from '../../contexts/UserContext'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { doc } from 'firebase/firestore'
 import { db, toggleLikeTweet, toggleRetweetTweet } from '../../firebase'
@@ -15,6 +14,7 @@ import LikeIcon from '../../assets/heart.svg'
 import LikeFilledIcon from '../../assets/heart-filled.svg'
 import RetweetIcon from '../../assets/retweet.svg'
 import ReplyIcon from '../../assets/comment.svg'
+import { GlobalContext } from '../../contexts/GlobalContext'
 
 type TweetProps = {
   tweet: Tweet
@@ -99,7 +99,7 @@ const StatsBar: React.FC<BarProps> = ({ tweet }) => {
 }
 
 const ActionsBar: React.FC<TweetProps> = ({ tweet, user }) => {
-  const authUser = useContext(UserContext)
+  const { authUser } = useContext(GlobalContext)
   const navigate = useNavigate()
   const location = useLocation()
 

@@ -3,12 +3,12 @@ import SearchBar from "../components/Search/Search"
 import useAuthRedirect from "../hooks/useAuthRedirect"
 import Notification from "../components/Notification/Notification"
 import { useContext, useEffect } from "react"
-import { NotificationContext } from "../contexts/NotificationsContext"
 import { auth, readAllNotifications } from "../firebase"
+import { GlobalContext } from "../contexts/GlobalContext"
 
 
 const Notifications: React.FC = () => {
-  const notifications = useContext(NotificationContext)
+  const { notifications } = useContext(GlobalContext)
   useAuthRedirect()
 
   useEffect(() => {

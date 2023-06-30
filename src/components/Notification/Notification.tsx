@@ -10,7 +10,7 @@ import Loader from '../Loader/Loader'
 import { useUserDataWithId } from '../../hooks/useUserData'
 import { Link, useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
-import { UserContext } from '../../contexts/UserContext'
+import { GlobalContext } from '../../contexts/GlobalContext'
 
 type NotificationProps = {
   notification: NotifType
@@ -34,7 +34,7 @@ const Notification: React.FC<NotificationProps> = ({notification}) => {
 const Notification_like: React.FC<NotificationProps> = ({notification}) => {
   const [user, userLoading] = useUserDataWithId(notification.from)
   const [tweet, tweetLoading] = useTweetData(notification.tweetId)
-  const authUser = useContext(UserContext)
+  const { authUser } = useContext(GlobalContext)
   const navigate = useNavigate()
 
   if (userLoading || tweetLoading) return <Loader />
@@ -56,7 +56,7 @@ const Notification_like: React.FC<NotificationProps> = ({notification}) => {
 const Notification_retweet: React.FC<NotificationProps> = ({notification}) => {
   const [user, userLoading] = useUserDataWithId(notification.from)
   const [tweet, tweetLoading] = useTweetData(notification.tweetId)
-  const authUser = useContext(UserContext)
+  const { authUser } = useContext(GlobalContext)
   const navigate = useNavigate()
 
   if (userLoading || tweetLoading) return <Loader />

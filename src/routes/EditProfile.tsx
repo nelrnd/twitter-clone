@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react"
 import Modal from "../components/Modals/Modal"
-import { UserContext } from "../contexts/UserContext"
 import ModalHeader from "../components/Modals/ModalHeader"
 import Button from "../components/Buttons/Button"
 import Banner from "../components/Profile/Banner"
@@ -13,14 +12,15 @@ import PhotoIcon from '../assets/add-photo.svg'
 import CloseIcon from '../assets/close.svg'
 import { useLocation, useNavigate } from "react-router-dom"
 import { updateUserInfo, uploadImage } from "../firebase"
+import { GlobalContext } from "../contexts/GlobalContext"
 
 const EditProfile: React.FC = () => {
-  const user = useContext(UserContext)
-  const [newName, setName] = useState(user?.name)
-  const [newBio, setBio] = useState(user?.bio)
+  const { authUser } = useContext(GlobalContext)
+  const [newName, setName] = useState(authUser?.name || '')
+  const [newBio, setBio] = useState(authUser?.bio || '')
   const [newProfileFile, setProfileFile] = useState<File | null>(null)
   const [newHeaderFile, setHeaderFile] = useState<File | null>(null)
-  const [newHeaderURL, setHeaderURL] = useState(user?.headerURL)
+  const [newHeaderURL, setHeaderURL] = useState(authUser?.headerURL)
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -44,27 +44,27 @@ const EditProfile: React.FC = () => {
   }
 
   const save = async () => {
-    if (!user) return
+    if (!authUser) return
     const updatedInfo: { name?: string; bio?: string; profileURL?: string; headerURL?: string | null } = {}
-    if (newName !== user.name) {
+    if (newName !== authUser.name) {
       updatedInfo.name = newName
     }
-    if (newBio !== user.bio) {
+    if (newBio !== authUser.bio) {
       updatedInfo.bio = newBio
     }
     if (newProfileFile) {
-      const URL = await uploadImage(newProfileFile, `profiles/${user.id}`)
+      const URL = await uploadImage(newProfileFile, `profiles/${authUser.id}`)
       updatedInfo.profileURL = URL
     }
     if (newHeaderFile) {
-      const URL = await uploadImage(newHeaderFile, `headers/${user.id}`)
+      const URL = await uploadImage(newHeaderFile, `headers/${authUser.id}`)
       updatedInfo.headerURL = URL
     }
     if (!newHeaderURL) {
       updatedInfo.headerURL = null
     }
     if (Object.keys(updatedInfo).length !== 0) {
-      await updateUserInfo(updatedInfo, user.id)
+      await updateUserInfo(updatedInfo, authUser.id)
     }
     goBack()
   }
@@ -89,7 +89,7 @@ const EditProfile: React.FC = () => {
       </div>
       <div className="Avatar_wrapper">
         <UploadButton setFile={setProfileFile} />
-        <Avatar src={newProfileFile ? URL.createObjectURL(newProfileFile) : user?.profileURL} size={116} />
+        <Avatar src={newProfileFile ? URL.createObjectURL(newProfileFile) : authUser?.profileURL} size={116} />
       </div>
 
       <div className="text-inputs">

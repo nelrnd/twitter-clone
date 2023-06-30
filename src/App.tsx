@@ -2,7 +2,6 @@ import './App.sass'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { auth, db } from './firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { UserContext } from './contexts/UserContext'
 import { useUserDataWithId } from './hooks/useUserData'
 import Layout from './components/Layout/Layout'
 import Home from './routes/Home'
@@ -22,11 +21,11 @@ import PhotoModal from './components/Modals/PhotoModal'
 import ComposeTweet from './routes/ComposeTweet'
 import Notifications from './routes/Notifications'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { CollectionReference, collection } from 'firebase/firestore'
-import { Notification } from './types'
-import { NotificationContext } from './contexts/NotificationsContext'
+import { CollectionReference, collection, orderBy, query, where } from 'firebase/firestore'
+import { Chat, Notification } from './types'
 import Messages from './routes/Messages'
 import ChatRoom from './components/ChatRoom/ChatRoom'
+import { GlobalContext } from './contexts/GlobalContext'
 
 const App: React.FC = () => {
   const [user] = useAuthState(auth)
@@ -36,10 +35,10 @@ const App: React.FC = () => {
   const state = location.state as { backgroundLocation?: Location }  
 
   const [notifications] = useCollectionData(user ? collection(db, 'users', user.uid, 'notifications') as CollectionReference<Notification> : null)
-
+  const [chats] = useCollectionData(user ? query(collection(db, 'chats') as CollectionReference<Chat>, where('members', 'array-contains', user.uid), orderBy('lastMessage.timestamp', 'desc')) : null)
+  
   return (
-    <UserContext.Provider value={userData}>
-      <NotificationContext.Provider value={notifications}>
+    <GlobalContext.Provider value={{authUser: userData, notifications, chats}}>
         <Routes location={state?.backgroundLocation || location}>
           <Route path="/" element={<Layout />}>
             <Route index path="home" element={<Home />} />
@@ -83,8 +82,7 @@ const App: React.FC = () => {
             <Route path="settings/profile" element={<EditProfile />} />
           </Routes>
         )}
-      </NotificationContext.Provider>
-    </UserContext.Provider>
+    </GlobalContext.Provider>
   )
 }
 

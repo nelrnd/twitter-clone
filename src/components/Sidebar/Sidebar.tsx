@@ -13,16 +13,14 @@ import ProfileIcon from '../../assets/profile.svg'
 import ProfileIconFilled from '../../assets/profile-filled.svg'
 import DotsIcon from '../../assets/dots.svg'
 import { useContext, useState } from 'react'
-import { UserContext } from '../../contexts/UserContext'
 import Avatar from '../Avatar/Avatar'
 import { signOut } from 'firebase/auth'
 import { auth } from '../../firebase'
-import { NotificationContext } from '../../contexts/NotificationsContext'
+import { GlobalContext } from '../../contexts/GlobalContext'
 
 function Sidebar() {
   const [manageOpened, setManageOpened] = useState(false)
-  const notifications = useContext(NotificationContext)
-  const user = useContext(UserContext)
+  const { authUser, notifications, chats } = useContext(GlobalContext)
   const navigate = useNavigate()
   const location = useLocation()
   const pathname = location.pathname
@@ -58,10 +56,10 @@ function Sidebar() {
     },
     {
       text: 'Profile',
-      link: (user && `/${user.username}`) || '',
+      link: (authUser && `/${authUser.username}`) || '',
       icon: ProfileIcon,
       iconFilled: ProfileIconFilled,
-      active: user && pathname.split('/')[1] === user.username && !pathname.includes('status'),
+      active: authUser && pathname.split('/')[1] === authUser.username && !pathname.includes('status'),
     },
   ]
 
@@ -90,12 +88,12 @@ function Sidebar() {
           </Button>
         </div>
 
-        {user ? (
+        {authUser ? (
           <>
             <div className="bottom">
               <div className={`popup  ${manageOpened ? 'open' : ''}`}>
                 <ul>
-                  <li onClick={logout}>Log out @{user.username}</li>
+                  <li onClick={logout}>Log out @{authUser.username}</li>
                 </ul>
                 <svg width="15" height="8" viewBox="0 0 15 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path fillRule="evenodd" clipRule="evenodd" d="M-0.000488281 0L7.41111 7.4116L14.8227 0H-0.000488281Z" fill="white" />
@@ -103,10 +101,10 @@ function Sidebar() {
               </div>
 
               <div className="manage-user" onClick={openManage}>
-                <Avatar src={user.profileURL} size={40} />
+                <Avatar src={authUser.profileURL} size={40} />
                 <div>
-                  <h3>{user.name}</h3>
-                  <p className="grey">@{user.username}</p>
+                  <h3>{authUser.name}</h3>
+                  <p className="grey">@{authUser.username}</p>
                 </div>
                 <DotsIcon />
               </div>

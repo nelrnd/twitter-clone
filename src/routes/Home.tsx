@@ -1,18 +1,18 @@
 import { useContext, useState } from "react"
-import { UserContext } from "../contexts/UserContext"
 import PageHeader from "../components/PageHeader/PageHeader"
 import TweetComposer from "../components/TweetComposer/TweetComposer"
 import Feed from "../components/Feed/Feed"
 import useAuthRedirect from "../hooks/useAuthRedirect"
 import Tabs from "../components/Tabs/Tabs"
 import SearchBar from "../components/Search/Search"
+import { GlobalContext } from "../contexts/GlobalContext"
 
 type HomeProps = {
   children?: string | JSX.Element | JSX.Element[]
 }
 
 const Home: React.FC<HomeProps> = ({children}) => {
-  const user = useContext(UserContext)
+  const { authUser } = useContext(GlobalContext)
   const [currentTab, setCurrentTab] = useState('For you')
 
   useAuthRedirect()
@@ -30,7 +30,7 @@ const Home: React.FC<HomeProps> = ({children}) => {
     }
   ]
 
-  return user ? (
+  return authUser ? (
     <>
       <main>
         <PageHeader>
@@ -41,7 +41,7 @@ const Home: React.FC<HomeProps> = ({children}) => {
 
         <TweetComposer />
 
-        <Feed userIds={currentTab === 'Following' ? [user.id, ...user.following] : null} />
+        <Feed userIds={currentTab === 'Following' ? [authUser.id, ...authUser.following] : null} />
       </main>
 
       <aside>

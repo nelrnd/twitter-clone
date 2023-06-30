@@ -6,7 +6,6 @@ import { getTime } from "../../utils"
 import { Tweet, User } from "../../types"
 import PhotoPreview from "../PhotoPreview/PhotoPreview"
 import { useContext, useLayoutEffect } from "react"
-import { UserContext } from "../../contexts/UserContext"
 import { useDocumentData } from "react-firebase-hooks/firestore"
 import { doc } from "firebase/firestore"
 import { db, toggleLikeTweet, toggleRetweetTweet } from "../../firebase"
@@ -18,6 +17,7 @@ import LikeFilledIcon from '../../assets/heart-filled.svg'
 import RetweetIcon from '../../assets/retweet.svg'
 import ReplyIcon from '../../assets/comment.svg'
 import useTweetData from "../../hooks/useTweetData"
+import { GlobalContext } from "../../contexts/GlobalContext"
 
 type PreTweetCardProps = {
   tweetId: string
@@ -97,7 +97,7 @@ type StatsActionsBarProps = {
 }
 
 const StatsActionsBar: React.FC<StatsActionsBarProps> = ({tweet, user}) => {
-  const authUser = useContext(UserContext)
+  const { authUser } = useContext(GlobalContext)
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -128,14 +128,14 @@ const StatsActionsBar: React.FC<StatsActionsBarProps> = ({tweet, user}) => {
 
 const RetweetBar: React.FC<{retweetedBy: string}> = ({retweetedBy}) => {
   const [user, loading] = useUserDataWithId(retweetedBy)
-  const currentUser = useContext(UserContext)
+  const { authUser } = useContext(GlobalContext)
 
   if (loading || !user) return null
 
   return (
     <div className="RetweetBar">
       <RetweetIcon />
-      <p>{user.id === currentUser?.id ? 'You' : user.name} Retweeted</p>
+      <p>{user.id === authUser?.id ? 'You' : user.name} Retweeted</p>
     </div>
   )
 }

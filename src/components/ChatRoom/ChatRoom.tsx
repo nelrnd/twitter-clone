@@ -2,10 +2,10 @@ import { Link, useParams } from 'react-router-dom'
 import Avatar from '../Avatar/Avatar'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { CollectionReference, collection, orderBy, query} from 'firebase/firestore'
-import { auth, createChat, createMessage, db } from '../../firebase'
+import { auth, createChat, createMessage, db, readAllMessages } from '../../firebase'
 import { useUserDataWithId } from '../../hooks/useUserData'
 import { Message as MessageType, User } from '../../types'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Message from '../Message/Message'
 import SendIcon from '../../assets/send.svg'
 import './ChatRoom.sass'
@@ -51,6 +51,8 @@ type ChatMessagesProps = {
 
 const ChatMessages: React.FC<ChatMessagesProps> = ({messages}) => {
   const bottom = useRef<HTMLDivElement>(null)
+  const { chatId } = useParams<'chatId'>()
+  const authUserId = auth.currentUser?.uid
   const checkIfFollowUp = (msg: MessageType, id: number) => !!(messages && messages[id + 1] && messages[id + 1].timestamp - msg.timestamp < 60000 && msg.from === messages[id + 1].from)
 
   useLayoutEffect(() => {
@@ -58,6 +60,14 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({messages}) => {
       bottom.current.scrollIntoView()
     } 
   }, [messages])
+
+  useEffect(() => {
+    if (chatId && authUserId) {
+      setTimeout(() => {
+        readAllMessages(chatId, authUserId)
+      }, 500)
+    }
+  }, [chatId, authUserId, messages])
 
   return (
     <div className="ChatMessages">
