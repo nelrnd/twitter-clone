@@ -306,9 +306,9 @@ export const createMessage = async (chatId: string, from: string, text: string) 
     if (!chatId || !from || !text) return
     const messageRef = collection(db, 'chats', chatId, 'messages')
     const message = { text, from, timestamp: Date.now() }
-    await addDoc(messageRef, message)
-    await setLastMessage(chatId, message)
-    await incrementUnreadCount(chatId, from)
+    addDoc(messageRef, message)
+    setLastMessage(chatId, message)
+    incrementUnreadCount(chatId, from)
   } catch (err) {
     console.error(err)
   }

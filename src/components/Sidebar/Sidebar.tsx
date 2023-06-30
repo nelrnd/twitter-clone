@@ -53,6 +53,7 @@ function Sidebar() {
       icon: MessageIcon,
       iconFilled: MessageIconFilled,
       active: pathname.includes('/messages'),
+      label: authUser && chats?.filter((c) => c.unreadCount[authUser.id]).length
     },
     {
       text: 'Profile',
