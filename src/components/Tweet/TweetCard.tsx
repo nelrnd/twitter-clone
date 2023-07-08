@@ -85,7 +85,7 @@ const TweetCard: React.FC<TweetCardProps> = ({tweet, retweetedBy, isReply, onLoa
           )}
         </main>
         <StatsActionsBar tweet={tweet} user={user} />
-        <div className="background" onClick={() => navigate('/' + user.username + '/status/' + tweet.id)} />
+        <div className="background" onClick={() => navigate(`/${user.username}/status/${tweet.id}`, { state: { previousLocation: location }})} />
       </div>
     </article>
   ) : null

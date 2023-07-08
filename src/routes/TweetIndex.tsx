@@ -1,4 +1,4 @@
-import { useNavigate, useOutletContext } from "react-router-dom"
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom"
 import { Tweet, User } from "../types"
 import PageHeader from "../components/PageHeader/PageHeader"
 import TweetMain from "../components/Tweet/TweetMain"
@@ -14,17 +14,15 @@ import SearchBar from "../components/Search/Search"
 const TweetIndex: React.FC = () => {
   const {tweet, user}: {tweet: Tweet, user: User} = useOutletContext()
   const navigate = useNavigate()
+  const { state } = useLocation()
   const start = useRef<HTMLDivElement>(null)
 
   const [inReplyToTweet, loading] = useTweetData(tweet.inReplyTo?.tweetId)
   const [replies, repliesLoading] = useCollectionData(query(collection(db, 'tweets', tweet.id, 'replies'), orderBy('timestamp')))
 
   const goBack = () => {
-    if (window.history.state.idx > 0) {
-      navigate(-1)
-    } else {
-      navigate('/home')
-    }
+    const previousLocation = state?.previousLocation?.pathname || '/home'
+    navigate(previousLocation)
   }
 
   useEffect(() => {
