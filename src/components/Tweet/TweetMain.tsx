@@ -7,6 +7,7 @@ import { doc } from 'firebase/firestore'
 import { db, toggleLikeTweet, toggleRetweetTweet } from '../../firebase'
 import { getLongTime } from '../../utils'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { GlobalContext } from '../../contexts/GlobalContext'
 import './TweetMain.sass'
 
 // Icons
@@ -14,7 +15,6 @@ import LikeIcon from '../../assets/heart.svg'
 import LikeFilledIcon from '../../assets/heart-filled.svg'
 import RetweetIcon from '../../assets/retweet.svg'
 import ReplyIcon from '../../assets/comment.svg'
-import { GlobalContext } from '../../contexts/GlobalContext'
 
 type TweetProps = {
   tweet: Tweet
