@@ -1,4 +1,4 @@
-export type User = {
+type User = {
   id: string
   username: string
   name: string
@@ -13,7 +13,7 @@ export type User = {
   joinedAt: number
 }
 
-export type Tweet = {
+type Tweet = {
   id: string
   content: string[]
   media: string[]
@@ -25,7 +25,15 @@ export type Tweet = {
   inReplyTo: {tweetId: string, userId: string} | null
 }
 
-export type Notification = {
+type FeedItem = {
+  id: string
+  tweetId: string
+  userId: string
+  type?: 'tweet' | 'retweet'
+  timestamp: number
+}
+
+type Notification = {
   from: string
   type: string
   tweetId: string | null
@@ -33,15 +41,17 @@ export type Notification = {
   read: boolean
 }
 
-export type Chat = {
+type Chat = {
   id: string
   members: string[]
   lastMessage: { text: string | null, from: string | null, timestamp: number | null }
   unreadCount: { [key: string]: number }
 }
 
-export type Message = {
+type Message = {
   text: string
   from: string
   timestamp: number
 }
+
+export type { User, Tweet, FeedItem, Notification, Chat, Message }

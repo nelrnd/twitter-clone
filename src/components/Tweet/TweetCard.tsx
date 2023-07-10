@@ -22,7 +22,7 @@ import ProfilePopup from "../Profile/ProfilePopup"
 
 type PreTweetCardProps = {
   tweetId: string
-  retweetedBy?: string
+  retweetedBy?: string | null 
   isReply?: boolean
 }
 
@@ -36,7 +36,7 @@ const PreTweetCard: React.FC<PreTweetCardProps> = ({tweetId, retweetedBy, isRepl
 
 type TweetCardProps = {
   tweet: Tweet | undefined
-  retweetedBy?: string
+  retweetedBy: string | null | undefined
   isReply?: boolean
   onLoad?: () => void
 }
