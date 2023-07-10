@@ -15,6 +15,7 @@ const FETCH_NUMBER = 10
 const Feed: React.FC<FeedProps> = ({ userIds }) => {
   const [refs, setRefs] = useState<FeedItem[]>([])
   const reachedLastRef = useRef<boolean>(false)
+  const currentUserIds = useRef(userIds)
 
   const fetchInitialTweets = async (userIds: string[]) => {
     const refsCollection = collection(db, 'feed') as CollectionReference<FeedItem>
@@ -30,6 +31,7 @@ const Feed: React.FC<FeedProps> = ({ userIds }) => {
   }
 
   const fetchMoreTweets = async (lastRef: FeedItem, userIds: string[]) => {
+    console.log('at least called')
     if (reachedLastRef.current === true || !lastRef) {
       return
     }
@@ -46,8 +48,10 @@ const Feed: React.FC<FeedProps> = ({ userIds }) => {
   }
 
   useEffect(() => {
-    fetchInitialTweets(userIds)
-  }, [userIds])
+    if (currentUserIds.current.toString() !== userIds.toString() || refs.length === 0) {
+      fetchInitialTweets(userIds)
+    }
+  }, [userIds, refs.length])
 
   return (
     <div className='Feed'>
