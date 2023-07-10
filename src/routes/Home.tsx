@@ -41,7 +41,7 @@ const Home: React.FC<HomeProps> = ({children}) => {
 
         <TweetComposer />
 
-        <Feed userIds={currentTab === 'Following' ? [authUser.id, ...authUser.following] : null} />
+        <Feed userIds={currentTab === 'Following' ? [authUser.id, ...authUser.following] : []} />
       </main>
 
       <aside>

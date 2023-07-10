@@ -7,7 +7,7 @@ import TweetCard from '../Tweet/TweetCard'
 import Loader from '../Loader/Loader'
 
 type FeedProps = {
-  userIds: string[] | undefined
+  userIds: string[]
 }
 
 const FETCH_NUMBER = 10
@@ -16,11 +16,11 @@ const Feed: React.FC<FeedProps> = ({ userIds }) => {
   const [refs, setRefs] = useState<FeedItem[]>([])
   const reachedLastRef = useRef<boolean>(false)
 
-  const fetchInitialTweets = async (userIds: string[] | undefined) => {
+  const fetchInitialTweets = async (userIds: string[]) => {
     const refsCollection = collection(db, 'feed') as CollectionReference<FeedItem>
-    const q = userIds ? 
+    const q = userIds.length ? 
       query(refsCollection, where( 'userId', 'in', userIds), orderBy('timestamp', 'desc'), limit(FETCH_NUMBER)) : 
-      query(refsCollection, orderBy('timestamp', 'desc'), limit(FETCH_NUMBER))
+      query(refsCollection, where('timestamp', '>', 0), orderBy('timestamp', 'desc'), limit(FETCH_NUMBER))
     const querySnapshot = await getDocs(q)
     const refs = querySnapshot.docs.map((doc) => doc.data())
     setRefs(refs)
@@ -29,14 +29,14 @@ const Feed: React.FC<FeedProps> = ({ userIds }) => {
     }
   }
 
-  const fetchMoreTweets = async (lastRef: FeedItem, userIds: string[] | undefined) => {
-    if (reachedLastRef.current === true) {
+  const fetchMoreTweets = async (lastRef: FeedItem, userIds: string[]) => {
+    if (reachedLastRef.current === true || !lastRef) {
       return
     }
     const refsCollection = collection(db, 'feed') as CollectionReference<FeedItem>
-    const q = userIds ? 
+    const q = userIds.length ? 
       query(refsCollection, where( 'userId', 'in', userIds), orderBy('timestamp', 'desc'), startAfter(lastRef && lastRef.timestamp || 0), limit(FETCH_NUMBER)) :
-      query(refsCollection, orderBy('timestamp', 'desc'), startAfter(lastRef.timestamp), limit(FETCH_NUMBER))
+      query(refsCollection, where('timestamp', '>', 0), orderBy('timestamp', 'desc'), startAfter(lastRef.timestamp), limit(FETCH_NUMBER))
     const querySnapshot = await getDocs(q)
     const refs = querySnapshot.docs.map((doc) => doc.data())
     setRefs((prevRefs) => [...prevRefs, ...refs])

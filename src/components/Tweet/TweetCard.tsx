@@ -1,6 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useUserDataWithId } from "../../hooks/useUserData"
-import Loader from "../Loader/Loader"
 import Avatar from "../Avatar/Avatar"
 import { getTime } from "../../utils"
 import { Tweet, User } from "../../types"
@@ -27,9 +26,7 @@ type PreTweetCardProps = {
 }
 
 const PreTweetCard: React.FC<PreTweetCardProps> = ({tweetId, retweetedBy, isReply}) => {
-  const [tweet, loading] = useTweetData(tweetId)
-
-  if (loading) return <Loader />
+  const [tweet] = useTweetData(tweetId)
 
   return tweet ? <TweetCard tweet={tweet} retweetedBy={retweetedBy} isReply={isReply} /> : null
 }
@@ -42,13 +39,12 @@ type TweetCardProps = {
 }
 
 const TweetCard: React.FC<TweetCardProps> = ({tweet, retweetedBy, isReply, onLoad}) => {
-  const [user, loading] = useUserDataWithId(tweet?.userId)
+  const [user] = useUserDataWithId(tweet?.userId)
   const navigate = useNavigate()
   const location = useLocation()
   const [popupPosition, setPopupPosition] = useState<{x: number, y: number}|null>(null)
   const [timer, setTimer] = useState<ReturnType<typeof setTimeout>|null>(null)
 
-  
   const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
     if (timer) clearTimeout(timer)
     const target = event.target
@@ -64,8 +60,6 @@ const TweetCard: React.FC<TweetCardProps> = ({tweet, retweetedBy, isReply, onLoa
     const newTimer = setTimeout(() => setPopupPosition(null), 500)
     setTimer(newTimer)
   }
-
-  if (loading) return <Loader />
 
   return tweet && user ? (
     <>
