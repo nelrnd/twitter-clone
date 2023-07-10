@@ -1,4 +1,4 @@
-import { CollectionReference, collection, getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore'
+import { CollectionReference, collection, endBefore, getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore'
 import { db } from '../../firebase'
 import { useEffect, useRef, useState } from 'react'
 import { FeedItem } from '../../types'
@@ -14,13 +14,14 @@ const FETCH_NUMBER = 10
 
 const Feed: React.FC<FeedProps> = ({ userIds }) => {
   const [refs, setRefs] = useState<FeedItem[]>([])
+  const [newRefs, setNewRefs] = useState<FeedItem[]>([])
   const reachedLastRef = useRef<boolean>(false)
   const currentUserIds = useRef(userIds)
 
   const fetchInitialTweets = async (userIds: string[]) => {
     const refsCollection = collection(db, 'feed') as CollectionReference<FeedItem>
     const q = userIds.length ? 
-      query(refsCollection, where( 'userId', 'in', userIds), orderBy('timestamp', 'desc'), limit(FETCH_NUMBER)) : 
+      query(refsCollection, where('userId', 'in', userIds), orderBy('timestamp', 'desc'), limit(FETCH_NUMBER)) : 
       query(refsCollection, where('timestamp', '>', 0), orderBy('timestamp', 'desc'), limit(FETCH_NUMBER))
     const querySnapshot = await getDocs(q)
     const refs = querySnapshot.docs.map((doc) => doc.data())
@@ -31,7 +32,6 @@ const Feed: React.FC<FeedProps> = ({ userIds }) => {
   }
 
   const fetchMoreTweets = async (lastRef: FeedItem, userIds: string[]) => {
-    console.log('at least called')
     if (reachedLastRef.current === true || !lastRef) {
       return
     }
@@ -41,20 +41,35 @@ const Feed: React.FC<FeedProps> = ({ userIds }) => {
       query(refsCollection, where('timestamp', '>', 0), orderBy('timestamp', 'desc'), startAfter(lastRef.timestamp), limit(FETCH_NUMBER))
     const querySnapshot = await getDocs(q)
     const refs = querySnapshot.docs.map((doc) => doc.data())
-    setRefs((prevRefs) => [...prevRefs, ...refs])
+    setRefs((prevRefs) => prevRefs.concat(refs))
     if (refs.length < FETCH_NUMBER) {
       reachedLastRef.current = true
     }
   }
 
+  const fetchNewTweets = async (firstRef: FeedItem, userIds: string[]) => {
+    const refsCollection = collection(db, 'feed') as CollectionReference<FeedItem>
+    const q = userIds.length ?
+     query(refsCollection, where('userId', 'in', userIds), orderBy('timestamp', 'desc'), endBefore(firstRef.timestamp)) :
+     query(refsCollection, where('timestamp', '>', 0), orderBy('timestamp', 'desc'), endBefore(firstRef.timestamp))
+    const querySnapshot = await getDocs(q)
+    const refs = querySnapshot.docs.map((doc) => doc.data())
+    setNewRefs(refs)
+  }
+
   useEffect(() => {
     if (currentUserIds.current.toString() !== userIds.toString() || refs.length === 0) {
       fetchInitialTweets(userIds)
+      setNewRefs([])
+      currentUserIds.current = userIds
+    } else {
+      fetchNewTweets(refs[0], userIds)
     }
-  }, [userIds, refs.length])
+  }, [userIds, refs])
 
   return (
     <div className='Feed'>
+      {newRefs.map((ref) => <TweetCard key={ref.id} tweetId={ref.tweetId} retweetedBy={ref.type === 'retweet' ? ref.userId : null} />)}
       <InfiniteScroll dataLength={refs.length} next={() => fetchMoreTweets(refs[refs.length -1], userIds)} hasMore={!reachedLastRef.current} loader={<Loader />}>
         {refs.map((ref) => <TweetCard key={ref.id} tweetId={ref.tweetId} retweetedBy={ref.type === 'retweet' ? ref.userId : null} />)}
       </InfiniteScroll>
