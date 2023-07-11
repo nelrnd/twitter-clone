@@ -1,121 +1,119 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import Button from '../Buttons/Button'
-import './Sidebar.sass'
-
-import Icon from '../../assets/icon.svg'
-import HomeIcon from '../../assets/home.svg'
-import HomeIconFilled from '../../assets/home-filled.svg'
-import BellIcon from '../../assets/bell.svg'
-import BellIconFilled from '../../assets/bell-filled.svg'
-import MessageIcon from '../../assets/message.svg'
-import MessageIconFilled from '../../assets/message-filled.svg'
-import ProfileIcon from '../../assets/profile.svg'
-import ProfileIconFilled from '../../assets/profile-filled.svg'
-import DotsIcon from '../../assets/dots.svg'
 import { useContext, useState } from 'react'
-import Avatar from '../Avatar/Avatar'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { signOut } from 'firebase/auth'
 import { auth } from '../../firebase'
 import { GlobalContext } from '../../contexts/GlobalContext'
+import { User } from '../../types'
+import Button from '../Buttons/Button'
+import Avatar from '../Avatar/Avatar'
+import UserName from '../User/UserName'
+import './Sidebar.sass'
 
-function Sidebar() {
-  const [manageOpened, setManageOpened] = useState(false)
-  const { authUser, notifications, chats } = useContext(GlobalContext)
+// Icons
+import TwitterIcon from '../../assets/twitter.svg'
+import HomeIcon from '../../assets/home.svg'
+import HomeIconActive from '../../assets/home-filled.svg'
+import NotificationsIcon from '../../assets/notification.svg'
+import NotificationsIconActive from '../../assets/notification-filled.svg'
+import MessagesIcon from '../../assets/message.svg'
+import MessagesIconActive from '../../assets/message-filled.svg'
+import ProfileIcon from '../../assets/profile.svg'
+import ProfileIconActive from '../../assets/profile-filled.svg'
+import DotsIcon from '../../assets/dots.svg'
+
+const Sidebar: React.FC = () => {
+  const { authUser } = useContext(GlobalContext)
   const navigate = useNavigate()
   const location = useLocation()
-  const pathname = location.pathname
 
-  const openManage = () => setManageOpened(true)
-  const closeManage = () => setManageOpened(false)
+  const { notifications, chats } = useContext(GlobalContext)
+  const notificationsCount = notifications?.filter((n) => !n.read).length
+  const chatsCount = authUser && chats?.filter((c) => c.unreadCount[authUser.id]).length || 0
 
-  const logout = () => signOut(auth)
-  const tweet = () => navigate('/compose/tweet', {state: {backgroundLocation: location}})
+  const handleTweet = () => navigate('/compose/tweet', {state: {backgroundLocation: location}})
 
-  const sidebarTabs = [
-    {
-      text: 'Home',
-      link: '/home',
-      icon: HomeIcon,
-      iconFilled: HomeIconFilled,
-      active: pathname === '/home',
-    },
-    {
-      text: 'Notifications',
-      link: '/notifications',
-      icon: BellIcon,
-      iconFilled: BellIconFilled,
-      active: pathname === '/notifications',
-      label: notifications?.filter((n) => n.read === false).length
-    },
-    {
-      text: 'Messages',
-      link: '/messages',
-      icon: MessageIcon,
-      iconFilled: MessageIconFilled,
-      active: pathname.includes('/messages'),
-      label: authUser && chats?.filter((c) => c.unreadCount[authUser.id]).length
-    },
-    {
-      text: 'Profile',
-      link: (authUser && `/${authUser.username}`) || '',
-      icon: ProfileIcon,
-      iconFilled: ProfileIconFilled,
-      active: authUser && pathname.split('/')[1] === authUser.username && !pathname.includes('status'),
-    },
-  ]
+  return authUser ? (
+    <nav className='Sidebar'>
+      <div className='tabs'>
+        <SidebarTab href={'home'} icon={<TwitterIcon />} />
+        <SidebarTab href={'home'} text={'Home'} icon={<HomeIcon />} activeIcon={<HomeIconActive />} />
+        <SidebarTab href={'notifications'} text={'Notifications'} icon={<NotificationsIcon />} activeIcon={<NotificationsIconActive />} badgeCount={notificationsCount} />
+        <SidebarTab href={'messages'} text={'Messages'} icon={<MessagesIcon />} activeIcon={<MessagesIconActive />} badgeCount={chatsCount} />
+        <SidebarTab href={authUser?.username} text={'Profile'} icon={<ProfileIcon />} activeIcon={<ProfileIconActive />} />
+        <Button style='primary' size='large' onClick={handleTweet}>Tweet</Button>
+      </div>
+
+      <ManageUser user={authUser} />
+    </nav>
+  ) : null
+}
+
+type SidebarTabProps = {
+  href: string
+  text?: string
+  icon: JSX.Element
+  activeIcon?: JSX.Element
+  badgeCount?: number
+}
+
+const SidebarTab: React.FC<SidebarTabProps> = ({ href, text, icon, activeIcon, badgeCount }) => {
+  const location = useLocation()
+  const isActive = location.pathname.split('/')[1] === href
 
   return (
-    <div className="Sidebar_wrapper">
-      <aside className="Sidebar">
-        <div className="top">
-          <Link to="/home" className="icon">
-            <Icon />
-          </Link>
+    <Link to={href} className={`SidebarTab ${isActive ? 'active' : ''} ${!text ? 'noText' : ''}`}>
+      <div className={`content ${text ? 'hasText' : ''}`}>
+        {!!badgeCount && <Badge count={badgeCount} />}
+        {isActive ? activeIcon || icon : icon}
+        {text && <span>{text}</span>}
+      </div>
+    </Link>
+  )
+}
 
-          <nav className="tabs">
-            {sidebarTabs.map((tab, id) => (
-              <Link to={tab.link} key={id}>
-                <div className={`tab ${tab.active ? 'active' : ''}`}>
-                  {tab.active ? <tab.iconFilled /> : <tab.icon />}
-                  {!!tab.label && <div className='label'>{tab.label}</div>}
-                  <span>{tab.text}</span>
-                </div>
-              </Link>
-            ))}
-          </nav>
+type BadgeProps = {
+  count: number
+}
 
-          <Button style="primary" size="large" onClick={tweet}>
-            Tweet
-          </Button>
-        </div>
-
-        {authUser ? (
-          <>
-            <div className="bottom">
-              <div className={`popup  ${manageOpened ? 'open' : ''}`}>
-                <ul>
-                  <li onClick={logout}>Log out @{authUser.username}</li>
-                </ul>
-                <svg width="15" height="8" viewBox="0 0 15 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fillRule="evenodd" clipRule="evenodd" d="M-0.000488281 0L7.41111 7.4116L14.8227 0H-0.000488281Z" fill="white" />
-                </svg>
-              </div>
-
-              <div className="manage-user" onClick={openManage}>
-                <Avatar src={authUser.profileURL} size={40} />
-                <div>
-                  <h3>{authUser.name}</h3>
-                  <p className="grey">@{authUser.username}</p>
-                </div>
-                <DotsIcon />
-              </div>
-            </div>
-          </>
-        ) : null}
-        <div className={`manage-user-backdrop ${manageOpened ? 'open' : ''}`} onClick={closeManage} />
-      </aside>
+const Badge: React.FC<BadgeProps> = ({ count }) => {
+  return (
+    <div className='Badge'>
+      {count < 10 ? count : '9+'}
     </div>
   )
+}
+
+type ManageUserProps = {
+  user: User
+}
+
+const ManageUser: React.FC<ManageUserProps> = ({ user }) => {
+  const [open, setOpen] = useState(false)
+
+  const handleLogout = () => signOut(auth)
+
+  return user ? (
+    <div className='ManageUser_wrapper'>
+      {open && (
+        <>
+          <div className='ManageUserPopup'>
+            <ul>
+              <li onClick={handleLogout}>Log out @{user.username}</li>
+            </ul>
+            <svg width="15" height="8" viewBox="0 0 15 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M-0.000488281 0L7.41111 7.4116L14.8227 0H-0.000488281Z" fill="white" />
+            </svg>
+          </div>
+          <div className='backdrop' onClick={() => setOpen(false)} />
+        </>
+      )}
+      <div className='ManageUser' onClick={() => setOpen(true)}>
+        <Avatar src={user.profileURL} size={40} />
+        <UserName user={user} />
+        <DotsIcon />
+      </div>
+    </div>
+  ) : null
 }
 
 export default Sidebar
