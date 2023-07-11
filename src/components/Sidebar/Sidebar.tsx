@@ -19,6 +19,7 @@ import MessagesIcon from '../../assets/message.svg'
 import MessagesIconActive from '../../assets/message-filled.svg'
 import ProfileIcon from '../../assets/profile.svg'
 import ProfileIconActive from '../../assets/profile-filled.svg'
+import TweetIcon from '../../assets/tweet.svg'
 import DotsIcon from '../../assets/dots.svg'
 
 const Sidebar: React.FC = () => {
@@ -40,7 +41,10 @@ const Sidebar: React.FC = () => {
         <SidebarTab href={'notifications'} text={'Notifications'} icon={<NotificationsIcon />} activeIcon={<NotificationsIconActive />} badgeCount={notificationsCount} />
         <SidebarTab href={'messages'} text={'Messages'} icon={<MessagesIcon />} activeIcon={<MessagesIconActive />} badgeCount={chatsCount} />
         <SidebarTab href={authUser?.username} text={'Profile'} icon={<ProfileIcon />} activeIcon={<ProfileIconActive />} />
-        <Button style='primary' size='large' onClick={handleTweet}>Tweet</Button>
+        <Button style='primary' size='large' onClick={handleTweet}>
+          <TweetIcon />
+          <span className='text'>Tweet</span>
+        </Button>
       </div>
 
       <ManageUser user={authUser} />
