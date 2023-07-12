@@ -8,11 +8,13 @@ const NoProfileHeader: React.FC = () => {
 
   return (
     <header className="ProfileHeader">
-      <Banner />
-      <Avatar blank={true} size={132} />
+      <div className="avatar-header_wrapper">
+        <Banner />
+        <Avatar blank={true} size={132} />
+      </div>
       <h2 className="heading-2" style={{marginTop: 80, marginLeft: 16}}>@{username}</h2>
 
-      <div style={{padding: '112px'}}>
+      <div className="big-padding">
         <h1 className="heading-1">This account doesn't exists</h1>
         <p className="grey">Try searching for another.</p>
       </div>

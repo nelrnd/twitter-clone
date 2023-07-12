@@ -9,7 +9,7 @@ type AvatarProps = {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ src, size, onClick, blank }) => (
-  <div className={`Avatar ${size}`} onClick={onClick} style={{ width: size + 'px', height: size + 'px' }}>
+  <div className={`Avatar ${size}`} onClick={onClick} style={{ width: size, height: size }}>
     {!blank && <img src={src || defaultProfile} referrerPolicy="no-referrer" alt="avatar" />}
   </div>
 )
