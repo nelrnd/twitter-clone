@@ -21,6 +21,9 @@
   h2
     margin-bottom: 0
 
+  .IconButton
+    display: none
+
 .ChatMessages
   padding: 16px
   overflow-y: auto
@@ -71,3 +74,7 @@
       display: block
       width: 20px
       height: 20px
+
+@media screen and (max-width: 1000px)
+  .ChatHeader .IconButton
+    display: block

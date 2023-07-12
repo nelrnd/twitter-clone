@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import Avatar from '../Avatar/Avatar'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { CollectionReference, collection, orderBy, query} from 'firebase/firestore'
@@ -9,6 +9,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Message from '../Message/Message'
 import SendIcon from '../../assets/send.svg'
 import './ChatRoom.sass'
+import IconButton from '../Buttons/IconButton'
+import BackIcon from '../../assets/back.svg'
 
 const ChatRoom: React.FC = () => {
   const { chatId } = useParams<'chatId'>()
@@ -35,8 +37,13 @@ type ChatHeaderProps = {
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({user}) => {
+  const navigate = useNavigate()
+
   return (
     <header className='ChatHeader'>
+      <IconButton onClick={() => navigate('/messages')}>
+        <BackIcon />
+      </IconButton>
       <Link to={`/${user.username}`}>
         <Avatar src={user.profileURL} size={32} />
       </Link>

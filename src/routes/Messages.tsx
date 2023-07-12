@@ -10,7 +10,7 @@ const Messages: React.FC = () => {
   const { chats } = useContext(GlobalContext)
 
   return (
-    <div className="messages">
+    <div className={`messages ${chatId ? 'chat' : 'home'}`}>
       <nav>
         <PageHeader>
           <h1 className="heading-2">Messages</h1>
