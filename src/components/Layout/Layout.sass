@@ -1,36 +1,25 @@
 @use '../../base'
 
-html, body, #root
-  height: 100%
-
 .Layout
   min-height: 100%
-  display: flex
+  display: grid
+  grid-auto-flow: column
+  grid-auto-columns: auto
+  justify-content: center
   gap: 32px
 
-  .Sidebar_wrapper
-    flex-grow: 1
-    display: flex
-    justify-content: flex-end
+  > main
+    width: 600px
+    min-height: 100%
+    border: solid 1px base.$dark-10
+    border-top: none
+    border-bottom: none
+
+  > aside
+    width: 350px
+    min-height: 100%
+    padding: 16px 0
     position: relative
-
-  > .right-part
-    flex-grow: 1
-    display: flex
-    gap: 32px
-
-    > main
-      width: 600px
-      min-height: 100%
-      border: solid 1px base.$dark-10
-      border-top: none
-      border-bottom: none
-
-    > aside
-      width: 350px
-      min-height: 100%
-      padding: 16px 0
-      position: relative
 
 .messages
   display: grid
@@ -47,3 +36,9 @@ html, body, #root
     border-right: solid 1px base.$dark-10
     height: 100%
     overflow-y: hidden
+
+.JoinLayout
+  min-height: 100%
+  display: grid
+  place-content: center
+  background-color: rgba(black, 35%)

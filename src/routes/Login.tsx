@@ -3,8 +3,8 @@ import { Link, Navigate } from 'react-router-dom'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth, checkIfEmailExists, joinWithGoogle } from '../firebase'
-import JoinLayout, { TwitterIcon } from '../components/JoinLayout/JoinLayout'
-import GoogleIcon from '../assets/google.png'
+import { FirebaseError } from 'firebase/app'
+import JoinCard from '../components/JoinCard/JoinCard'
 import Button from '../components/Buttons/Button'
 import Divider from '../components/Divider/Divider'
 import TextInput from '../components/TextInput/TextInput'
@@ -12,7 +12,8 @@ import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
 import Loader from '../components/Loader/Loader'
 import Alert from '../components/Alert/Alert'
-import { FirebaseError } from 'firebase/app'
+import TwitterIcon from '../assets/twitter.svg'
+import GoogleIcon from '../assets/google.png'
 
 type EnterEmailProps = {
   email: string
@@ -53,7 +54,7 @@ const Login: React.FC = () => {
   return user ? (
     <Navigate to="/home" replace />
   ) : (
-    <JoinLayout paddingSize={currentStage === 'ENTER_EMAIL' ? 'large' : 'small'}>
+    <JoinCard width={currentStage === 'ENTER_EMAIL' ? 300 : 440}>
       {loading ? (
         <Loader />
       ) : (
@@ -70,7 +71,7 @@ const Login: React.FC = () => {
         </>
       )}
       <Alert text={error.text} />
-    </JoinLayout>
+    </JoinCard>
   )
 }
 

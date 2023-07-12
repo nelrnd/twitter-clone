@@ -8,16 +8,20 @@ const Layout: React.FC = () => {
   const { authUser } = useContext(GlobalContext)
   const location = useLocation()
 
-  if (location.pathname === '/') return <Navigate to="/home" replace={true} />
-
+  if (location.pathname === '/') {
+    return <Navigate to='/home' replace={true} />
+  }
+  
   return authUser ? (
-    <div className="Layout">
+    <div className='Layout'>
       <Sidebar />
-      <div className="right-part">
-        <Outlet />
-      </div>
+      <Outlet />
     </div>
-  ) : <Outlet />
+  ) : (
+    <div className='JoinLayout'>
+      <Outlet />
+    </div>
+  )
 }
 
 export default Layout

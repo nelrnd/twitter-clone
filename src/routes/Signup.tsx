@@ -5,7 +5,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { checkEmailFormat } from '../utils'
 import { useUserDataWithId } from '../hooks/useUserData'
-import JoinLayout, { TwitterIcon } from '../components/JoinLayout/JoinLayout'
+import JoinCard from '../components/JoinCard/JoinCard'
 import Button from '../components/Buttons/Button'
 import IconButton from '../components/Buttons/IconButton'
 import BackIcon from '../assets/back.svg'
@@ -13,6 +13,7 @@ import GoogleIcon from '../assets/google.png'
 import Divider from '../components/Divider/Divider'
 import TextInput from '../components/TextInput/TextInput'
 import Loader from '../components/Loader/Loader'
+import TwitterIcon from '../assets/twitter.svg'
 
 const STAGES = ['JOIN', 'CREATE_ACCOUNT', 'PICK_PASSWORD', 'PICK_USERNAME']
 
@@ -56,19 +57,19 @@ const Signup: React.FC = () => {
 
   if (dataLoading) {
     return (
-      <JoinLayout paddingSize="large">
+      <JoinCard width={300}>
         <Loader />
-      </JoinLayout>
+      </JoinCard>
     )
   }
 
   return (
-    <JoinLayout paddingSize={currentStage === 'JOIN' ? 'large' : 'small'}>
+    <JoinCard width={currentStage === 'JOIN' ? 300 : 440}>
       {currentStage === 'JOIN' && <Signup_Join setStage={setStage} />}
       {currentStage === 'CREATE_ACCOUNT' && <Signup_CreateAccount setStage={setStage} name={name} setName={setName} email={email} setEmail={setEmail} />}
       {currentStage === 'PICK_PASSWORD' && <Signup_PickPassword setStage={setStage} password={password} setPassword={setPassword} email={email} name={name} />}
       {currentStage === 'PICK_USERNAME' && <Signup_PickUsername />}
-    </JoinLayout>
+    </JoinCard>
   )
 }
 
@@ -146,10 +147,14 @@ const Signup_CreateAccount: React.FC<CreateAccountProps> = ({ setStage, name, se
 
   return (
     <>
-      <IconButton onClick={() => setStage(STAGES[0])}>
-        <BackIcon />
-      </IconButton>
-      <div className="top-bar">Step 1 of 2</div>
+      <div className="top-bar">
+        <IconButton onClick={() => setStage(STAGES[0])}>
+          <BackIcon />
+        </IconButton>
+        <div className='text'>
+          Step 1 of 2
+        </div>
+      </div>
       <h1>Create your account</h1>
       <form onSubmit={handleSubmit}>
         <TextInput label="Name" value={name} setValue={setName} />
@@ -199,10 +204,14 @@ const Signup_PickPassword: React.FC<PickPasswordProps> = ({ setStage, password, 
 
   return (
     <>
-      <IconButton onClick={() => setStage(STAGES[1])}>
-        <BackIcon />
-      </IconButton>
-      <div className="top-bar">Step 2 of 2</div>
+      <div className="top-bar">
+        <IconButton onClick={() => setStage(STAGES[1])}>
+          <BackIcon />
+        </IconButton>
+        <div className='text'>
+          Step 2 of 2
+        </div>
+      </div>
       <h1>You'll need a password</h1>
       <p className="subtitle">Make sure it's 8 characters or more.</p>
       <form onSubmit={handleSubmit}>
