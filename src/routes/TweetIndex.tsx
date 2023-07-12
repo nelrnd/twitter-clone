@@ -9,7 +9,7 @@ import Loader from "../components/Loader/Loader"
 import TweetCard, { TweetCard as LoadedTweetCard } from "../components/Tweet/TweetCard"
 import { useEffect, useRef } from "react"
 import useTweetData from "../hooks/useTweetData"
-import SearchBar from "../components/Search/Search"
+import { Main, Side } from "../components/Layout/Layout"
 
 const TweetIndex: React.FC = () => {
   const {tweet, user}: {tweet: Tweet, user: User} = useOutletContext()
@@ -37,13 +37,13 @@ const TweetIndex: React.FC = () => {
 
   return (
     <>
-      <main className="TweetIndex">
+      <Main className="TweetIndex">
         <PageHeader onClick={goBack}>
           <h2 className="heading-2">Tweet</h2>
         </PageHeader>
 
         {tweet.inReplyTo && loading && <Loader />}
-        {inReplyToTweet && <LoadedTweetCard tweet={inReplyToTweet} isReply={true} onLoad={scrollAtTop} />}
+        {inReplyToTweet && <LoadedTweetCard tweet={inReplyToTweet} isReply={true} onLoad={scrollAtTop} retweetedBy={null} />}
 
         <div style={{minHeight: 'calc(100vh - 52px)'}} ref={start}>
           <TweetMain tweet={tweet} user={user} />
@@ -51,11 +51,9 @@ const TweetIndex: React.FC = () => {
           {repliesLoading && <Loader />}
           {replies && <div>{replies.map((reply) => <TweetCard key={reply.id} tweetId={reply.id} />)}</div>}
         </div>
-      </main>
+      </Main>
 
-      <aside>
-        <SearchBar />
-      </aside>
+      <Side />
     </>
   )
 }

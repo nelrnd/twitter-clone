@@ -1,13 +1,13 @@
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import { User } from "../types"
-import PageHeader from "../components/PageHeader/PageHeader"
-import Tabs from "../components/Tabs/Tabs"
 import { useCollectionData } from "react-firebase-hooks/firestore"
 import { CollectionReference, collection, query, where } from "firebase/firestore"
 import { db } from "../firebase"
+import { Main, Side } from "../components/Layout/Layout"
+import PageHeader from "../components/PageHeader/PageHeader"
+import Tabs from "../components/Tabs/Tabs"
 import Loader from "../components/Loader/Loader"
 import ProfileCard from "../components/Profile/ProfileCard"
-import SearchBar from "../components/Search/Search"
 
 const Following: React.FC = () => {
   const { username } = useParams<'username'>()
@@ -23,7 +23,7 @@ const Following: React.FC = () => {
 
   return user ? (
     <>
-      <main>
+      <Main>
         <PageHeader onClick={() => navigate('../')}>
           <h2 className="heading-2">{user.name}</h2>
           <div className="grey small">@{user.username}</div>
@@ -36,11 +36,9 @@ const Following: React.FC = () => {
 
           {users?.map((user) => <ProfileCard key={user.id} user={user} showBio={true} showFollow={true} />)}
         </div>
-      </main>
+      </Main>
 
-      <aside>
-        <SearchBar />
-      </aside>
+      <Side />
     </>
   ) : <Navigate to={'/' + username} />
 }

@@ -3,6 +3,7 @@ import Sidebar from '../Sidebar/Sidebar'
 import './Layout.sass'
 import { useContext } from 'react'
 import { GlobalContext } from '../../contexts/GlobalContext'
+import SearchBar from '../Search/Search'
 
 const Layout: React.FC = () => {
   const { authUser } = useContext(GlobalContext)
@@ -24,4 +25,14 @@ const Layout: React.FC = () => {
   )
 }
 
+type SectionProps = {
+  children: JSX.Element | (JSX.Element|null|boolean|undefined)[]
+  className?: string
+}
+
+const Main: React.FC<SectionProps> = ({ children, className }) => <main className={`Main ${className || ''}`}>{children}</main>
+
+const Side: React.FC = () => <aside className='Side'><SearchBar /></aside>
+
 export default Layout
+export { Main, Side }

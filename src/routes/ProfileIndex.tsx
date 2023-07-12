@@ -5,7 +5,7 @@ import NoProfileHeader from "../components/Profile/NoProfileHeader"
 import Tabs from "../components/Tabs/Tabs"
 import Feed from "../components/Feed/Feed"
 import ProfileHeader from "../components/Profile/ProfileHeader"
-import SearchBar from "../components/Search/Search"
+import { Main, Side } from "../components/Layout/Layout"
 
 const ProfileIndex: React.FC = () => {
   const {user}: {user: User} = useOutletContext()
@@ -21,7 +21,7 @@ const ProfileIndex: React.FC = () => {
 
   return (
     <>
-      <main>
+      <Main>
         <PageHeader onClick={goBack}>
           {user ? (
             <>
@@ -41,11 +41,9 @@ const ProfileIndex: React.FC = () => {
             <Feed userIds={[user.id]} />
           </>
         }
-      </main>
+      </Main>
 
-      <aside>
-        <SearchBar />
-      </aside>
+      <Side />
     </>
   )
 }

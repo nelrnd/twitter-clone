@@ -7,20 +7,7 @@
   grid-auto-columns: auto
   justify-content: center
   gap: 32px
-
-  > main
-    width: 600px
-    min-height: 100%
-    border: solid 1px base.$dark-10
-    border-top: none
-    border-bottom: none
-
-  > aside
-    width: 350px
-    min-height: 100%
-    padding: 16px 0
-    position: relative
-
+  
 .messages
   display: grid
   grid-template-columns: 382px 600px
@@ -42,3 +29,44 @@
   display: grid
   place-content: center
   background-color: rgba(black, 35%)
+
+.Main
+  width: 600px
+  min-height: 100%
+  border: solid 1px base.$dark-10
+  border-top: none
+  border-bottom: none
+
+.Side
+  width: 350px
+  min-height: 100%
+  padding: 16px 0
+  position: relative
+
+@media screen and (max-width: 1100px)
+  .Layout
+    gap: 20px
+
+  .Side
+    width: 290px
+
+@media screen and (max-width: 1000px)
+  .Sidebar
+    margin-left: 16px
+
+  .Layout
+    gap: 16px
+    grid-template-columns: auto 1fr
+
+  .Main
+    width: 100%
+
+  .Side
+    display: none
+
+@media screen and (max-width: 900px)
+  .Sidebar
+    margin-left: 8px
+  
+  .Layout
+    gap: 0

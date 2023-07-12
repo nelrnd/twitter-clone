@@ -4,7 +4,7 @@ import PageHeader from "../components/PageHeader/PageHeader"
 import Tabs from "../components/Tabs/Tabs"
 import ProfileHeader from "../components/Profile/ProfileHeader"
 import LikeFeed from "../components/Feed/LikeFeed"
-import SearchBar from "../components/Search/Search"
+import { Main, Side } from "../components/Layout/Layout"
 
 const ProfileLikes: React.FC = () => {
   const { username } = useParams<'username'>()
@@ -21,7 +21,7 @@ const ProfileLikes: React.FC = () => {
 
   return user ? (
     <>
-      <main>
+      <Main>
         <PageHeader onClick={goBack}>
           <h2 className="heading">{user.name}</h2>
           <p className="small grey">{user.likesCount} Likes</p>
@@ -29,11 +29,9 @@ const ProfileLikes: React.FC = () => {
         <ProfileHeader user={user} />
         <Tabs tabs={tabs} />
         <LikeFeed userId={user.id} />
-      </main>
+      </Main>
 
-      <aside>
-        <SearchBar />
-      </aside>
+      <Side />
     </>
   ) : <Navigate to={"/" + username} />
 }
