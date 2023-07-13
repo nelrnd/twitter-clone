@@ -1,56 +1,113 @@
-import SearchIcon from '../../assets/search.svg'
-import { useRef, useState } from 'react'
-import { CollectionReference, collection, query, where } from 'firebase/firestore'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { CollectionReference, Query, collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '../../firebase'
-import { useCollectionDataOnce } from 'react-firebase-hooks/firestore'
-import Loader from '../Loader/Loader'
 import { User } from '../../types'
-import ProfileCard from '../Profile/ProfileCard'
+import Loader from '../Loader/Loader'
+import Avatar from '../Avatar/Avatar'
+import UserName from '../User/UserName'
+import SearchIcon from '../../assets/search.svg'
 import './Search.sass'
 
-const SearchBar: React.FC = () => {
-  const [searchValue, setSearchValue] = useState('')
+const Search: React.FC = () => {
+  const [value, setValue] = useState('')
   const [open, setOpen] = useState(false)
-  const input = useRef<HTMLInputElement>(null)
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value)
-  }
 
   return (
-    <>
-      <div className="SearchBar_wrapper" onClick={() => input.current && input.current.focus()}>
-        <SearchIcon />
-        <input type="search" value={searchValue} onChange={handleChange} placeholder='Search Twitter' ref={input} onFocus={() => setOpen(true)} />
-        {open && <SearchResults searchValue={searchValue} />}
-      </div>
-      {open && <div className='Search_backdrop' onClick={() => setOpen(false)} />}
-    </>
-  )
-}
-
-type SearchResultsProps = {
-  searchValue: string
-}
-
-const SearchResults: React.FC<SearchResultsProps> = ({searchValue}) => {
-  const usernameQuery = query(collection(db, 'users') as CollectionReference<User>, where('username', '>=', searchValue), where('username', '<=', searchValue + '\uf8ff'))
-  const nameQuery = query(collection(db, 'users') as CollectionReference<User>, where('name', '>=', searchValue), where('name', '<=', searchValue + '\uf8ff'))
-  const [usernameResults, usernameLoading] = useCollectionDataOnce(searchValue ? usernameQuery : null)
-  const [nameResults, nameLoading] = useCollectionDataOnce(searchValue ? nameQuery : null)
-
-  const results = usernameResults?.concat(nameResults || []).filter((res, id, arr) => arr.findIndex((u) => u.id === res.id) === id)
-
-  return (
-    <div className="SearchResults">
-      {usernameLoading || nameLoading && <Loader />}
-      {!searchValue ? (
-        <p style={{padding: 16, textAlign: 'center'}}>Try searching for people</p>
-      ) : (
-        results?.map((res, id) => <ProfileCard key={id} user={res} showBio={false} showFollow={false} />)
-      )}
+    <div className='Search'>
+      <SearchBar value={value} setValue={setValue} setOpen={setOpen} />
+      {open && <SearchResults value={value} setOpen={setOpen} />}
     </div>
   )
 }
 
-export default SearchBar
+type SearchBarProps = {
+  value: string
+  setValue: (value: string) => void
+  setOpen: (open: boolean) => void
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ value, setValue, setOpen }) => {
+  const input = useRef<HTMLInputElement>(null)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value)
+  }
+
+  return (
+    <div className='SearchBar'>
+      <SearchIcon />
+      <input type="search" value={value} onChange={handleChange} placeholder='Search Twitter' ref={input} onFocus={() => setOpen(true)} />
+    </div>
+  )
+}
+
+type SearchResultsProps = {
+  value: string
+  setOpen: (open: boolean) => void
+}
+
+const SearchResults: React.FC<SearchResultsProps> = ({ value, setOpen }) => {
+  const [results, setResults] = useState<User[]>([])
+  const [loading, setLoading] = useState(false)
+
+  const fetchResults = async (value: string) => {
+    const usersCollection = collection(db, 'users') as CollectionReference<User>
+    const q1 = query(usersCollection, where('username', '>=', value), where('username', '<=', value + '\uf8ff'))
+    const q2 = query(usersCollection, where('name', '>=', value), where('name', '<=', value + '\uf8ff'))
+
+    const fetch = async (query: Query) => {
+      const querySnapshot = await getDocs(query)
+      const results = querySnapshot.docs.map((doc) => doc.data() as User)
+      return results
+    }
+
+    const [usernameResults, nameResults] = await Promise.all([fetch(q1), fetch(q2)])
+
+    const results = [...usernameResults, ...nameResults].filter((user, id, arr) => arr.findIndex((u) => u.id === user.id) === id)
+
+    setResults(results)
+  }
+
+  useEffect(() => {
+    (async () => {
+      if (value) {
+        setLoading(true)
+        await fetchResults(value)
+        setLoading(false)
+      }
+    })()
+  }, [value])
+
+  return (
+    <>
+      <div className='SearchResults'>
+        {loading ? (
+          <Loader />
+        ) : !value ? (
+          <p className='try-searching'>Try searching for people</p>
+        ) : (
+          results.map((user, id) => <SearchResult key={id} user={user} />)
+        )}
+      </div>
+      <div className='backdrop' onClick={() => setOpen(false)} />
+    </>
+  )
+}
+
+type SearchResultProps = {
+  user: User
+}
+
+const SearchResult: React.FC<SearchResultProps> = ({ user }) => {
+  const navigate = useNavigate()
+
+  return (
+    <div className='SearchResult' onClick={() => navigate(`/${user.username}`)}>
+      <Avatar src={user.profileURL} size={56} />
+      <UserName user={user} dir='ver' />
+    </div>
+  )
+}
+
+export default Search

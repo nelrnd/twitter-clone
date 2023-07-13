@@ -1,10 +1,18 @@
 @use '../../base'
 
-.SearchBar_wrapper
+.Search
+  position: relative
+
+  .backdrop
+    position: fixed
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    z-index: 1
+
+.SearchBar
   width: auto
-  position: sticky
-  top: 16px
-  z-index: 3
   padding: 0 12px
   background-color: base.$dark-10
   border-radius: 1000px
@@ -12,6 +20,8 @@
   grid-template-columns: auto 1fr
   align-items: center
   gap: 16px
+  position: relative
+  z-index: 2
 
   svg
     margin-left: 8px
@@ -27,39 +37,39 @@
     font-size: 16px
     height: 44px
 
-    &::placeholder
+  input[type="search"]::placeholder
       color: base.$dark-70
 
-.SearchBar_wrapper:focus-within
-  background-color: transparent
-  outline: solid 1px base.$blue
+  &:focus-within
+    background-color: transparent
+    outline: solid 1px base.$blue
 
-  svg
+  &:focus-visible svg
     color: base.$blue
 
 .SearchResults
   position: absolute
+  z-index: 2
   top: calc(100% + 12px)
   width: 100%
   background-color: white
   border-radius: 16px
   box-shadow: 0 0 8px rgba(black, 10%)
 
-.SearchResults
-  .ProfileCard
-    align-items: center
+  .try-searching
+    padding: 12px
+    text-align: center
+    position: relative
+    z-index: 2
+    
+.SearchResult
+  padding: 12px 16px
+  display: grid
+  grid-template-columns: auto 1fr
+  gap: 12px
+  align-items: center
+  cursor: pointer
+  transition: background-color 0.2s ease-in-out
 
-    .Avatar
-      width: 56px !important
-      height: 56px !important
-
-    .name:hover
-      text-decoration: none
-
-.Search_backdrop
-  position: fixed
-  top: 0
-  right: 0
-  bottom: 0
-  left: 0
-  z-index: 2
+  &:hover
+    background-color: base.$ghost
