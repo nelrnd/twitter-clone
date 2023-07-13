@@ -68,7 +68,7 @@ const Feed: React.FC<FeedProps> = ({ userIds }) => {
   }, [userIds, refs])
 
   return (
-    <div className='Feed'>
+    <div>
       {newRefs.map((ref) => <TweetCard key={ref.id} tweetId={ref.tweetId} retweetedBy={ref.type === 'retweet' ? ref.userId : null} />)}
       <InfiniteScroll dataLength={refs.length} next={() => fetchMoreTweets(refs[refs.length -1], userIds)} hasMore={!reachedLastRef.current} loader={<Loader />}>
         {refs.map((ref) => <TweetCard key={ref.id} tweetId={ref.tweetId} retweetedBy={ref.type === 'retweet' ? ref.userId : null} />)}

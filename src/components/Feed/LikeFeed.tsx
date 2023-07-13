@@ -43,7 +43,7 @@ const LikeFeed: React.FC<LikeFeedProps> = ({ userId }) => {
   }, [userId])
 
   return (
-    <div className='Feed'> 
+    <div> 
       <InfiniteScroll dataLength={likes.length} next={() => fetchMoreLikes(likes[likes.length - 1], userId)} hasMore={!reachedLastLike.current} loader={<Loader />}>
         {likes.map((like) => <TweetCard key={like.tweetId} tweetId={like.tweetId} />)}
       </InfiniteScroll>

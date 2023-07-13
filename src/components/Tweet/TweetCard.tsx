@@ -50,7 +50,7 @@ const TweetCard: React.FC<TweetCardProps> = ({tweet, retweetedBy, isReply, onLoa
     const target = event.target
     if (target instanceof Element && target.className !== 'ProfilePopup') {
       const rect = target.getBoundingClientRect()
-      const timer = setTimeout(() => setPopupPosition({ x: rect.left, y: rect.top + rect.height + 10 }), 500) 
+      const timer = setTimeout(() => setPopupPosition({ x: rect.x, y: rect.y + rect.height + 10 + document.documentElement.scrollTop }), 500)
       setTimer(timer)
     }
   }
@@ -97,7 +97,7 @@ const TweetCard: React.FC<TweetCardProps> = ({tweet, retweetedBy, isReply, onLoa
           <div className="background" onClick={() => navigate(`/${user.username}/status/${tweet.id}`, { state: { previousLocation: location }})} />
         </div>
       </article>
-      <ProfilePopup user={user} position={popupPosition} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
+      {popupPosition && <ProfilePopup user={user} position={popupPosition} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />}
     </>
   ) : null
 }
