@@ -10,7 +10,7 @@ type FeedProps = {
   userIds: string[]
 }
 
-const FETCH_NUMBER = 10
+const FETCH_NUMBER = 15
 
 const Feed: React.FC<FeedProps> = ({ userIds }) => {
   const [refs, setRefs] = useState<FeedItem[]>([])

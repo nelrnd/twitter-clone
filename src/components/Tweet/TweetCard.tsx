@@ -7,7 +7,7 @@ import PhotoPreview from "../PhotoPreview/PhotoPreview"
 import { useContext, useState } from "react"
 import { useDocumentData } from "react-firebase-hooks/firestore"
 import { doc } from "firebase/firestore"
-import { db, toggleLikeTweet, toggleRetweetTweet } from "../../firebase"
+import { auth, db, toggleLikeTweet, toggleRetweetTweet } from "../../firebase"
 import './TweetCard.sass'
 
 // Icons
@@ -18,6 +18,7 @@ import ReplyIcon from '../../assets/comment.svg'
 import useTweetData from "../../hooks/useTweetData"
 import { GlobalContext } from "../../contexts/GlobalContext"
 import ProfilePopup from "../Profile/ProfilePopup"
+import TweetMenu from "./TweetMenu"
 
 type PreTweetCardProps = {
   tweetId: string
@@ -65,6 +66,7 @@ const TweetCard: React.FC<TweetCardProps> = ({tweet, retweetedBy, isReply, onLoa
     <>
       <article className={`TweetCard ${isReply ? 'isReply' : ''}`} onLoad={onLoad}>
         {retweetedBy && <RetweetBar retweetedBy={retweetedBy} />}
+        {tweet.userId === auth.currentUser?.uid && <TweetMenu tweetId={tweet.id} />}
         <div className="left-col">
           <Link to={'/' + user.username} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <Avatar src={user.profileURL} size={40} />

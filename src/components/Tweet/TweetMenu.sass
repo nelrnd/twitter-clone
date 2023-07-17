@@ -1,0 +1,52 @@
+@use '../../base'
+
+.TweetMenu
+  position: absolute
+  top: 8px
+  right: 8px
+  z-index: 5
+
+  svg
+    width: 20px
+    height: 20px
+
+  .Popup
+    position: absolute
+    width: 300px
+    z-index: 3
+    top: 0
+    right: 0
+    background-color: white
+    border-radius: 12px
+    box-shadow: 0 0 4px rgb(black, 10%)
+    overflow: hidden
+
+    ul
+      list-style-type: none
+      position: relative
+      z-index: 2
+
+    li
+      padding: 12px
+      display: flex
+      align-items: center
+      gap: 8px
+      transition: background-color 0.2s ease-in-out
+
+    li:hover
+      background-color: base.$ghost
+
+    .text
+      font-weight: 700
+
+    .danger
+      color: base.$red
+
+    .Backdrop
+      position: fixed
+      top: 0
+      left: 0
+      bottom: 0
+      right: 0
+      background-color: rgba(black, 2%)
+      z-index: -1

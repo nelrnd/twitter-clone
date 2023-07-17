@@ -111,6 +111,36 @@ export const createTweet = async (content: string[], media: File[], userId: stri
   }
 }
 
+export const deleteTweet = async (tweetId: string) => {
+  try {
+    const tweetRef = doc(db, 'tweets', tweetId)
+    const snapshot = await getDoc(tweetRef)
+    const tweet = snapshot.data()
+    if (!tweet) {
+      console.log('Tweet not found')
+      return
+    }
+    deleteTweetRefs(tweetId)
+    updateUserCount(tweet.userId, 'tweetCount', -1)
+    deleteDoc(tweetRef)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const deleteTweetRefs = async (tweetId: string) => {
+  try {
+    if (!tweetId) return
+    const querySnapshot = await getDocs(query(collection(db, 'feed'), where('tweetId', '==', tweetId)))
+    querySnapshot.docs.forEach((d) => {
+      console.log(d.id)
+      deleteDoc(doc(db, 'feed', d.id))
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 const createRefInFeed = async (tweetId: string, userId: string, type: string) => {
   try {
     if (!tweetId || !userId || !type) return
