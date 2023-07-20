@@ -162,5 +162,7 @@ const ReplyingTo: React.FC<ReplyingToProps> = ({tweet}) => {
   return user ? <p className="ReplyingTo grey">Replying to <Link to={'/' + user.username} className="link">@{user.username}</Link></p> : null
 }
 
+const NoTweet: React.FC = () => <div className="NoTweet">This Tweet was deleted by the Tweet author.</div>
+
 export default PreTweetCard
-export { TweetCard }
+export { TweetCard, NoTweet }

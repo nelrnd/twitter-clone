@@ -6,7 +6,7 @@ import { useCollectionData } from "react-firebase-hooks/firestore"
 import { collection, orderBy, query } from "firebase/firestore"
 import { db } from "../firebase"
 import Loader from "../components/Loader/Loader"
-import TweetCard, { TweetCard as LoadedTweetCard } from "../components/Tweet/TweetCard"
+import TweetCard, { TweetCard as LoadedTweetCard, NoTweet } from "../components/Tweet/TweetCard"
 import { useEffect, useRef } from "react"
 import useTweetData from "../hooks/useTweetData"
 import { Main, Side } from "../components/Layout/Layout"
@@ -41,9 +41,12 @@ const TweetIndex: React.FC = () => {
         <PageHeader onClick={goBack}>
           <h2 className="heading-2">Tweet</h2>
         </PageHeader>
-
-        {tweet.inReplyTo && loading && <Loader />}
-        {inReplyToTweet && <LoadedTweetCard tweet={inReplyToTweet} isReply={true} onLoad={scrollAtTop} retweetedBy={null} />}
+        
+        {tweet.inReplyTo && (
+          loading ? <Loader /> :
+          inReplyToTweet ? <LoadedTweetCard tweet={inReplyToTweet} isReply={true} onLoad={scrollAtTop} retweetedBy={null} /> :
+          <NoTweet />
+        )}
 
         <div style={{minHeight: 'calc(100vh - 52px)'}} ref={start}>
           <TweetMain tweet={tweet} user={user} />

@@ -121,7 +121,7 @@ export const deleteTweet = async (tweetId: string) => {
       return
     }
     deleteTweetRefs(tweetId)
-    updateUserCount(tweet.userId, 'tweetCount', -1)
+    updateUserCount(tweet.userId, 'tweetsCount', -1)
     deleteDoc(tweetRef)
   } catch (err) {
     console.error(err)
@@ -133,7 +133,6 @@ const deleteTweetRefs = async (tweetId: string) => {
     if (!tweetId) return
     const querySnapshot = await getDocs(query(collection(db, 'feed'), where('tweetId', '==', tweetId)))
     querySnapshot.docs.forEach((d) => {
-      console.log(d.id)
       deleteDoc(doc(db, 'feed', d.id))
     })
   } catch (err) {
