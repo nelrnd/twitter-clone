@@ -1,5 +1,6 @@
 {
   "name": "twitter-clone",
+  "homepage": "https://twitterclone.nel.dev",
   "private": true,
   "version": "0.0.0",
   "type": "module",
