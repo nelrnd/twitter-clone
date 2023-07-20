@@ -100,7 +100,7 @@ const Notification_reply: React.FC<NotificationProps> = ({notification}) => {
   if (loading) return <Loader />
 
   return tweet ? (
-    <TweetCard tweet={tweet} />
+    <TweetCard tweet={tweet} retweetedBy={null} />
   ) : null
 }
 

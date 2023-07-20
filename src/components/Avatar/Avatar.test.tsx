@@ -6,7 +6,7 @@ import Avatar from './Avatar'
 describe('Avatar', () => {
   it('should render an img with correct src attribute', () => {
     const src = 'https://example.com/myImage.jpg'
-    render(<Avatar src={src} />)
+    render(<Avatar src={src} size={40} />)
     const img: HTMLImageElement = screen.getByAltText('avatar')
     expect(img).toBeInTheDocument()
     expect(img.tagName).toBe('IMG')
