@@ -4,10 +4,11 @@ import PhotoPreview from '../PhotoPreview/PhotoPreview'
 import ProfileInfo from '../ProfileInfo/ProfileInfo'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { doc } from 'firebase/firestore'
-import { db, toggleLikeTweet, toggleRetweetTweet } from '../../firebase'
+import { auth, db, toggleLikeTweet, toggleRetweetTweet } from '../../firebase'
 import { getLongTime } from '../../utils'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { GlobalContext } from '../../contexts/GlobalContext'
+import TweetMenu from './TweetMenu'
 import './TweetMain.sass'
 
 // Icons
@@ -31,6 +32,8 @@ const TweetMain: React.FC<TweetProps> = ({ tweet, user }) => {
   
   return tweet && user ? (
     <article className="TweetMain">
+      {tweet.userId === auth.currentUser?.uid && <TweetMenu tweetId={tweet.id} />}
+
       <ProfileInfo user={user} />
 
       <main>
